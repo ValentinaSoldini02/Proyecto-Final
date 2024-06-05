@@ -18,7 +18,7 @@ Pensamos en agregar datos de criminología  para complementar y ver que zonas so
 
 ¿Se puede hacer suposiciones?
 
-Preguntas que nos hemos hevho:
+Preguntas que nos hemos hecho:
  - Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
  - ¿Cuál es la variable que más influye en el precio?
  - Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede       acceder a las propiedades (sustentarse) ?
