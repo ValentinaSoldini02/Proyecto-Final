@@ -10,15 +10,65 @@ Las variables explicativas (X) van a ser todas las demás.
 
 Nuestra principal idea es hacer una regresión lineal múltiple.
 
-Cambios pendientes: Cambiar los nombres de las variables, a nombres más comunes. ¿Se puede hacer tres regresiones? Separarlos en casas, apartamentos e industrias cambiar de dolares a pesos Pensamos en agregar datos de criminología para complementar y ver que zonas son más peligrosas.
+Cambios pendientes: 
+
+Cambiar los nombres de las variables, a nombres más comunes. 
+
+¿Se puede hacer tres regresiones? 
+
+Separarlos en casas, apartamentos e industrias cambiar de dolares a pesos +
+
+Pensamos en agregar datos de criminología para complementar y ver que zonas son más peligrosas.
 
 ¿Se puede hacer suposiciones?
 
-Preguntas que nos hemos hecho: - Cambia el precio con respecto al barrio en que se ecuestre la propiedad? - ¿Cuál es la variable que más influye en el precio? - Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? - ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo? - ¿Qué variables están correlacionadas entre sí? - ¿Hay alguna variable que debería de eliminarse al modelo?
+
+
+Preguntas que nos hemos hecho: 
+- Cambia el precio con respecto al barrio en que se ecuestre la propiedad? 
+- ¿Cuál es la variable que más influye en el precio? 
+- Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? 
+- ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo? 
+- ¿Qué variables están correlacionadas entre sí? 
+- ¿Hay alguna variable que debería de eliminarse al modelo?
 
 
 
 ```{r}
+
+# Importar librerías
+library(readr)
+library(here)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+
+
+
+```
+
+
+
+1) Preguntas
+Arriba
+
+
+2) Limpieza
+
+3) Exploración
+
+4) Visualización
+
+5) Modelado
+
+
+# Limpieza
+```{r}
+# estoy haciendo esto con los datos de las casas (sin hacer join con los datos de crimen, pero supongo que cuando hagamos join el código va a seguir funcionando)
+
+datos <- read_csv(here("houses.csv"))
+datos
+
 
 
 
@@ -27,40 +77,62 @@ Preguntas que nos hemos hecho: - Cambia el precio con respecto al barrio en que 
 
 
 
+### Valores Nulos
 ```{r}
 
 
+# Cantidad de Valores Nulos
 
+data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
+data_nulos %>% filter(cantidad_nulos > 0)
 
+# Hay cuatro columnas que tienen valores nulos.
 ```
 
 
 
 
+### Duplicados
 ```{r}
 
+# Cantidad de valores duplicados 
+
+nrow(datos[duplicated(datos), ])
+
+# Datos sin duplicados
+datos <- datos[!duplicated(datos), ]
+datos
+
+# IMPORTANTE: Casi la mitad del dataframe estaba duplicada, paso de tener 2361 filas a tener 1078 !!!
 
 
 
 ```
 
+IMPORTANTE: Casi la mitad del dataframe estaba duplicada, paso de tener 2361 filas a tener 1078 !!!
 
 
 
 
-```{r}
-
-
-
-
-```
-
-
-
+### Outlier
+Pueden afectar la prediccion del modelo hacer un gráfico de caja para verlos con una función que reciba solo columnas númericas
 
 ```{r}
 
+funcion_outlier <- function(datos){
+       data <- select_if(datos, is.numeric)
+       for (col_name in colnames(data)) {
+         grafico <- ggplot(datos, aes_string(x = col_name)) +
+         geom_boxplot() +
+         ggtitle(paste("Boxplot de", col_name))
+                       print(grafico)
+         
+       }
 
+       }
+
+
+funcion_outlier(datos)
 
 
 ```
