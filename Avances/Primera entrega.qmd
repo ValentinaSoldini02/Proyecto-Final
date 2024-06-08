@@ -302,17 +302,27 @@ Vemos que si, el promedio de precios de alquilier, difiere según el barrio, est
 ```{r}
 
 
-
+ggplot(filtro1, aes(x = reorder(Zone, media_precio), y = media_precio)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Categoría", y = "Valor", title = "Gráfico de barras de Categorías y Valores")
 
 ```
 
+mal
 
 
+
+
+Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? 
+  
+Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```{r}
 
 
-
+  
+  
+  
 
 ```
 
