@@ -11,11 +11,11 @@ Las variables explicativas (X) van a ser todas las demás.
 
 Nuestra principal idea es hacer una regresión lineal múltiple.
 
-Cambios pendientes: 
+Cambios pendientes:
 
-Cambiar los nombres de las variables, a nombres más comunes. 
+Cambiar los nombres de las variables, a nombres más comunes.
 
-¿Se puede hacer tres regresiones? 
+¿Se puede hacer tres regresiones?
 
 Separarlos en casas, apartamentos e industrias cambiar de dolares a pesos +
 
@@ -23,47 +23,42 @@ Pensamos en agregar datos de criminología para complementar y ver que zonas son
 
 ¿Se puede hacer suposiciones?
 
-
-
-Preguntas que nos hemos hecho: 
-- Cambia el precio con respecto al barrio en que se ecuestre la propiedad? 
-- ¿Cuál es la variable que más influye en el precio? 
-- Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? 
-- ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo? 
-- ¿Qué variables están correlacionadas entre sí? 
-- ¿Hay alguna variable que debería de eliminarse al modelo?
-
-
+Preguntas que nos hemos hecho: - Cambia el precio con respecto al barrio en que se ecuestre la propiedad? - ¿Cuál es la variable que más influye en el precio? - Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? - ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo? - ¿Qué variables están correlacionadas entre sí? - ¿Hay alguna variable que debería de eliminarse al modelo?
 
 ```{r}
 
-# Importar librerías
-library(readr)
-library(here)
-library(dplyr)
-library(tidyverse)
-library(ggplot2)
+# Descargar librería
 
 
 
 ```
 
 
+```{r}
+# Importar librerías
+library(readr)
+library(here)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(readxl)
 
-1) Preguntas
-Arriba
 
 
-2) Limpieza
+```
 
-3) Exploración
+1)  Preguntas Arriba
 
-4) Visualización
+2)  Limpieza
 
-5) Modelado
+3)  Exploración
 
+4)  Visualización
+
+5)  Modelado
 
 # Limpieza
+
 ```{r}
 # estoy haciendo esto con los datos de las casas (sin hacer join con los datos de crimen, pero supongo que cuando hagamos join el código va a seguir funcionando)
 
@@ -73,11 +68,20 @@ datos
 
 
 
+# Datos sobre ingresos por barrios que vamos a usar para hacer un join
+
+ingresos_barrio <- read_excel(here("Ingresos_deflactados.xlsx"))
+ingresos_barrio
+
+# Datos sobre homicidios por barrio que vamos a usar para hacer un join
+
+datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
+datos_delitos
+
 ```
 
-
-
 ### Valores Nulos
+
 ```{r}
 
 
@@ -89,10 +93,8 @@ data_nulos %>% filter(cantidad_nulos > 0)
 # Hay cuatro columnas que tienen valores nulos.
 ```
 
-
-
-
 ### Duplicados
+
 ```{r}
 
 # Cantidad de valores duplicados 
@@ -111,10 +113,8 @@ datos
 
 IMPORTANTE: Casi la mitad del dataframe estaba duplicada, paso de tener 2361 filas a tener 1078 !!!
 
-
-
-
 ### Outliers
+
 Pueden afectar la prediccion del modelo hacer un gráfico de caja para verlos con una función que reciba solo columnas númericas
 
 ```{r}
@@ -137,27 +137,11 @@ funcion_outlier(datos)
 
 ```
 
-NOTA) 2e+05 = 2×10^5 = 2*100000 = 200000
- 
+NOTA) 2e+05 = 2×10\^5 = 2\*100000 = 200000
 
 NOTA) Haciendo esto note que la columna de Beedroms aparece dos veces
 
-
-Hay varias columnas que tienen valores nulos, que son:
-Price, 
-Common_Expenses, 
-Floor, 
-Apartments_per_Floor,
-Number_of_Floors, 
-Bathrooms, 
-Bedrooms, 
-Built_Square_Meters, 
-Terrace_Square_Meters, 
-Land_Square_Meters, 
-Bedrooms (otra vez)
-Garages, 
-Floors
-
+Hay varias columnas que tienen valores nulos, que son: Price, Common_Expenses, Floor, Apartments_per_Floor, Number_of_Floors, Bathrooms, Bedrooms, Built_Square_Meters, Terrace_Square_Meters, Land_Square_Meters, Bedrooms (otra vez) Garages, Floors
 
 ```{r}
 
@@ -195,18 +179,12 @@ detectar_outliers_iqr(datos$Pool)
 datos
 ```
 
-
-
-
 ```{r}
 
 #
 
 
 ```
-
-
-
 
 # Visualización
 
@@ -226,7 +204,6 @@ ggplot(datos, aes(x = Price, y=Bathrooms)) +
 
 ```
 
-
 ```{r}
 
 datos2 <- datos %>% filter(Price <= 20000)
@@ -241,21 +218,8 @@ ggplot(datos2, aes(x =Bathrooms , y=Price )) +
 
 ```
 
+Preguntas que nos hemos hecho: - Cambia el precio con respecto al barrio en que se ecuestre la propiedad? - ¿Cuál es la variable que más influye en el precio? - Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? - ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo? - ¿Qué variables están correlacionadas entre sí? - ¿Hay alguna variable que debería de eliminarse al modelo?
 
-
-
-
-
-
-
-
-Preguntas que nos hemos hecho: 
-- Cambia el precio con respecto al barrio en que se ecuestre la propiedad? 
-- ¿Cuál es la variable que más influye en el precio? 
-- Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? 
-- ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo? 
-- ¿Qué variables están correlacionadas entre sí? 
-- ¿Hay alguna variable que debería de eliminarse al modelo?
 ```{r}
 
 # Pregunta 1)
@@ -289,15 +253,7 @@ colnames(datos)
 
 IDEA) Hacer una función que sirva para convertir de dolares a precios uruguayos capaz
 
-Vemos que si, el promedio de precios de alquilier, difiere según el barrio, esto se puede deber a varias razones, como son la criminalidad, donde vemos que en los barrios considerados más seguros, como son Punta Carretas, Pocitos, Carrasco, Buceo vemos que los precios de alquiler en superan los 1500 dolares, en cambio en los barrios menos seguros como son Casavalle, la Paloma y Manga 
-
-
-
-
-
-
-
-
+Vemos que si, el promedio de precios de alquilier, difiere según el barrio, esto se puede deber a varias razones, como son la criminalidad, donde vemos que en los barrios considerados más seguros, como son Punta Carretas, Pocitos, Carrasco, Buceo vemos que los precios de alquiler en superan los 1500 dolares, en cambio en los barrios menos seguros como son Casavalle, la Paloma y Manga
 
 ```{r}
 
@@ -310,24 +266,33 @@ ggplot(filtro1, aes(x = reorder(Zone, media_precio), y = media_precio)) +
 
 mal
 
+Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ?
+
+Para esto encontre unos datos sobre ingresos de las personas en uruguay.
+
+
+Estos son los datos:
+https://docs.google.com/spreadsheets/d/1BKf21E85wVD1kni-ZzC-43sK_jQxvRiE/edit#gid=1698237137https://docs.google.com/spreadsheets/d/1BKf21E85wVD1kni-ZzC-43sK_jQxvRiE/edit#gid=1698237137
 
 
 
-Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? 
+
+
+```{r}
+
+
   
-Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
-
-```{r}
-
-
-  
   
   
 
 ```
 
+```{r}
 
 
+
+
+```
 
 ```{r}
 
@@ -336,8 +301,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
+
+
+```
 
 ```{r}
 
@@ -346,7 +315,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
+
+
+
+```
 
 ```{r}
 
@@ -355,8 +329,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
+
+
+```
 
 ```{r}
 
@@ -365,9 +343,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
 
+
+```
 
 ```{r}
 
@@ -376,8 +357,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
+
+
+```
 
 ```{r}
 
@@ -386,8 +371,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
+
+
+```
 
 ```{r}
 
@@ -396,8 +385,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
+
+
+```
 
 ```{r}
 
@@ -406,7 +399,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
+
+
+
+```
 
 ```{r}
 
@@ -415,8 +413,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
+
+
+```
 
 ```{r}
 
@@ -425,9 +427,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
 
+
+```
 
 ```{r}
 
@@ -436,8 +441,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
+
+
+```
 
 ```{r}
 
@@ -446,8 +455,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
+
+
+```
 
 ```{r}
 
@@ -456,8 +469,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
 
+
+
+```
 
 ```{r}
 
@@ -466,7 +483,12 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
+```{r}
 
+
+
+
+```
 
 ```{r}
 
@@ -475,172 +497,9 @@ Para esto voy a buscar unos datos sobre ingresos de las personas en uruguay
 
 ```
 
-
-
-
 ```{r}
 
 
 
 
 ```
-
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-
-
-
-
-
