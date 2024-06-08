@@ -1,5 +1,6 @@
 ---
 title: "Primera entrega"
+author: "Diego Da Rosa, Nahuel Bizoso, Valentina Soldini"
 format: pdf
 editor: visual
 ---
@@ -207,17 +208,34 @@ datos
 
 
 
-```{r}
+# Visualización
 
+Algunos gráficos
+
+NOTA) Para el gráfico de Adress (dirección) podemos usar el mapa geografico de Uruguay.
+
+```{r}
+datos
+
+
+
+ggplot(datos, aes(x = Price, y=Bathrooms)) +
+         geom_point()
 
 
 
 ```
 
 
-
 ```{r}
 
+datos2 <- datos %>% filter(Price <= 20000)
+datos2
+
+
+
+ggplot(datos2, aes(x =Bathrooms , y=Price )) +
+         geom_point()
 
 
 
