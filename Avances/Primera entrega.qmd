@@ -72,7 +72,7 @@ datos
 
 ingresos_barrio <- read_excel(here("Ingresos_deflactados.xlsx"))
 ingresos_barrio
-
+colnames(ingresos_barrio)
 # Datos sobre homicidios por barrio que vamos a usar para hacer un join
 
 datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
@@ -279,11 +279,38 @@ https://docs.google.com/spreadsheets/d/1BKf21E85wVD1kni-ZzC-43sK_jQxvRiE/edit#gi
 
 
 ```{r}
+ingresos_barrio
+
+ingresos_barrio %>% 
+  select(1, 24) #%>% 
+  rename(
+    "Promedio de ingresos totales del hogar per capita por barrios (deflactado)" = "Zone",
+    
+    
+  )
+  
+
+# Extraer la primera fila para usarla como nombres de columnas
+new_colnames <- as.character(ingresos_barrio[1, ])
+# Eliminar la primera fila del dataframe original
+ingresos_barrio <- ingresos_barrio[-1, ]
+# Asignar los nuevos nombres de columnas al dataframe
+colnames(ingresos_barrio) <- new_colnames
 
 
-  
-  
-  
+
+colnames(ingresos_barrio)[is.na(colnames(ingresos_barrio))] <- "Zone"
+ingresos_barrio
+
+
+
+
+
+
+
+
+
+
 
 ```
 
