@@ -279,16 +279,8 @@ https://docs.google.com/spreadsheets/d/1BKf21E85wVD1kni-ZzC-43sK_jQxvRiE/edit#gi
 
 
 ```{r}
-ingresos_barrio
+#ingresos_barrio
 
-ingresos_barrio %>% 
-  select(1, 24) #%>% 
-  rename(
-    "Promedio de ingresos totales del hogar per capita por barrios (deflactado)" = "Zone",
-    
-    
-  )
-  
 
 # Extraer la primera fila para usarla como nombres de columnas
 new_colnames <- as.character(ingresos_barrio[1, ])
@@ -310,6 +302,33 @@ ingresos_barrio
 
 
 
+prueba <- ingresos_barrio %>% 
+  select(1, 24)
+
+prueba
+
+
+datos
+
+
+prueba %>% filter(Zone == "Flor de Maroñas")
+
+# Hacer algunas modificaciones, porque por ejemplo en prueba se llama flor de maroñas y en datos se llama maroñas (son lo mismo pero no lo reconoce)
+
+Union_Final <- left_join(datos, prueba, 
+                         by = "Zone", relationship = "many-to-one")
+
+Union_Final
+
+
+
+
+
+
+
+
+
+# Esta el problema de vuelta de que Price esta en dolares y los ingresos de los uruguayos estan en pesos uruguayos.
 
 
 ```
@@ -318,6 +337,21 @@ ingresos_barrio
 
 
 
+df <- data.frame(
+  precio = c(2,3,3,2,3,4,3,2,5,7),
+  ingreso = c(3,4,2,2,4,5,4,3,3,2),
+  lugar = c("Colon","Sayago","Pocitos","Peñarol","Tu padre","a","Colon","Colon","a","Peñarol")
+  
+)
+
+df
+
+
+
+
+
+ggplot(df, aes(x=precio,  fill=lugar)) + 
+  geom_bar()
 
 ```
 
