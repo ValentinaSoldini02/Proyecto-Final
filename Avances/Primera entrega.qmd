@@ -33,7 +33,6 @@ Preguntas que nos hemos hecho: - Cambia el precio con respecto al barrio en que 
 
 ```
 
-
 ```{r}
 # Importar librerías
 library(readr)
@@ -270,13 +269,7 @@ Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acce
 
 Para esto encontre unos datos sobre ingresos de las personas en uruguay.
 
-
-Estos son los datos:
-https://docs.google.com/spreadsheets/d/1BKf21E85wVD1kni-ZzC-43sK_jQxvRiE/edit#gid=1698237137https://docs.google.com/spreadsheets/d/1BKf21E85wVD1kni-ZzC-43sK_jQxvRiE/edit#gid=1698237137
-
-
-
-
+Estos son los datos: https://docs.google.com/spreadsheets/d/1BKf21E85wVD1kni-ZzC-43sK_jQxvRiE/edit#gid=1698237137https://docs.google.com/spreadsheets/d/1BKf21E85wVD1kni-ZzC-43sK_jQxvRiE/edit#gid=1698237137
 
 ```{r}
 #ingresos_barrio
@@ -364,12 +357,8 @@ ggplot(df, aes(x=precio,  fill=lugar)) +
 
 ```{r}
 
-
-
-
-```
-
-```{r}
+prueba
+Union_Final %>% select(1, 9)
 
 
 
@@ -378,6 +367,80 @@ ggplot(df, aes(x=precio,  fill=lugar)) +
 
 ```{r}
 
+
+prueba %>% 
+  arrange(Zone) #%>% 
+ # mutate(Union_Final$Zone)
+
+Union_Final %>% 
+  select(Zone) %>%
+  mutate(unique(prueba$Zone))
+
+
+
+UNION <- prueba %>%
+  select(Zone) %>%
+  mutate(Zone_2 = sort(unique(Union_Final$Zone)))
+
+UNION
+
+
+
+
+
+sort(unique(Union_Final$Zone))
+
+
+
+
+sort(unique(Union_Final$Zone))
+cat("\n")
+cat("\n")
+cat("\n")
+cat("\n")
+sort(unique(prueba$Zone))
+
+
+
+
+sort(unique(Union_Final$Zone)) == sort(unique(prueba$Zone))
+
+table(unique(Union_Final$Zone))
+table(unique(prueba$Zone))
+
+sort(unique(Union_Final$Zone))
+
+
+
+# NOTAS)
+# capurro = Bella Vista = Arroyo Seco
+
+UNION %>% filter(Zone != Zone_2)
+
+
+
+
+UNION
+
+
+
+```
+
+```{r}
+#UNION
+
+
+# Voy a modificar los datos de prueba 2 para luego pegarlos a los datos de UNION (que son los de prueba en 2023) con los datos de casas
+UNION
+#
+UNION %>% 
+  select(Zone, Zone_2) %>%
+  mutate(Zone = case_when(
+    Zone == "Colón Centro y Noroeste" ~ "Colón",
+    TRUE ~ Zone  # Para mantener los valores que no coinciden con el patrón especificado
+  ))
+
+#
 
 
 
