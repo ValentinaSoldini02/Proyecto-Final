@@ -340,7 +340,7 @@ Union_Final
 df <- data.frame(
   precio = c(2,3,3,2,3,4,3,2,5,7),
   ingreso = c(3,4,2,2,4,5,4,3,3,2),
-  lugar = c("Colon","Sayago","Pocitos","Peñarol","Tu padre","a","Colon","Colon","a","Peñarol")
+  lugar = c("Colon","Sayago","Pocitos","Peñarol","b","a","Colon","Colon","a","Peñarol")
   
 )
 
