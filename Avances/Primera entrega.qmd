@@ -447,18 +447,27 @@ UNION %>%
 ```
 
 ```{r}
-
-
-
-
+datos
+names(datos)
 ```
+```{r}
+datos$Zone <- factor(datos$Zone)
+levels(datos$Zone)
+```
+
+
+
 
 ```{r}
+library(fastDummies)
+
+#crear dummy para las variables categoricas
+datos <- dummy_cols(datos, select_columns = c("Property_Type", "Zone", "Condition", "Disposition"))
 
 
-
-
+mod <- lm(Price ~., data = datos)
 ```
+
 
 ```{r}
 
