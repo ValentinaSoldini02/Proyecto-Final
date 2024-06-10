@@ -684,7 +684,7 @@ mod <- lm(Price ~., data = datos)
 
 
 
-
+13+14+10+15+7+18+9+13 
 ```
 
 
@@ -696,7 +696,8 @@ Montevideo
 
 
 
-MUNIPICIO A: Cerro, 
+MUNIPICIO A: 
+Cerro, 
 La Teja, 
 Paso de la Arena, 
 Belvedere, 
@@ -710,6 +711,7 @@ Tomkinson,
 Tres Ombúes, 
 Pueblo Victoria
 
+(13)
 
 
 MUNICIPIO B: 
@@ -723,10 +725,10 @@ La Aguada,
 La Comercial, 
 Tres Cruces
 
+(9)
 
 
 MUNICIPIO C
-
 Aguada, 
 Aires Puros, 
 Arroyo Seco, 
@@ -746,6 +748,8 @@ Bolívar,
 Reducto, 
 Villa Muñoz
 
+(18)
+
 
 
 MUNICIPIO CH: 
@@ -756,9 +760,12 @@ MUNICIPIO CH:
  Buceo, 
  Pocitos, 
  Punta Carretas
+ 
+ (7)
+  
 
-
-
+ 
+ 
 MUNICIPIO D: 
  Toledo Chico, 
  Manga, 
@@ -775,9 +782,11 @@ MUNICIPIO D:
  Bolívar, 
  Cerrito de la Victoria, 
  Aires Puros
-
-
-
+ 
+ (15)
+ 
+ 
+ 
 MUNICIPIO E: 
  Unión, 
  Malvín Norte,
@@ -789,9 +798,11 @@ MUNICIPIO E:
  Malvín, 
  Buceo, 
  La Blanqueada
+ 
+ (10)
+ 
 
-
-
+ 
 MUNICIPIO F: 
  Manga, 
  Villa García, 
@@ -807,9 +818,12 @@ MUNICIPIO F:
  Piedras Blancasm, 
  Punta de Rieles, 
  Bella Italia
-
-
-
+ 
+ (14)
+ 
+ 
+ 
+ 
 MUNICIPIO G: 
  Lezica, 
  Melilla, 
@@ -826,7 +840,7 @@ MUNICIPIO G:
  Colón Noroeste
 
 
-
+(13)
 
 
 ```{r}
