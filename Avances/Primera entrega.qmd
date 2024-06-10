@@ -123,6 +123,11 @@ table(datos$Property_Type)
 # # Aclarar que el precio es mensual y en dolares.
 # No convertir a uruguayos, dejarlo en dolares
 # En las variables de 0 y 1, tiene que estar como factor.
+# 
+# Obtener los datos de longitud y latitud y el mapa (que tiene valentina)
+# google maps api R  (mapsapi)
+# Usarla para obtener la dirección (para cada dirección te da la latitud y la longitud)
+# 
 ```
 
 ### Valores Nulos
