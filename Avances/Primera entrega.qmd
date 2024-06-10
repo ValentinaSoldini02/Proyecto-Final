@@ -687,42 +687,152 @@ mod <- lm(Price ~., data = datos)
 
 ```
 
+
+
+Montevideo
+8 municipios
+18 centros comunales
+62 barrios
+
+
+
+MUNIPICIO A: Cerro, 
+La Teja, 
+Paso de la Arena, 
+Belvedere, 
+Casabó, 
+Nuevo París, 
+Prado, 
+Nueva Savona, 
+Pajas Blancas, 
+La Paloma, 
+Tomkinson, 
+Tres Ombúes, 
+Pueblo Victoria
+
+
+
+MUNICIPIO B: 
+Cordón, 
+Parque Rodó, 
+Palermo, 
+Barrio Sur, 
+Ciudad Vieja, 
+Centro, 
+La Aguada, 
+La Comercial, 
+Tres Cruces
+
+
+
+MUNICIPIO C
+
+Aguada, 
+Aires Puros, 
+Arroyo Seco, 
+Atahualpa, 
+Bella Vista, 
+Brazo Oriental, 
+Capurro, 
+Prado, 
+Goes, 
+Jacinto Vera, 
+Krüger, 
+Larrañaga, 
+La Comercial, 
+La Figurita, 
+Mercado Modelo, 
+Bolívar, 
+Reducto, 
+Villa Muñoz
+
+
+
+MUNICIPIO CH: 
+ Tres Cruces, 
+ La Blanqueada, 
+ Parque Batlle, 
+ Villa Dolores, 
+ Buceo, 
+ Pocitos, 
+ Punta Carretas
+
+
+
+MUNICIPIO D: 
+ Toledo Chico, 
+ Manga, 
+ Piedras Blancas, 
+ Placido Ellauri, 
+ Casavalle, 
+ Borro, 
+ Marconi, 
+ Las Acacias, 
+ Pérez Castellanos,
+ Porvenir, 
+ Villa Española, 
+ Unión, 
+ Bolívar, 
+ Cerrito de la Victoria, 
+ Aires Puros
+
+
+
+MUNICIPIO E: 
+ Unión, 
+ Malvín Norte,
+ Malvín Nuevo, 
+ Las Canteras, 
+ Carrasco Norte, 
+ Carrasco, 
+ Punta Gordam, 
+ Malvín, 
+ Buceo, 
+ La Blanqueada
+
+
+
+MUNICIPIO F: 
+ Manga, 
+ Villa García, 
+ Manga Rural, 
+ Bañados de Carrasco, 
+ Las Canteras, 
+ Maroñas, 
+ Parque Guaraní,
+ Villa Española, 
+ Flor de Maroñas, 
+ Ituzaingó, 
+ Jardines del Hipódromo, 
+ Piedras Blancasm, 
+ Punta de Rieles, 
+ Bella Italia
+
+
+
+MUNICIPIO G: 
+ Lezica, 
+ Melilla, 
+ Colón Sureste, 
+ Abayubá, 
+ Peñarol, 
+ Lavalleja, 
+ Paso de las Duranas, 
+ Nuevo París, 
+ Sayago, 
+ Conciliación, 
+ Barrio Ferrocarril, 
+ Colón Centro, 
+ Colón Noroeste
+
+
+
+
+
 ```{r}
-# Barrios por Municipio
-
-
-# Municipio A: Cerro, La Teja, Paso de la Arena, Belvedere, Casabó, Nuevo París, Prado, Nueva Savona, Pajas Blancas, La Paloma, Tomkinson, Tres Ombúes, Pueblo Victoria
 
 
 
-# Municipio B: 
-# Cordón, Parque Rodó, Palermo, Barrio Sur, Ciudad Vieja, Centro, La Aguada, La Comercial, Tres Cruces
-
-
-
-# Municipio C:
-# Aguada, Aires Puros, Arroyo Seco, Atahualpa, Bella Vista, Brazo Oriental, Capurro, Prado, Goes, Jacinto Vera, Krüger, Larrañaga, La Comercial, La Figurita, Mercado Modelo, Bolívar, Reducto, Villa Muñoz
-
-
-# Municipio CH: 
-# Tres Cruces, La Blanqueada, Parque Batlle, Villa Dolores, Buceo, Pocitos, Punta Carretas
-
-
-# Municipio D: 
-# Toledo Chico, Manga, Piedras Blancas, Placido Ellauri, Casavalle, Borro, Marconi, Las Acacias, Pérez Castellanos, Porvenir, Villa Española, Unión, Bolívar, Cerrito de la Victoria, Aires Puros
-
-
-# Municipio E: 
-# Unión, Malvín Norte, Malvín Nuevo, Las Canteras, Carrasco Norte, Carrasco, Punta Gordam, Malvín, Buceo, La Blanqueada
-
-
-
-# Municipio F: 
-# Manga, Villa García, Manga Rural, Bañados de Carrasco, Las Canteras, Maroñas, Parque Guaraní, Villa Española, Flor de Maroñas, Ituzaingó, Jardines del Hipódromo, Piedras Blancasm, Punta de Rieles, Bella Italia
-
-
-# Municipio G: 
-# Lezica, Melilla, Colón Sureste, Abayubá, Peñarol, Lavalleja, Paso de las Duranas, Nuevo París, Sayago, Conciliación, Barrio Ferrocarril, Colón Centro, Colón Noroeste
 
 
 ```
