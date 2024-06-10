@@ -466,6 +466,7 @@ datos <- dummy_cols(datos, select_columns = c("Property_Type", "Zone", "Conditio
 
 
 mod <- lm(Price ~., data = datos)
+
 ```
 
 
