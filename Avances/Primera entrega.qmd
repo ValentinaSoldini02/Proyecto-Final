@@ -96,12 +96,33 @@ colnames(ingresos_barrio)
 datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
 datos_delitos
 
+
+
+datos
 # Agrupar la base de incidentes por barrio para luego agruparlo. 
 # Aunque no tenemos el barrio donde ocurrio, tenemos la seccional, pero podemos asumir que si a alguien le roban en X barrio va a ir a la seccional de ese barrio. 
 # 
 # 
 # Ir respondiendo preguntas para las que tengamos datos.
+# 
+# 
+# 
+# Usar las variables de 0 y 1 como factores porque sino el modelo se muere
 
+
+
+table(datos$Property_Type)
+
+# Agrupar los barrios por zon o por municipios.
+# controlar las variables categoricas
+# dejar para el final lo de joinear datos de crimenes o de ingresos.
+# 
+# 
+# 
+# 1) Precio por metro cuadrado ()
+# # Aclarar que el precio es mensual y en dolares.
+# No convertir a uruguayos, dejarlo en dolares
+# En las variables de 0 y 1, tiene que estar como factor.
 ```
 
 ### Valores Nulos
