@@ -96,6 +96,12 @@ colnames(ingresos_barrio)
 datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
 datos_delitos
 
+# Agrupar la base de incidentes por barrio para luego agruparlo. 
+# Aunque no tenemos el barrio donde ocurrio, tenemos la seccional, pero podemos asumir que si a alguien le roban en X barrio va a ir a la seccional de ese barrio. 
+# 
+# 
+# Ir respondiendo preguntas para las que tengamos datos.
+
 ```
 
 ### Valores Nulos
@@ -130,6 +136,15 @@ datos
 ```
 
 IMPORTANTE: Casi la mitad del dataframe estaba duplicada, paso de tener 2361 filas a tener 1078 !!!
+
+```{r}
+data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
+data_nulos %>% filter(cantidad_nulos > 0)
+
+
+```
+
+
 
 ### Outliers
 
@@ -288,7 +303,18 @@ ggplot(filtro1, aes(x = reorder(Zone, media_precio), y = media_precio)) +
 
 # buscar la latitud y la longitud? Para reconocer las calles 
 #  
-#  
+# 
+# 
+# leaflet, map (librerias para hacer mapas) 
+
+# Nuestra variable de respuesta Y es el Precio. 
+
+
+
+
+
+
+
 ```
 
 mal
