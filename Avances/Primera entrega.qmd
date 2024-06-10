@@ -23,7 +23,26 @@ Pensamos en agregar datos de criminología para complementar y ver que zonas son
 
 ¿Se puede hacer suposiciones?
 
-Preguntas que nos hemos hecho: - Cambia el precio con respecto al barrio en que se ecuestre la propiedad? - ¿Cuál es la variable que más influye en el precio? - Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? - ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo? - ¿Qué variables están correlacionadas entre sí? - ¿Hay alguna variable que debería de eliminarse al modelo?
+Preguntas que nos hemos hecho:
+
+\- Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+
+\- ¿Cuál es la variable que más influye en el precio?
+
+\- Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ?
+
+\- ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo?
+
+\- ¿Qué variables están correlacionadas entre sí?
+
+\- ¿Hay alguna variable que debería de eliminarse al modelo?
+
+
+
+Primero hacer preguntas que podamos responder con los datos y luego las que no le hacemos un join con datos externos (crimen, ingresos)
+
+
+
 
 ```{r}
 
@@ -259,8 +278,17 @@ Vemos que si, el promedio de precios de alquilier, difiere según el barrio, est
 
 ggplot(filtro1, aes(x = reorder(Zone, media_precio), y = media_precio)) + 
   geom_bar(stat = "identity") + 
-  labs(x = "Categoría", y = "Valor", title = "Gráfico de barras de Categorías y Valores")
+  labs(x = "Zona", y = "Precio", title = "Precio segun zona")
 
+
+# Hacer una agrupación (por comunas por ejemplo que son 14) o por municipio. 
+
+# Podemos hacer un mapa donde el precio sea el color, cuanto más intenso sea el color más precio hay en esa área. Gráfico de puntos. Agrupar por zonales tal vez
+
+
+# buscar la latitud y la longitud? Para reconocer las calles 
+#  
+#  
 ```
 
 mal
@@ -450,13 +478,11 @@ UNION %>%
 datos
 names(datos)
 ```
+
 ```{r}
 datos$Zone <- factor(datos$Zone)
 levels(datos$Zone)
 ```
-
-
-
 
 ```{r}
 library(fastDummies)
@@ -468,7 +494,6 @@ datos <- dummy_cols(datos, select_columns = c("Property_Type", "Zone", "Conditio
 mod <- lm(Price ~., data = datos)
 
 ```
-
 
 ```{r}
 
