@@ -847,6 +847,169 @@ MUNICIPIO G:
 
 
 
+Municipio_A <- datos %>% filter(Zone %in% c(
+  "Cerro",
+  "La Teja",
+  "Paso de la Arena", 
+  "Belvedere",  
+  "Nuevo París", 
+  "Prado"
+  ))
+
+Municipio_A
+
+table(Municipio_A$Zone)
+
+
+
+Municipio_B <- datos %>% filter(Zone %in% c(
+  "Cordón", 
+  "Parque Rodó", 
+  "Palermo", 
+  "Barrio Sur", 
+  "Ciudad Vieja", 
+  "Centro", 
+  "Aguada", 
+  "La Comercial"
+))
+
+Municipio_B
+
+table(Municipio_B$Zone)
+
+
+
+
+
+
+Municipio_C <- datos %>% filter(Zone %in% c(
+   "Aguada", 
+   "Aires Puros", # no hay
+   "Arroyo Seco", 
+   "Atahualpa", 
+   "Bella Vista", 
+   "Brazo Oriental", 
+   "Capurro", 
+   "Goes", 
+   "Jacinto Vera", 
+   "La Comercial", 
+   "Mercado Modelo", 
+   "Reducto", 
+   "Villa Muñoz"
+))
+
+Municipio_C
+
+table(Municipio_C$Zone)
+
+
+
+Municipio_CH <- datos %>% filter(Zone %in% c(
+ "Tres Cruces", 
+ "La Blanqueada", 
+ "Parque Batlle", 
+ "Villa Dolores", 
+ "Buceo", 
+ "Pocitos", 
+ "Punta Carretas"
+))
+
+Municipio_CH
+
+
+table(Municipio_CH$Zone)
+
+
+
+
+
+
+Municipio_D <- datos %>% filter(Zone %in% c(
+ "Toledo Chico", 
+ "Manga", 
+ "Piedras Blancas", 
+ "Placido Ellauri", 
+ "Casavalle", 
+ "Borro", 
+ "Marconi", 
+ "Las Acacias", 
+ "Pérez Castellanos",
+ "Porvenir", 
+ "Villa Española", 
+ "Unión", 
+ "Bolívar", 
+ "Cerrito de la Victoria", 
+ "Aires Puros"
+))
+ 
+Municipio_D
+ 
+
+
+
+Municipio_E <- datos %>% filter(Zone %in% c(
+ "Unión", 
+ "Malvín Norte",
+ "Malvín Nuevo", 
+ "Las Canteras", 
+ "Carrasco Norte", 
+ "Carrasco", 
+ "Punta Gordam", 
+ "Malvín", 
+ "Buceo", 
+ "La Blanqueada"
+))
+ 
+Municipio_E
+
+
+
+
+ 
+Municipio_F <- datos %>% filter(Zone %in% c(
+ "Manga", 
+ "Villa García", 
+ "Manga Rural", 
+ "Bañados de Carrasco", 
+ "Las Canteras", 
+ "Maroñas", 
+ "Parque Guaraní",
+ "Villa Española", 
+ "Flor de Maroñas", 
+ "Ituzaingó", 
+ "Jardines del Hipódromo", 
+ "Piedras Blancas", 
+ "Punta de Rieles", 
+ "Bella Italia"
+))
+
+Municipio_F 
+ 
+ 
+ 
+Municipio_G <- datos %>% filter(Zone %in% c(
+ "Lezica", 
+ "Melilla", 
+ "Colón Sureste", 
+ "Abayubá", 
+ "Peñarol", 
+ "Lavalleja", 
+ "Paso de las Duranas", 
+ "Nuevo París", 
+ "Sayago", 
+ "Conciliación", 
+ "Barrio Ferrocarril", 
+ "Colón Centro", 
+ "Colón Noroeste"
+))
+
+Municipio_G
+
+
+
+
+datos %>% filter(Zone %in% c("Punta Carretas"))
+
 
 
 ```
