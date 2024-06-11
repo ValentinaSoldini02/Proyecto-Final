@@ -893,47 +893,24 @@ datos
 
 ```{r}
 
-#datos
-
-
-
 prueba_2 <- datos %>%
   mutate(Municipio = case_when(
-    
-    
     Zone %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo París","Prado")  ~ "Municipio_A",
-    
-    
     Zone %in% c("Cordón","Parque Rodó","Palermo","Barrio Sur","Ciudad Vieja","Centro","Aguada","La Comercial") ~ "Municipio_B",
-    
-    
-    
-    Zone %in% c("Aguada", "Arroyo Seco", "Atahualpa", "Bella Vista", "Brazo Oriental",  "Capurro",  "Goes",  "Jacinto Vera",  "La Comercial",  "Mercado Modelo",  "Reducto",  "Villa Muñoz") ~ "Municipio_C",
-    
-    
-    
+    Zone %in% c("Aguada", "Arroyo Seco", "Atahualpa", "Bella Vista", "Brazo Oriental", "Capurro", "Goes", "Jacinto Vera", "La Comercial", "Mercado Modelo", "Reducto", "Villa Muñoz") ~ "Municipio_C",
     Zone %in% c("Tres Cruces", "La Blanqueada", "Parque Batlle", "Villa Dolores", "Buceo", "Pocitos", "Punta Carretas") ~ "Municipio_CH",
-    
-    
-    
-    Zone %in% c("Piedras Blancas", "Villa Española", "Unión","Bolivar","Cerrito", ) ~ "Municipio_D",
-    
-    
-    
+    Zone %in% c("Piedras Blancas", "Villa Española", "Unión","Bolivar","Cerrito") ~ "Municipio_D",
     Zone %in% c("Malvín Norte","Malvín", "Carrasco Norte", "Carrasco", "Punta Gorda", "Buceo", "La Blanqueada") ~ "Municipio_E",
-    
-    
-    
-    Zone %in% c( "Maroñas", "Flor de Maroñas", "Villa Española", "Ituzaingó", "Jardines del Hipódromo", "Piedras Blancas", ) ~ "Municipio_F",
-    
-    
-    
-    Zone %in% c( "Lezica", "Peñarol", "Nuevo París", "Sayago", "Conciliación", "Colón") ~ "Municipio_G",
-
+    Zone %in% c("Maroñas", "Flor de Maroñas", "Villa Española", "Ituzaingó", "Jardines del Hipódromo", "Piedras Blancas") ~ "Municipio_F",
+    Zone %in% c("Lezica", "Peñarol", "Nuevo París", "Sayago", "Conciliación", "Colón") ~ "Municipio_G",
     TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
   ))
 
-prueba_2
+# Ver el resultado
+print(prueba_2)
+
+
+
 
 
 ``` 
