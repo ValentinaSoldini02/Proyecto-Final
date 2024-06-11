@@ -23,7 +23,12 @@ Pensamos en agregar datos de criminología para complementar y ver que zonas son
 
 ¿Se puede hacer suposiciones?
 
-Preguntas que nos hemos hecho: - Cambia el precio con respecto al barrio en que se ecuestre la propiedad? - ¿Cuál es la variable que más influye en el precio? - Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? - ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo? - ¿Qué variables están correlacionadas entre sí? - ¿Hay alguna variable que debería de eliminarse al modelo?
+Preguntas que nos hemos hecho: 
+- Cambia el precio con respecto al barrio en que se ecuestre la propiedad? 
+- ¿Cuál es la variable que más influye en el precio? 
+- Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? 
+- ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo? 
+- ¿Qué variables están correlacionadas entre sí? - ¿Hay alguna variable que debería de eliminarse al modelo?
 
 ```{r}
 
@@ -450,25 +455,25 @@ UNION %>%
 datos
 names(datos)
 ```
+
 ```{r}
 datos$Zone <- factor(datos$Zone)
 levels(datos$Zone)
 ```
 
-
-
-
 ```{r}
+# separar por zonas (agrupar)
+
 library(fastDummies)
 
 #crear dummy para las variables categoricas
+
 datos <- dummy_cols(datos, select_columns = c("Property_Type", "Zone", "Condition", "Disposition"))
 
 
 mod <- lm(Price ~., data = datos)
 
 ```
-
 
 ```{r}
 
