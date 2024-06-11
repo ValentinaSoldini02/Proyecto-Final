@@ -971,44 +971,24 @@ GRILLA_2
 
 ```{r}
 
-prueba <- data.frame(
-         col1 = c(2,8,6,4,4,4,8,3,4,8),
-         col2 = c("a","b","c","d","e","f","g","h","i","j"),
-         col3 = c("Clase1","Clase1","Clase2","Clase2","Clase3","Clase3","Clase3","Clase4","Clase4","Clase5")
-         )
 
-prueba
+
+prueba_2
 
 
 
-
-
-ggplot(data = prueba, aes(x = col2, y = col1, 
-                             colour = col3 )) + 
-# Elegímos los datos, los ejes, el grupo y el color
-  facet_grid(~col3) +  # Separamos por continente
-  geom_bar(stat="identity", size = 1) +     # Gráfico de lineas                                             
-# Hacemos el gráifco  
-  labs(x = "Año", y = "GDP Per Capita", color = "Continente") + # Nombre de los ejes        
-  ggtitle("GPD Per Capita a través de los años") + 
-  theme(plot.title = element_text(hjust = 0.5))
-  # Elegímos el Título                               
-  
-  
+ggplot(data = prueba_2, aes(x = Zone, y = Price, fill = Municipio)) + 
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Precio por Zona y Municipio") + # Título del gráfico
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
 
 
 
 
-ggplot(data = prueba, aes(x = col2, y = col1, 
-                             colour = col3 )) + 
-# Elegímos los datos, los ejes, el grupo y el color
-  facet_grid(~col3) +  # Separamos por continente
-  geom_bar(stat="identity", size = 1) +     # Gráfico de lineas                                             
-# Hacemos el gráifco  
-  labs(x = "Año", y = "GDP Per Capita", color = "Continente") + # Nombre de los ejes        
-  ggtitle("GPD Per Capita a través de los años") + 
-  theme(plot.title = element_text(hjust = 0.5))
-  # Elegímos el Título                               
+                           
   
   
 
