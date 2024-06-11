@@ -727,7 +727,7 @@ MUNICIPIO G: Lezica, Melilla, Colón Sureste, Abayubá, Peñarol, Lavalleja, Pas
 
 ```{r}
 
-
+# 57 barrios hmmm
 
 Municipio_A <- datos %>% filter(Zone %in% c(
   "Cerro",
@@ -766,7 +766,6 @@ table(Municipio_B$Zone)
 
 Municipio_C <- datos %>% filter(Zone %in% c(
    "Aguada", 
-   "Aires Puros", # no hay
    "Arroyo Seco", 
    "Atahualpa", 
    "Bella Vista", 
@@ -783,6 +782,10 @@ Municipio_C <- datos %>% filter(Zone %in% c(
 Municipio_C
 
 table(Municipio_C$Zone)
+
+
+
+
 
 
 
@@ -806,87 +809,61 @@ table(Municipio_CH$Zone)
 
 
 
+
+  
 Municipio_D <- datos %>% filter(Zone %in% c(
- "Toledo Chico", 
- "Manga", 
  "Piedras Blancas", 
- "Placido Ellauri", 
- "Casavalle", 
- "Borro", 
- "Marconi", 
- "Las Acacias", 
- "Pérez Castellanos",
- "Porvenir", 
  "Villa Española", 
- "Unión", 
- "Bolívar", 
- "Cerrito de la Victoria", 
- "Aires Puros"
+ "Unión",             
+ "Bolivar",           
+ "Cerrito", 
 ))
  
 Municipio_D
+  
+
+ 
  
 
 
 
 Municipio_E <- datos %>% filter(Zone %in% c(
- "Unión", 
  "Malvín Norte",
- "Malvín Nuevo", 
- "Las Canteras", 
+ "Malvín", 
  "Carrasco Norte", 
  "Carrasco", 
- "Punta Gordam", 
- "Malvín", 
+ "Punta Gorda", 
  "Buceo", 
  "La Blanqueada"
 ))
- 
 Municipio_E
 
 
 
 
- 
 Municipio_F <- datos %>% filter(Zone %in% c(
- "Manga", 
- "Villa García", 
- "Manga Rural", 
- "Bañados de Carrasco", 
- "Las Canteras", 
- "Maroñas", 
- "Parque Guaraní",
- "Villa Española", 
+ "Maroñas",  
  "Flor de Maroñas", 
+ "Villa Española", 
  "Ituzaingó", 
  "Jardines del Hipódromo", 
  "Piedras Blancas", 
- "Punta de Rieles", 
- "Bella Italia"
 ))
 
 Municipio_F 
  
  
+
  
 Municipio_G <- datos %>% filter(Zone %in% c(
  "Lezica", 
- "Melilla", 
- "Colón Sureste", 
- "Abayubá", 
  "Peñarol", 
- "Lavalleja", 
- "Paso de las Duranas", 
  "Nuevo París", 
  "Sayago", 
  "Conciliación", 
- "Barrio Ferrocarril", 
- "Colón Centro", 
- "Colón Noroeste"
+ "Colón"
 ))
-
 Municipio_G
-
 
 
 
@@ -895,6 +872,57 @@ datos %>% filter(Zone %in% c("Punta Carretas"))
 
 
 ```
+
+
+```{r}
+
+
+
+
+
+datos
+
+
+```
+
+
+
+
+```{r}
+
+datos
+
+
+
+prueba_2 <- datos %>%
+  mutate(Municipio = case_when(
+    
+    Zone %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo París","Prado")  ~ "Municipio_A",
+    
+    
+    Zone %in% c("Cordón","Parque Rodó","Palermo","Barrio Sur","Ciudad Vieja","Centro","Aguada","La Comercial") ~ "Municipio_B",
+    
+    Zone %in% c(".") ~ "Municipio_C",
+    
+    Zone %in% c(".") ~ "Municipio_CH",
+    
+    Zone %in% c(".") ~ "Municipio_D",
+    
+    Zone %in% c(".") ~ "Municipio_E",
+    
+    Zone %in% c(".") ~ "Municipio_F",
+    
+    Zone %in% c(".") ~ "Municipio_G",
+
+    TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
+  ))
+
+prueba_2
+
+
+``` 
+
+
 
 ```{r}
 
