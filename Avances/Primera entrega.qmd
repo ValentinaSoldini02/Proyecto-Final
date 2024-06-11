@@ -57,6 +57,10 @@ library(ggplot2)
 library(readxl)
 
 
+library(cowplot)
+library(gridExtra)
+
+
 
 ```
 
@@ -687,161 +691,39 @@ mod <- lm(Price ~., data = datos)
 13+14+10+15+7+18+9+13 
 ```
 
+Montevideo 8 municipios 18 centros comunales 62 barrios
 
+MUNIPICIO A: Cerro, La Teja, Paso de la Arena, Belvedere, Casabó, Nuevo París, Prado, Nueva Savona, Pajas Blancas, La Paloma, Tomkinson, Tres Ombúes, Pueblo Victoria
 
-Montevideo
-8 municipios
-18 centros comunales
-62 barrios
+(13) 
 
+MUNICIPIO B: Cordón, Parque Rodó, Palermo, Barrio Sur, Ciudad Vieja, Centro, La Aguada, La Comercial, Tres Cruces
 
+(9) 
 
-MUNIPICIO A: 
-Cerro, 
-La Teja, 
-Paso de la Arena, 
-Belvedere, 
-Casabó, 
-Nuevo París, 
-Prado, 
-Nueva Savona, 
-Pajas Blancas, 
-La Paloma, 
-Tomkinson, 
-Tres Ombúes, 
-Pueblo Victoria
+MUNICIPIO C Aguada, Aires Puros, Arroyo Seco, Atahualpa, Bella Vista, Brazo Oriental, Capurro, Prado, Goes, Jacinto Vera, Krüger, Larrañaga, La Comercial, La Figurita, Mercado Modelo, Bolívar, Reducto, Villa Muñoz
 
-(13)
+(18) 
 
+MUNICIPIO CH: Tres Cruces, La Blanqueada, Parque Batlle, Villa Dolores, Buceo, Pocitos, Punta Carretas
 
-MUNICIPIO B: 
-Cordón, 
-Parque Rodó, 
-Palermo, 
-Barrio Sur, 
-Ciudad Vieja, 
-Centro, 
-La Aguada, 
-La Comercial, 
-Tres Cruces
+(7) 
 
-(9)
+MUNICIPIO D: Toledo Chico, Manga, Piedras Blancas, Placido Ellauri, Casavalle, Borro, Marconi, Las Acacias, Pérez Castellanos, Porvenir, Villa Española, Unión, Bolívar, Cerrito de la Victoria, Aires Puros
 
+(15) 
 
-MUNICIPIO C
-Aguada, 
-Aires Puros, 
-Arroyo Seco, 
-Atahualpa, 
-Bella Vista, 
-Brazo Oriental, 
-Capurro, 
-Prado, 
-Goes, 
-Jacinto Vera, 
-Krüger, 
-Larrañaga, 
-La Comercial, 
-La Figurita, 
-Mercado Modelo, 
-Bolívar, 
-Reducto, 
-Villa Muñoz
+MUNICIPIO E: Unión, Malvín Norte, Malvín Nuevo, Las Canteras, Carrasco Norte, Carrasco, Punta Gordam, Malvín, Buceo, La Blanqueada
 
-(18)
+(10) 
 
+MUNICIPIO F: Manga, Villa García, Manga Rural, Bañados de Carrasco, Las Canteras, Maroñas, Parque Guaraní, Villa Española, Flor de Maroñas, Ituzaingó, Jardines del Hipódromo, Piedras Blancasm, Punta de Rieles, Bella Italia
 
+(14) 
 
-MUNICIPIO CH: 
- Tres Cruces, 
- La Blanqueada, 
- Parque Batlle, 
- Villa Dolores, 
- Buceo, 
- Pocitos, 
- Punta Carretas
- 
- (7)
-  
+MUNICIPIO G: Lezica, Melilla, Colón Sureste, Abayubá, Peñarol, Lavalleja, Paso de las Duranas, Nuevo París, Sayago, Conciliación, Barrio Ferrocarril, Colón Centro, Colón Noroeste
 
- 
- 
-MUNICIPIO D: 
- Toledo Chico, 
- Manga, 
- Piedras Blancas, 
- Placido Ellauri, 
- Casavalle, 
- Borro, 
- Marconi, 
- Las Acacias, 
- Pérez Castellanos,
- Porvenir, 
- Villa Española, 
- Unión, 
- Bolívar, 
- Cerrito de la Victoria, 
- Aires Puros
- 
- (15)
- 
- 
- 
-MUNICIPIO E: 
- Unión, 
- Malvín Norte,
- Malvín Nuevo, 
- Las Canteras, 
- Carrasco Norte, 
- Carrasco, 
- Punta Gordam, 
- Malvín, 
- Buceo, 
- La Blanqueada
- 
- (10)
- 
-
- 
-MUNICIPIO F: 
- Manga, 
- Villa García, 
- Manga Rural, 
- Bañados de Carrasco, 
- Las Canteras, 
- Maroñas, 
- Parque Guaraní,
- Villa Española, 
- Flor de Maroñas, 
- Ituzaingó, 
- Jardines del Hipódromo, 
- Piedras Blancasm, 
- Punta de Rieles, 
- Bella Italia
- 
- (14)
- 
- 
- 
- 
-MUNICIPIO G: 
- Lezica, 
- Melilla, 
- Colón Sureste, 
- Abayubá, 
- Peñarol, 
- Lavalleja, 
- Paso de las Duranas, 
- Nuevo París, 
- Sayago, 
- Conciliación, 
- Barrio Ferrocarril, 
- Colón Centro, 
- Colón Noroeste
-
-
-(13)
-
+(13) 
 
 ```{r}
 
@@ -1014,6 +896,47 @@ datos %>% filter(Zone %in% c("Punta Carretas"))
 
 ```
 
+```{r}
+
+
+grafica <- function(mun){
+  ggplot(mun, aes(x=Zone, y=Price)) +
+  geom_bar(stat="identity")
+}
+
+
+M1 <- grafica(Municipio_A)
+M2 <- grafica(Municipio_B)
+M3 <- grafica(Municipio_C)
+M4 <- grafica(Municipio_CH)
+M5 <- grafica(Municipio_D)
+M6 <- grafica(Municipio_E)
+M7 <- grafica(Municipio_F)
+M8 <- grafica(Municipio_G)
+
+
+
+
+
+```
+
+```{r}
+
+GRILLA_2 <- plot_grid(M1, M2, M3, M4, M5, M6, M7, M8,
+                      ncol = 2, nrow = 4,
+                      labels = "")#, scale = c(1.03, 1.03, 1.04, 1.042))
+GRILLA_2
+
+
+
+```
+```{r}
+
+
+
+
+```
+
 
 
 ```{r}
@@ -1022,6 +945,120 @@ datos %>% filter(Zone %in% c("Punta Carretas"))
 
 
 ```
+
+
+
+```{r}
+
+prueba <- data.frame(
+         col1 = c(2,8,6,4,4,4,8,3,4,8),
+         col2 = c("a","b","c","d","e","f","g","h","i","j"),
+         col3 = c("Clase1","Clase1","Clase2","Clase2","Clase3","Clase3","Clase3","Clase4","Clase4","Clase5")
+         )
+
+prueba
+
+
+
+
+
+ggplot(data = prueba, aes(x = col2, y = col1, 
+                             colour = col3 )) + 
+# Elegímos los datos, los ejes, el grupo y el color
+  facet_grid(~col3) +  # Separamos por continente
+  geom_bar(stat="identity", size = 1) +     # Gráfico de lineas                                             
+# Hacemos el gráifco  
+  labs(x = "Año", y = "GDP Per Capita", color = "Continente") + # Nombre de los ejes        
+  ggtitle("GPD Per Capita a través de los años") + 
+  theme(plot.title = element_text(hjust = 0.5))
+  # Elegímos el Título                               
+  
+  
+
+
+
+
+ggplot(data = prueba, aes(x = col2, y = col1, 
+                             colour = col3 )) + 
+# Elegímos los datos, los ejes, el grupo y el color
+  facet_grid(~col3) +  # Separamos por continente
+  geom_bar(stat="identity", size = 1) +     # Gráfico de lineas                                             
+# Hacemos el gráifco  
+  labs(x = "Año", y = "GDP Per Capita", color = "Continente") + # Nombre de los ejes        
+  ggtitle("GPD Per Capita a través de los años") + 
+  theme(plot.title = element_text(hjust = 0.5))
+  # Elegímos el Título                               
+  
+  
+
+
+```
+
+
+
+```{r}
+
+prueba
+
+
+prueba_2 <- prueba %>%
+  mutate(Municipio = case_when(
+    col3 %in% c("Clase1","Clase2","Clase3")  ~ "Municipio1",
+  #  col3 == "Clase2" ~ "Municipio2",
+ #   col3 == "Clase3" ~ "Municipio3",
+    col3 == "Clase4" ~ "Municipio4",
+    col3 == "Clase5" ~ "Municipio5",
+    TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
+  ))
+
+prueba_2
+
+
+
+```
+
+
+
+```{r}
+
+
+
+
+```
+
+
+
+
+```{r}
+
+
+
+
+```
+
+
+
+
+
+```{r}
+
+
+
+
+```
+
+
+
+
+```{r}
+
+
+
+
+```
+
+
+
 
 ```{r}
 
