@@ -1048,7 +1048,41 @@ ggplot(data3, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) +
 Vemos que la mayoría de alquileres se hacen en el municipio CH y la mínoria de alquileres se hacen en el municipio Municipio_F
 
 ```{r}
-#
+# O otra pregunta que es en que condición se encuentran la mayoría de las viviendas?
+
+datos_tipo <- prueba_2 %>% 
+  group_by(Property_Type, Municipio) %>%
+  summarise(nueva = n())
+datos_tipo
+```
+
+```{r}
+# O otra pregunta que es en que condición se encuentran la mayoría de las viviendas por municipio
+
+ggplot(datos_tipo, aes(x = Municipio, y = nueva, fill = Property_Type)) + 
+  geom_bar(stat = "identity", position = "dodge") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8)) +
+  labs(x = "Municipio", y = "Cantidad", fill = "Tipo de Propiedad") +
+  ggtitle("Cantidad de Propiedades por Tipo y Municipio") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+```{r}
+# Que tipos de alquileres hay
+ggplot(datos_tipo, aes(x = Property_Type)) + 
+  geom_bar() +
+  theme(axis.text.x = element_text(size=7)) 
+```
+
+
+
+    
+  
+  
+
+# Crear el gráfico de barras
+
 
 
 
