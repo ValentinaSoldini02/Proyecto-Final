@@ -1107,10 +1107,6 @@ ggplot(datos_tipo, aes(x = Property_Type)) +
   theme(axis.text.x = element_text(size=7)) 
 ```
 
-
-
-    
-  
   
 
 # Crear el gráfico de barras
@@ -1178,7 +1174,11 @@ ggplot(prueba_2, aes(x = Property_Type)) +
 ```{r}
 
 
-# Pregunta 3) En que estado se encuentran la mayor de los alquileres por municipio
+
+
+
+
+# Pregunta 3) En que estado se encuentran la mayor de los alquileres por municipio?
 
 
 # Pregunta 4) Como están distribuidos el tipo de alquiler por municipio
@@ -1231,6 +1231,21 @@ ggplot(prueba_22, aes(x = Municipio, fill = Condition)) +
 # La mayoría de viviendas que están en buenas
 # o excelentes condiciones están en el municipio CH
 # dónde también están las viviendas más caras
+
+
+
+
+# Crear el gráfico de barras con colores personalizados
+ggplot(data = prueba_22, aes(x = Condition, y = Price, fill = Municipio)) + 
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Precio por Zona y Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+
 ```
 
 
@@ -1239,4 +1254,28 @@ ggplot(prueba_22, aes(x = Municipio, fill = Condition)) +
 ```{r}
 
 # La gran mayoría son apartamentos
+ 
+ 
+
+
+
+
+
+# PREGUNTAS NUEVAS:
+
+
+
+
+# Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+
+# En que municipio hay más alquileres?
+
+
+#  En que condición se encuentran la mayoría de las viviendas por municipio?
+
+#  Qué tipo de inmuebles hay? (oficinas, casas, apartamentos)
+
+#  En que estado se encuentran la mayor de los alquileres por municipio?
+
+
 ```
