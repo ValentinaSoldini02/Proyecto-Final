@@ -959,7 +959,7 @@ GRILLA_2
 
 ```{r}
 
-
+# diego
 prueba_22 <- prueba_2 %>% filter(Price <= 150000 & Common_Expenses <= 10000)
 
 
@@ -1264,6 +1264,35 @@ ggplot(data = prueba_22, aes(x = Condition, y = Price, fill = Municipio)) +
 
 
 
+Preguntas:
+
+P1) Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+
+P2) En que municipio hay más alquileres?
+
+P3)  En que condición se encuentran la mayoría de las viviendas por municipio?
+
+P4)  Qué tipo de inmuebles hay? (oficinas, casas, apartamentos)
+
+P5)  En que estado se encuentran la mayor de los alquileres por municipio?
+
+
+P1)
+
+P2)
+
+P3)
+
+P4)
+
+P5)
+
+P6)
+
+
+
+
+
 ```{r}
 
 # Instalar librerías:
@@ -1465,6 +1494,37 @@ datos
 # Visualización:
 ```{r}
 
+# Vamos a crear una nueva columna que va a buscar en los datos a los barrios y va a crear categorías de municipios basadas en los barrios.
+
+
+
+
+datos_2 <- datos %>%
+  mutate(Municipio = case_when(
+    Zone %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo París","Prado")  ~ "Municipio_A",
+    
+    Zone %in% c("Cordón","Parque Rodó","Palermo","Barrio Sur","Ciudad Vieja","Centro","Aguada","La Comercial") ~ "Municipio_B",
+    
+    Zone %in% c("Aguada", "Arroyo Seco", "Atahualpa", "Bella Vista", "Brazo Oriental", "Capurro", "Goes", "Jacinto Vera", "La Comercial", "Mercado Modelo", "Reducto", "Villa Muñoz") ~ "Municipio_C",
+    
+    Zone %in% c("Tres Cruces", "La Blanqueada", "Parque Batlle", "Villa Dolores", "Buceo", "Pocitos", "Punta Carretas") ~ "Municipio_CH",
+    
+    Zone %in% c("Piedras Blancas", "Villa Española", "Unión","Bolivar","Cerrito") ~ "Municipio_D",
+    
+    Zone %in% c("Malvín Norte","Malvín", "Carrasco Norte", "Carrasco", "Punta Gorda", "Buceo", "La Blanqueada") ~ "Municipio_E",
+    
+    Zone %in% c("Maroñas", "Flor de Maroñas", "Villa Española", "Ituzaingó", "Jardines del Hipódromo", "Piedras Blancas") ~ "Municipio_F",
+    
+    Zone %in% c("Lezica", "Peñarol", "Nuevo París", "Sayago", "Conciliación", "Colón") ~ "Municipio_G",
+    
+    TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
+  ))
+
+# Ver el resultado
+datos_2
+
+
+
 
 
 
@@ -1474,7 +1534,8 @@ datos
 
 ```{r}
 
-
+# Vamos a eliminar los valores atípicos que estan en el dataframe
+datos_2 <- datos_2 %>% filter(Price <= 150000 & Common_Expenses <= 10000)
 
 
 ```
@@ -1482,6 +1543,32 @@ datos
 
 
 ```{r}
+# 
+# GRÁFICO DE BARRAS DEL PRECIO DE LOS APARTAMENTOS SEGÚN MUNICIPIO
+
+colores_personalizados <- c(
+  "Municipio_A" = "red", 
+  "Municipio_B" = "blue", 
+  "Municipio_C" = "green", 
+  "Municipio_CH" = "purple", 
+  "Municipio_D" = "orange", 
+  "Municipio_E" = "pink", 
+  "Municipio_F" = "brown", 
+  "Municipio_G" = "cyan")
+
+
+
+
+
+# Crear el gráfico de barras con colores personalizados
+ggplot(datos_2, aes(x = Zone, y = Price, fill = Municipio)) + 
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Precio por Zona y Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
 
 
 
