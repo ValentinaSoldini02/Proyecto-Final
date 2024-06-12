@@ -1,0 +1,91 @@
+Preguntas que quedaron:
+
+ - Cambia el precio con respecto al municipio en que se ecuestre la propiedad?
+ - ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el     precio? Mejorará el modelo?
+ - ¿Hay alguna variable que debería de eliminarse al modelo?
+ - En que municipio hay mas alquileres?
+ 
+
+```{r}
+library(readxl)
+library(here)
+library(tidyverse)
+datos <- read_csv(here("houses.csv"))
+datos
+```Descripcion de las variables:
+
+```{r}
+datos <- datos|>
+  rename(precio = Price,
+         nro_de_piso = Floor,
+         cant_de_piso = Number_of_Floors,
+         zona = Zone,
+         disposicion = Disposition,
+         cant_cuartos = Bedrooms...18,
+         cant_habitaciones = Bedrooms...13,
+         m2_terraza = Terrace_Square_Meters,
+         año_de_const = Year_of_Construction,
+         vista_al_mar = Sea_View,
+         deposito = Storage,
+         jardin = Garden,
+         losa_radiante = Radiant_Floor_Heating,
+         amueblado = Furnished...45,
+         direccion = Address,
+         tipo_prop = Property_Type,
+         baños = Bathrooms,
+         m2_const = Built_Square_Meters,
+         m2_totales = Land_Square_Meters,
+         vivienda_social = Social_Housing,
+         cant_de_est = Garages,
+         coneccion_cas = Gas_Pipeline,
+         calefaccion = Heating,
+         zona_barbacoa = Grill,
+         balcon = Balcony
+         )
+
+names(datos)
+#eliminar Furnished...32, Furnished...42, y Flors?
+```precio por metro cuadrado:
+```{r}
+datos <- datos|>
+  mutate(precio_m2 = precio/m2_const)
+```
+quitar variables: Furnished...32, Furnished...42, y Flors
+
+```{r}
+datos <- 
+  datos|>
+  select(-Furnished...32, -Furnished...42, -Floors, -precio, -m2_const)
+``````{r}
+prueba_2 <- datos %>%
+  mutate(Municipio = case_when(
+    Zone %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo
+                París","Prado")  ~ 
+      "Municipio_A",
+    Zone %in% c("Cordón","Parque Rodó","Palermo","Barrio Sur","Ciudad
+                Vieja","Centro","Aguada","La Comercial") ~ 
+      "Municipio_B",
+    Zone %in% c("Aguada", "Arroyo Seco", "Atahualpa", "Bella Vista", "Brazo
+                Oriental",  "Capurro",  "Goes",  "Jacinto Vera",  "La
+                Comercial",  "Mercado Modelo",  "Reducto",  "Villa Muñoz") ~
+      "Municipio_C",
+    Zone %in% c("Tres Cruces", "La Blanqueada", "Parque Batlle", "Villa
+                Dolores", "Buceo", "Pocitos", "Punta Carretas") ~
+      "Municipio_CH",
+    Zone %in% c("Piedras Blancas", "Villa Española",
+                "Unión","Bolivar","Cerrito") ~ 
+      "Municipio_D",
+    Zone %in% c("Malvín Norte","Malvín", "Carrasco Norte", "Carrasco", "Punta
+                Gorda") ~ 
+      "Municipio_E",
+    Zone %in% c("Maroñas", "Flor de Maroñas", "Ituzaingó", "Jardines del
+                Hipódromo") ~ 
+      "Municipio_F",
+    Zone %in% c("Lezica", "Peñarol", "Sayago", "Conciliación", "Colón") ~
+      "Municipio_G",
+    TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
+    )
+    )
+
+prueba_2
+```
