@@ -4,7 +4,14 @@ Preguntas que quedaron:
  - ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el     precio? Mejorará el modelo?
  - ¿Hay alguna variable que debería de eliminarse al modelo?
  - En que municipio hay mas alquileres?
- 
+
+Intrduccion:
+
+El mercado inmobiliario ha sido, durante muchos años de gran importancia tanto para inversores como para personas
+que buscan un alquiler.La variabilidad de los precios puede depender de diferentes factores como es la ubicacion,
+caracteristicas de la propiedad, tambien la seguridad de la zona y algunos otros.Este proyecto se basa en analizar
+como estas variables afectan en los precios de las propiedades en los diferentes municipios.
+
 
 ```{r}
 library(readxl)
