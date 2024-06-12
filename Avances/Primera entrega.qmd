@@ -1404,7 +1404,28 @@ datos
 
 
 
+
+### Outliers
+
+Pueden afectar la prediccion del modelo o los gráficos, para identificarlos vamos a usar una función que crea gráficos de cajas (que son útiles para ver los outliers) y también vamos a detectarlos con una función que usa el criterio de rango intercuartil para detectar outliers 
 ```{r}
+
+# Función gráficadora de boxplots
+funcion_outlier <- function(datos){
+       data <- select_if(datos, is.numeric)
+       for (col_name in colnames(data)) {
+         grafico <- ggplot(datos, aes_string(x = col_name)) +
+         geom_boxplot() +
+         ggtitle(paste("Boxplot de", col_name))
+                       print(grafico)
+         
+       }
+
+       }
+
+
+funcion_outlier(datos)
+# 39 columnas
 
 
 
@@ -1413,6 +1434,35 @@ datos
 
 
 
+El criterio de rango intercuartilico dice que si un valor esta por debajo del limite inferior (que es el quantil Q1 -1,5 * IQR) o por encima del limite superior (que es el quantil Q3 + 1,5 * IQR)
+
+```{r}
+
+
+detectar_outliers_iqr <- function(x) {
+  Q1 <- quantile(x, 0.25)
+  Q3 <- quantile(x, 0.75)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  outliers <- x[x < lower_bound | x > upper_bound]
+  return(outliers)
+}
+
+
+# Probando
+detectar_outliers_iqr(datos$Price)
+detectar_outliers_iqr(datos$Common_Expenses)
+detectar_outliers_iqr(datos$Air_Conditioning)
+detectar_outliers_iqr(datos$Solarium)
+detectar_outliers_iqr(datos$Pool)
+
+
+datos
+```
+
+
+# Visualización:
 ```{r}
 
 
