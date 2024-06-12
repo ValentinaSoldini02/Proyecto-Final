@@ -8,16 +8,16 @@ Preguntas que quedaron:
 Intrduccion:
 
 El mercado inmobiliario ha sido, durante muchos años de gran importancia tanto para inversores como para personas
-que buscan un alquiler.La variabilidad de los precios puede depender de diferentes factores como es la ubicacion,
-caracteristicas de la propiedad, tambien la seguridad de la zona y algunos otros.Este proyecto se basa en analizar
+que buscan un alquiler.La variabilidad de los precios puede depender de diferentes factores como es la ubicación,
+caracteristicas de la propiedad, también la seguridad de la zona y algunos otros.Este proyecto se basa en analizar
 como estas variables afectan en los precios de las propiedades en los diferentes municipios.
 
 Descripcion de los datos:
 
-Los datos utilizados, incluyen inofrmacion sobre propiedades disponibles para ser alquiladas en todo el año 2023.
-Contiene multiples variables como la direccion, el precio, caracteristicas fisicas de la prpiedad, tipo de propiedad,
+Los datos utilizados, incluyen inofrmación sobre propiedades disponibles para ser alquiladas en todo el año 2023.
+Contiene múltiples variables como la dirección, el precio, caracteristícas fisicas de la prpiedad, tipo de propiedad,
 condiciones de la propiedad, y caracterizticas adicionales como terraza, vista al mar, garage.
-En un primer momento se va a realizar una analisis exploratorio de los datos para ver que relacion tienen las diferentes
+En un primer momento se va a realizar una analisis exploratorio de los datos para ver que relación tienen las diferentes
 variabes con respecto al precio.
 
 
