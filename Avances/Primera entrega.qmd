@@ -999,21 +999,26 @@ ggplot(data = prueba_2, aes(x = Zone, y = Price, fill = Municipio)) +
 
 ```{r}
 
-prueba
 
+colores_personalizados <- c(
+  "Municipio_A" = "red", 
+  "Municipio_B" = "blue", 
+  "Municipio_C" = "green", 
+  "Municipio_CH" = "purple", 
+  "Municipio_D" = "orange", 
+  "Municipio_E" = "pink", 
+  "Municipio_F" = "brown", 
+  "Municipio_G" = "cyan")
 
-prueba_2 <- prueba %>%
-  mutate(Municipio = case_when(
-    col3 %in% c("Clase1","Clase2","Clase3")  ~ "Municipio1",
-  #  col3 == "Clase2" ~ "Municipio2",
- #   col3 == "Clase3" ~ "Municipio3",
-    col3 == "Clase4" ~ "Municipio4",
-    col3 == "Clase5" ~ "Municipio5",
-    TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
-  ))
-
-prueba_2
-
+# Crear el gráfico de barras con colores personalizados
+ggplot(data = prueba_2, aes(x = Zone, y = Price, fill = Municipio)) + 
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Precio por Zona y Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
 
 
 ```
