@@ -27,6 +27,8 @@ Preguntas que nos hemos hecho:
 
 \- Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
 
+\- En que municipio hay más alquileres?
+
 \- ¿Cuál es la variable que más influye en el precio?
 
 \- Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ?
@@ -876,7 +878,6 @@ datos %>% filter(Zone %in% c("Punta Carretas"))
 
 ```
 
-
 ```{r}
 
 
@@ -887,9 +888,6 @@ datos
 
 
 ```
-
-
-
 
 ```{r}
 
@@ -913,9 +911,7 @@ print(prueba_2)
 
 
 
-``` 
-
-
+```
 
 ```{r}
 
@@ -951,14 +947,6 @@ GRILLA_2
 
 
 ```
-```{r}
-
-
-
-
-```
-
-
 
 ```{r}
 
@@ -967,7 +955,12 @@ GRILLA_2
 
 ```
 
+```{r}
 
+
+
+
+```
 
 ```{r}
 
@@ -989,13 +982,11 @@ ggplot(data = prueba_2, aes(x = Zone, y = Price, fill = Municipio)) +
 
 
                            
-  
+  #
   
 
 
 ```
-
-
 
 ```{r}
 
@@ -1023,7 +1014,45 @@ ggplot(data = prueba_2, aes(x = Zone, y = Price, fill = Municipio)) +
 
 ```
 
+```{r}
 
+# Pregunta 2)
+# En que municipio hay más alquileres?
+
+
+prueba_2
+
+
+# Cantidad de alquileres por municipio
+data3 <- prueba_2 %>% 
+  group_by(Municipio) %>%
+  summarise(Cantidad = n())
+data3
+
+
+ggplot(data3, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) + 
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8)) 
+#
+
+
+
+
+
+
+# Puedo ver también que tipo de alquileres son los más comunes por municipio
+
+
+```
+
+Vemos que la mayoría de alquileres se hacen en el municipio CH y la mínoria de alquileres se hacen en el municipio Municipio_F
+
+```{r}
+#
+
+
+
+```
 
 ```{r}
 
@@ -1032,39 +1061,12 @@ ggplot(data = prueba_2, aes(x = Zone, y = Price, fill = Municipio)) +
 
 ```
 
-
-
-
 ```{r}
 
 
 
 
 ```
-
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-
-
-
-
-```
-
-
-
 
 ```{r}
 
