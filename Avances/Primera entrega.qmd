@@ -45,20 +45,30 @@ Primero hacer preguntas que podamos responder con los datos y luego las que no l
 
 # Descargar librería
 
-
+install.packages("readr")
+install.packages("here")
+install.packages("cowplot")
+install.packages("gridExtra")
 
 ```
 
 ```{r}
 # Importar librerías
 library(readr)
+library(readxl)
 library(here)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
+
+library(dplyr)
+library(ggplot2)
+library(here)
+library(readr)
+library(tidyverse)
 library(readxl)
-
-
+library(tibble)
+library(readxl)
 library(cowplot)
 library(gridExtra)
 
@@ -1001,6 +1011,10 @@ colores_personalizados <- c(
   "Municipio_F" = "brown", 
   "Municipio_G" = "cyan")
 
+
+
+
+
 # Crear el gráfico de barras con colores personalizados
 ggplot(data = prueba_2, aes(x = Zone, y = Price, fill = Municipio)) + 
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
@@ -1086,25 +1100,125 @@ ggplot(datos_tipo, aes(x = Property_Type)) +
 
 
 
+
+```{r}
+
 ```
+
+
+```{r}
+
+# Pregunta 2)
+# En que municipio hay más alquileres?
+
+
+#prueba_2
+
+
+# Cantidad de alquileres por municipio
+data3 <- prueba_2 %>%
+  group_by(Municipio) %>%
+  summarise(Cantidad = n())
+data3
+
+ggplot(data3, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) +
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+#
+
+# Vemos que la mayoría de alquileres se hacen en el municipio CH y la mínoria de alquileres se hacen en el municipio Municipio_F
+
+```
+
+
+
+
+
+```{r}
+prueba_22 <- prueba_2 %>% filter(Price <= 150000 & Common_Expenses <= 10000)
+
+datos_tipo <- prueba_22 %>%
+  group_by(Property_Type, Municipio) %>%
+  summarise(nueva = n())
+datos_tipo
+
+
+```
+
+```{r}
+# Pregunta 3) Que tipos de alquileres hay?
+ggplot(prueba_2, aes(x = Property_Type)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(size=7))
+
+
+
+```
+
+
 
 ```{r}
 
 
+# Pregunta 3) En que estado se encuentran la mayor de los alquileres por municipio
 
+
+# Pregunta 4) Como están distribuidos el tipo de alquiler por municipio
+ggplot(datos_tipo, aes(x = Municipio, y = nueva, fill = Property_Type)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8)) +
+  labs(x = "Municipio", y = "Cantidad", fill = "Tipo de Propiedad") +
+  ggtitle("Cantidad de Propiedades por Tipo y Municipio") +
+  theme(plot.title = element_text(hjust = 0.5))
 
 ```
 
+
 ```{r}
-
-
-
+# La mayoría de alquileres son apartamentos
+prueba_22 %>% filter(Common_Expenses < 10000)
 
 ```
 
+
 ```{r}
 
+ggplot(prueba_22, aes(x = Municipio, y = Common_Expenses)) +
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(size=7))
+```
 
 
 
+```{r}
+
+ggplot(prueba_22, aes(x = Condition)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(size=7))
+```
+
+
+
+```{r}
+
+ggplot(prueba_22, aes(x = Municipio, fill = Condition)) +
+  geom_bar(position = "dodge") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8)) +
+  labs(x = "Municipio", y = "Cantidad", fill = "Tipo de Propiedad") +
+  ggtitle("Cantidad de Propiedades por Tipo y Municipio") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+
+# La mayoría de viviendas que están en buenas
+# o excelentes condiciones están en el municipio CH
+# dónde también están las viviendas más caras
+```
+
+
+
+
+```{r}
+
+# La gran mayoría son apartamentos
 ```
