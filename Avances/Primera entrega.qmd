@@ -968,6 +968,7 @@ GRILLA_2
 ```{r}
 
 
+prueba_22 <- prueba_2 %>% filter(Price <= 150000 & Common_Expenses <= 10000)
 
 
 ```
@@ -980,7 +981,7 @@ prueba_2
 
 
 
-ggplot(data = prueba_2, aes(x = Zone, y = Price, fill = Municipio)) + 
+ggplot(data = prueba_22, aes(x = Zone, y = Price, fill = Municipio)) + 
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
   labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
@@ -1016,7 +1017,7 @@ colores_personalizados <- c(
 
 
 # Crear el gráfico de barras con colores personalizados
-ggplot(data = prueba_2, aes(x = Zone, y = Price, fill = Municipio)) + 
+ggplot(data = prueba_22, aes(x = Zone, y = Price, fill = Municipio)) + 
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
   labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
@@ -1079,6 +1080,23 @@ ggplot(datos_tipo, aes(x = Municipio, y = nueva, fill = Property_Type)) +
   labs(x = "Municipio", y = "Cantidad", fill = "Tipo de Propiedad") +
   ggtitle("Cantidad de Propiedades por Tipo y Municipio") +
   theme(plot.title = element_text(hjust = 0.5))
+
+
+
+
+
+
+
+# Crear el gráfico de barras con colores personalizados
+ggplot(data = prueba_22, aes(x = Property_Type, y = Price, fill = Municipio)) + 
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Precio por Zona y Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
 
 ```
 
