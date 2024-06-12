@@ -31,7 +31,7 @@ Preguntas que nos hemos hecho:
 
 \- ¿Cuál es la variable que más influye en el precio?
 
-\- Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ?
+\- Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? (eliminar, es un bolazo)
 
 \- ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo?
 
