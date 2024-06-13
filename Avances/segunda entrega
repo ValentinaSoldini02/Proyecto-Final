@@ -104,3 +104,67 @@ prueba_2 <- datos %>%
 
 prueba_2
 ```
+Tabla con las diferentes variables, tipo de variable y una descripcion 
+```{r}
+nombre_variable <- character()  
+tipo_variable <- character()    
+descripcion <- character()
+```
+
+
+```{r}
+tabla_variables <- data.frame(
+  "Nombre de la variable" = nombre_variable,
+  "Tipo de variable" = tipo_variable,
+  "Descripción" = descripcion,
+  stringsAsFactors = FALSE  
+)
+```
+
+```{r}
+tabla_variables[1,] <- c("direccion", "Numérica", "Ubicación donde se encuentra la propiedad")
+tabla_variables[2,] <- c("nro_de_piso", "Character", "Número de piso de la propiedad")
+tabla_variables[3,] <- c("tipo_prop", "Character", "Tipo de poropiedad, como apartamento, oficina, casa")
+tabla_variables[4,] <- c("disposicion", "Character", "En que posición se encuentra la pripiedad como, interior, frente, fondo")
+tabla_variables[5,] <- c("m2_terraza", "Numérica", "Metros cuadrado de la terraza")
+tabla_variables[6,] <- c("cant_cuartos", "Numérica", "Cantidad de dormitoros de la propiedad")
+tabla_variables[7,] <- c("vivienda_social", "Numérica", "Si la propiedad esta destinada para vivienda social es 1 y sino 0")
+tabla_variables[8,] <- c("Closet", "Numérica", "Espacio de guardaropas en la propiedad")
+tabla_variables[9,] <- c("Garage", "Numérica", "Garage en la propiedad")
+tabla_variables[10,] <- c("Playroom", "Numérica", "Sala de juegos en la propiedad")
+tabla_variables[11,] <- c("WiFi", "Numérica", "Conección a wifi en la propiedad")
+tabla_variables[12,] <- c("balcon", "Numérica", "Balcon en la propiedad")
+tabla_variables[13,] <- c("jardin", "Numérica", "Jardin en la propiedad ")
+tabla_variables[14,] <- c("amueblado", "Numérica", "La propiedad viene con los muebles incluidos a la hora de ser alquilado")
+tabla_variables[15,] <- c("Updated", "Fecha", "Última fecha que fue actualizado el listado")
+tabla_variables[16,] <- c("Apartments_per_Floor", "Numérica", "Número de apartamentos por piso en el edificio")
+tabla_variables[17,] <- c("zona", "Character", "En que zona de Montevideo se encuentra la propiedad")
+tabla_variables[18,] <- c("baños", "Numérica", "Cuántos cuartos hay en la propiedad")
+tabla_variables[19,] <- c("m2_totales", "Numérica", "Metros cuadrados de la propiedad")
+tabla_variables[20,] <- c("cant_de_est", "Numérica", "Cantidad de estacionamientos que tiene disponible la propiedad")
+tabla_variables[21,] <- c("Barbecue", "Numérica", "Barbacoa en la propiedad")
+tabla_variables[22,] <- c("Patio", "Numérica", "Patio en la propiedad")
+tabla_variables[23,] <- c("Pet", "Numérica", "Si se aceptan perros o no")
+tabla_variables[24,] <- c("Duplex", "Numérica", "Si es un duplex o no, duplex es una propiedad que esta encima de otra y generalmente son dos")
+tabla_variables[25,] <- c("zona_barbacoa", "Numérica", "Si hay una zona de barbacoa en el edificio de la propiedad")
+tabla_variables[26,] <- c("deposito", "Numérica", "Área de almacenaiento o depósito en la propiedad")
+tabla_variables[27,] <- c("losa_radiante", "Numérica", "Losa radiante en la propiedad")
+tabla_variables[28,] <- c("precio_m2", "Numérica", "El precio de la propiedad por metros cuadrados")
+tabla_variables[29,] <- c("Common_Expenses", "Numérica", "Gastos comunes asociados a la propiedad")
+tabla_variables[30,] <- c("cant_de_piso", "Numérica", "Núemero total de piso en el edificio")
+tabla_variables[31,] <- c("Condition", "Character", "En que condición se encuentra el apartamento")
+tabla_variables[32,] <- c("cant_habitaciones", "Numérica", "Cantidad de habitaciones en la propiedad")
+tabla_variables[33,] <- c("año_de_const", "Numérica", "En que año fue construida la propiedad")
+tabla_variables[34,] <- c("vista_al_mar", "Numérica", "Propiedad con vista al mar o no")
+tabla_variables[35,] <- c("Living_Room", "Numérica", "Propiedad con living o no")
+tabla_variables[36,] <- c("Pool", "Numérica", "Pool en la propiedad")
+tabla_variables[37,] <- c("coneccion_cas", "Numérica", "Propiedad cuenta con conección a gas directa o no")
+tabla_variables[38,] <- c("calefaccion", "Numérica", "Propiedad con calefacción")
+tabla_variables[39,] <- c("Gym", "Numérica", "Propiedad con gym")
+tabla_variables[40,] <- c("Air_Conditioning", "Numérica", "Propiedad con aire acondicionado")
+tabla_variables[41,] <- c("Solarium", "Numérica", "Propiedad con solarium")
+
+```
+```{r}
+print(tabla_variables)
+```
