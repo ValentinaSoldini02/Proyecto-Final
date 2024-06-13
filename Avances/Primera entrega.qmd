@@ -560,7 +560,7 @@ datos_2 %>% select('Sea_View','Social_Housing','Barbecue','Living_Room','Closet'
 
 graficadoreishon <- function(datos, columna){
 
-grupillo <- datos >%
+grupillo <- datos %>%
           group_by(columna) %>%
           summarise(conteo = mean(Price))
 
