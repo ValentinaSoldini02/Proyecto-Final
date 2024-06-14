@@ -233,6 +233,23 @@ P5) ¿En qué condición se encuentran los alquileres? (Subpregunta de esta: sub
 
 P6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
 
+P7)  ¿Como se distribuyen los gastos comúnes por Municipio?
+
+P8) ¿Cómo influye el tipo de alquiler en el nivel de gastos comunes?
+
+P9) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
+
+
+P10) ¿Cómo se distribuyen los Gastos Comunes en relación al tipo de alquiler por Municipio?
+
+
+P11) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
+
+
+
+P12) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
+.
+
 ```{r}
 
 
@@ -753,7 +770,7 @@ resultado_final
 
 ```{r}
 
-# Función para gráficar
+# Función para
 funcion_dum <- function(datos){
   # Convertir el DataFrame al formato largo
   data_long <- datos %>%
