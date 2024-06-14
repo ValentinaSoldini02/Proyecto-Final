@@ -1,5 +1,5 @@
 ---
-title: "Primera entrega"
+title: "Segunda entrega"
 author: "Diego Da Rosa, Nahuel Bizoso, Valentina Soldini"
 format: pdf
 editor: visual
