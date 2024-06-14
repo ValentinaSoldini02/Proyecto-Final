@@ -5,19 +5,13 @@ format: pdf
 editor: visual
 ---
 
-
-
-
 Introduccion:
 
 El mercado inmobiliario ha sido, durante muchos años de gran importancia tanto para inversores como para personas que buscan un alquiler. La variabilidad de los precios puede depender de diferentes factores como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros.Este proyecto se basa en analizar como estas variables afectan en los precios de las propiedades en los diferentes municipios.
 
-
 Descripcion de los datos:
 
 Los datos utilizados, incluyen inoformación sobre propiedades disponibles para ser alquiladas en todo el año 2023. Contiene múltiples variables como la dirección, el precio, caracteristícas fisicas de la prpiedad, tipo de propiedad, condiciones de la propiedad, y caracterizticas adicionales como terraza, vista al mar, garage. En un primer momento se va a realizar una analisis exploratorio de los datos para ver que relación tienen las diferentes variabes con respecto al precio.
-
-
 
 ```{r}
 
@@ -71,11 +65,6 @@ datos_delitos
 
 ```
 
-
-
-
-
-
 Descripcion de las variables:
 
 ```{r}
@@ -112,10 +101,12 @@ names(datos)
 ```
 
 precio por metro cuadrado:
+
 ```{r}
 datos <- datos|>
   mutate(precio_m2 = precio/m2_const)
 ```
+
 quitar variables: Furnished...32, Furnished...42, y Flors
 
 ```{r}
@@ -124,14 +115,13 @@ datos <-
   select(-Furnished...32, -Furnished...42, -Floors, -precio, -m2_const)
 ```
 
+Tabla con las diferentes variables, tipo de variable y una descripcion
 
-Tabla con las diferentes variables, tipo de variable y una descripcion 
 ```{r}
 nombre_variable <- character()  
 tipo_variable <- character()    
 descripcion <- character()
 ```
-
 
 ```{r}
 tabla_variables <- data.frame(
@@ -187,15 +177,9 @@ tabla_variables[41,] <- c("Solarium", "Numérica", "Propiedad con solarium")
 
 ```
 
-
-
 ```{r}
 print(tabla_variables)
 ```
-
-
-
-
 
 Nuestra variable de respuesta va a ser el precio. (Y)
 
@@ -625,10 +609,103 @@ ggplot(datos_2, aes(x = Condition, y = Price, fill = Municipio)) +
 
 
 
-```` {r}
 
-#
 
+```{r}
+
+
+# A ver los gastos comunes se pueden relacionar
+# con: Municipio, Estado de la vivienda, Tipo de vivienda,
+
+
+# P7)  ¿Como se distribuyen los gastos comúnes por Municipio?
+ggplot(datos_2, aes(x = Municipio , y = Common_Expenses)) +  # Datos y ejes
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+``` 
+
+
+```{r}
+# P8) ¿Cómo influye el tipo de alquiler en el nivel de gastos comunes?
+
+ggplot(datos_2, aes(x = Property_Type, y = Common_Expenses)) +  # Datos y ejes
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# subdiviridr por municipio? Que gastos son más comunes según el tipo de alquiler por municipio
+
+```
+
+
+```{r}
+
+
+# P9) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
+
+
+ggplot(datos_2, aes(x = Condition , y = Common_Expenses)) +  # Datos y ejes
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+```
+
+
+
+
+```{r}
+
+# P10) ¿Cómo se distribuyen los Gastos Comunes en relación al tipo de alquiler por Municipio?
+
+
+ggplot(datos_2, aes(x = Property_Type, y = Common_Expenses, fill = Municipio)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Condición de la vivienda por Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+
+
+```
+
+
+
+
+
+```{r}
+
+# P11) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
+
+
+ggplot(datos_2, aes(x = Condition, y = Common_Expenses, fill = Municipio)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Condición de la vivienda por Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+
+```
+
+
+
+
+
+```{r}
+
+# El 
+
+
+
+```
+
+
+```{r}
 
 
 
@@ -639,15 +716,9 @@ ggplot(datos_2, aes(x = Condition, y = Price, fill = Municipio)) +
 
 
 
-```` {r}
+```{r}
 
 
-```
-
-
-
-
-```` {r}
 
 
 ```
@@ -656,15 +727,9 @@ ggplot(datos_2, aes(x = Condition, y = Price, fill = Municipio)) +
 
 
 
-```` {r}
+```{r}
 
 
-```
-
-
-
-
-```` {r}
 
 
 ```
