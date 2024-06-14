@@ -698,10 +698,77 @@ ggplot(datos_2, aes(x = Condition, y = Common_Expenses, fill = Municipio)) +
 
 ```{r}
 
-# El 
+# P12) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
 
 
 
+# Las columnas de ceros y unos
+# Son 22 columnas
+
+
+# quitar variables: Furnished...32, Furnished...42, y Flors
+
+
+dum <- datos_2 %>% select('Sea_View','Social_Housing','Barbecue','Living_Room','Closet','Patio','Pool','Garage','Pet','Gas_Pipeline','Playroom','Duplex','Heating','WiFi','Grill','Gym','Balcony','Storage','Air_Conditioning','Garden','Radiant_Floor_Heating','Solarium')
+
+dum
+
+
+
+# EN FORMA DE FUNCIÓN
+# Función para crear el dataframe que tiene 0 y 1 en sus filas, las variables en sus columnas y el promedio de precio en cada celda.
+
+
+calcular_y_unir <- function(df, col, resultado_final) {
+  temp <- df %>%
+    group_by(valor = .data[[col]]) %>%
+    summarise(Mean = mean(Price, na.rm = TRUE), .groups = "drop")
+
+  colnames(temp)[2] <- paste0(col, "_Mean")
+  resultado_final <- left_join(resultado_final, temp, by = "valor", relationship = "many-to-one")
+  return(resultado_final)
+}
+
+# DataFrame inicial
+resultado_final <- data.frame(valor = c(0, 1))
+
+# Columnas de interés
+# columnas <- c("Sea_View", "Barbecue")
+columnas <- colnames(dum)
+
+
+
+# Aplicar la función para cada columna
+for (col in columnas) {
+  resultado_final <- calcular_y_unir(datos_2, col, resultado_final)
+}
+
+# DataFrame resultante
+resultado_final
+
+
+```
+
+
+
+```{r}
+
+# Función para gráficar
+funcion_dum <- function(datos){
+  # Convertir el DataFrame al formato largo
+  data_long <- datos %>%
+    pivot_longer(-valor, names_to = "variable", values_to = "value")
+
+  # Crear el gráfico
+  ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) +
+    geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +  # Ajusta el valor de 'width' para aumentar el espacio entre barras
+    labs(x = "Variable", y = "Value", fill = "Value") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+}
+
+
+# Llamar a la función con el DataFrame
+funcion_dum(resultado_final)
 ```
 
 
