@@ -18,13 +18,69 @@ Descripcion de los datos:
 Los datos utilizados, incluyen inoformación sobre propiedades disponibles para ser alquiladas en todo el año 2023. Contiene múltiples variables como la dirección, el precio, caracteristícas fisicas de la prpiedad, tipo de propiedad, condiciones de la propiedad, y caracterizticas adicionales como terraza, vista al mar, garage. En un primer momento se va a realizar una analisis exploratorio de los datos para ver que relación tienen las diferentes variabes con respecto al precio.
 
 
+
 ```{r}
+
+# Instalar librerías:
+
+#install.packages("readr")
+#install.packages("here")
+#install.packages("cowplot")
+#install.packages("gridExtra")
+
+
+
+```
+
+```{r}
+
+# Importar librerías:
+
+
+
+
+library(readr)
 library(readxl)
 library(here)
+library(dplyr)
 library(tidyverse)
+library(ggplot2)
+library(tibble)
+library(cowplot)
+library(gridExtra)
+
+
+```
+
+```{r}
+# LECTURA DE DATOS
+
+
+# Datos sobre precio de casas
 datos <- read_csv(here("houses.csv"))
 datos
+
+
+
+
+# Datos sobre ingresos por barrios que vamos a usar para hacer un join
+ingresos_barrio <- read_excel(here("Ingresos_deflactados.xlsx"))
+ingresos_barrio
+
+
+
+
+# Datos sobre homicidios por barrio que vamos a usar para hacer un join
+datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
+datos_delitos
+
+
 ```
+
+
+
+
+
 
 Descripcion de las variables:
 
@@ -276,64 +332,6 @@ P6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
 # leaflet, map (librerias para hacer mapas)
 
 # Nuestra variable de respuesta Y es el Precio.
-
-
-```
-
-```{r}
-
-# Instalar librerías:
-
-#install.packages("readr")
-#install.packages("here")
-#install.packages("cowplot")
-#install.packages("gridExtra")
-
-
-
-```
-
-```{r}
-
-# Importar librerías:
-
-
-
-
-library(readr)
-library(readxl)
-library(here)
-library(dplyr)
-library(tidyverse)
-library(ggplot2)
-library(tibble)
-library(cowplot)
-library(gridExtra)
-
-
-```
-
-```{r}
-# LECTURA DE DATOS
-
-
-# Datos sobre precio de casas
-datos <- read_csv(here("houses.csv"))
-datos
-
-
-
-
-# Datos sobre ingresos por barrios que vamos a usar para hacer un join
-ingresos_barrio <- read_excel(here("Ingresos_deflactados.xlsx"))
-ingresos_barrio
-
-
-
-
-# Datos sobre homicidios por barrio que vamos a usar para hacer un join
-datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
-datos_delitos
 
 
 ```
