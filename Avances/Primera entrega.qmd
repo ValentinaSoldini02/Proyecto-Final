@@ -41,7 +41,6 @@ Preguntas que nos hemos hecho:
 
 Primero hacer preguntas que podamos responder con los datos y luego las que no le hacemos un join con datos externos (crimen, ingresos)
 
-
 # ESTRUCTURANDO
 
 Preguntas:
@@ -57,7 +56,6 @@ P4) ¿Cómo se distribuyen los tipos de inmuebles por municipio?
 P5) ¿En qué condición se encuentran los alquileres? (Subpregunta de esta: subdividiendo por tipo de alquiler)
 
 P6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
-
 
 ```{r}
 
@@ -107,20 +105,14 @@ P6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
 
 ```
 
-
-
-
-
-
-
 ```{r}
 
 # Instalar librerías:
 
-install.packages("readr")
-install.packages("here")
-install.packages("cowplot")
-install.packages("gridExtra")
+#install.packages("readr")
+#install.packages("here")
+#install.packages("cowplot")
+#install.packages("gridExtra")
 
 
 
@@ -129,6 +121,9 @@ install.packages("gridExtra")
 ```{r}
 
 # Importar librerías:
+
+
+
 
 library(readr)
 library(readxl)
@@ -208,8 +203,8 @@ datos_delitos
 
 # Limpieza
 
-
 ### Valores Nulos
+
 ```{r}
 
 
@@ -267,7 +262,7 @@ funcion_outlier(datos)
 
 ```
 
-El criterio de rango intercuartilico es un criterio para detectar outliers,  dice que si un valor esta por debajo del limite inferior (que es el quantil Q1 -1,5 \* IQR) o por encima del limite superior (que es el quantil Q3 + 1,5 \* IQR).
+El criterio de rango intercuartilico es un criterio para detectar outliers, dice que si un valor esta por debajo del limite inferior (que es el quantil Q1 -1,5 \* IQR) o por encima del limite superior (que es el quantil Q3 + 1,5 \* IQR).
 
 ```{r}
 
@@ -293,9 +288,7 @@ detectar_outliers_iqr(datos$Pool)
 
 ```
 
-
-
-# Visualización 
+# Visualización
 
 ```{r}
 
@@ -332,8 +325,6 @@ datos_2
 
 ```
 
-
-
 ```{r}
 
 # Vamos a eliminar los valores atípicos que estan en el dataframe
@@ -342,12 +333,6 @@ datos_2 <- datos_2 %>% filter(Price <= 150000 & Common_Expenses <= 10000)
 
 
 ```
-
-
-
-
-
-
 
 ```{r}
 
@@ -389,9 +374,6 @@ ggplot(datos_2, aes(x = Zone, y = Price, fill = Municipio)) +  # Datos y ejes
 
 Vemos que si, los barrios ubicados en el municipio A y E son los que tienen un precio más +6elevado, mientras que los barrios ubicados en los municipios D y G son los más baratos.
 
-
-
-
 ```{r}
 
 # Pregunta 2) En que municipio hay más alquileres?
@@ -415,10 +397,6 @@ ggplot(grupo_municipio, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) +
 
 Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de alquileres se dan en el Municipio F
 
-
-
-
-
 ```{r}
 # Pregunta 3) Qué tipo de inmuebles para alquilar hay?
 
@@ -437,9 +415,6 @@ ggplot(grupo_tipo, aes(x=fct_reorder(Property_Type, Cantidad), y=Cantidad)) +
 ```
 
 La mayoría de alquileres son de Apartamentos, muy pocos son de Tierra, de Negocios Especiales, de Edificios o de Garages.
-
-
-
 
 ```{r}
 
@@ -494,6 +469,7 @@ ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) +
 
 
 ```
+
 La mayoría de los inmuebles estan en buena condición o excelente condición. Pocos de ellos estan en construcción, o con necesidad de mantenimiento o por ser renovados.
 
 ```{r}
@@ -551,66 +527,52 @@ ggplot(grupillo, aes(x=Garden, y=conteo)) + geom_bar(stat = "identity")
 # quitar variables: Furnished...32, Furnished...42, y Flors
 
 
-datos_2 %>% select('Sea_View','Social_Housing','Barbecue','Living_Room','Closet','Patio','Pool','Garage','Pet','Gas_Pipeline','Playroom','Duplex','Heating','WiFi','Grill','Gym','Balcony','Storage','Air_Conditioning','Garden','Radiant_Floor_Heating','Solarium')
+dum <- datos_2 %>% select('Sea_View','Social_Housing','Barbecue','Living_Room','Closet','Patio','Pool','Garage','Pet','Gas_Pipeline','Playroom','Duplex','Heating','WiFi','Grill','Gym','Balcony','Storage','Air_Conditioning','Garden','Radiant_Floor_Heating','Solarium')
 
 
+
+dum
 ```
 
 ```{r}
+# Función para columnas de ceros y unos
+grafico_ceros_unos <- function(datos, columna){
 
-graficadoreishon <- function(datos, columna){
+  grupillo <- datos %>%
+    group_by({{ columna }}) %>%
+    summarise(conteo = mean(Price))
 
-grupillo <- datos %>%
-          group_by(columna) %>%
-          summarise(conteo = mean(Price))
-
-grupillo
-
-
-ggplot(grupillo, aes(x=columna, y=conteo)) + geom_bar(stat = "identity")
-
+  ggplot(grupillo, aes(x = {{ columna }}, y = conteo)) + 
+    geom_bar(stat = "identity")
 }
 
 
-```
-
-```{r}
-
-
 
 
 ```
 
 ```{r}
 
+colnames(dum)
+
+grafico_ceros_unos(datos_2, Sea_View)
+grafico_ceros_unos(datos_2, Barbecue)
+grafico_ceros_unos(datos_2, Closet)
+grafico_ceros_unos(datos_2, Pool)
+grafico_ceros_unos(datos_2, Pet)
 
 
-
-```
-
-```{r}
-
-
-
-
-```
-
-```{r}
-
-
-
-
-```
-
-```{r}
-
-
-
-
-```
-
-```{r}
-
+ [1] "Sea_View"              "Social_Housing"       
+ [3] "Barbecue"              "Living_Room"          
+ [5] "Closet"                "Patio"                
+ [7] "Pool"                  "Garage"               
+ [9] "Pet"                   "Gas_Pipeline"         
+[11] "Playroom"              "Duplex"               
+[13] "Heating"               "WiFi"                 
+[15] "Grill"                 "Gym"                  
+[17] "Balcony"               "Storage"              
+[19] "Air_Conditioning"      "Garden"               
+[21] "Radiant_Floor_Heating" "Solarium"  
 
 
 
@@ -618,6 +580,97 @@ ggplot(grupillo, aes(x=columna, y=conteo)) + geom_bar(stat = "identity")
 
 ```{r}
 
+
+
+grafico_ceros_unos <- function(datos) {
+  # Verifica que todas las columnas del dataframe sean binarias (0 o 1)
+
+
+  # Lista para almacenar los gráficos
+  lista_graficos <- list()
+  
+  # Genera un gráfico de barras para cada columna binaria
+   for (columna in names(datos)) {
+    grupillo <- datos %>%
+      group_by(.data[[columna]]) %>%
+      summarise(conteo = mean(datos_2$Price))
+    
+    grafico <- ggplot(grupillo, aes(x = .data[[columna]], y = conteo)) + 
+      geom_bar(stat = "identity") +
+      ggtitle(paste("Gráfico de", columna))
+    
+    lista_graficos[[columna]] <- grafico
+  }
+  
+  # Muestra todos los gráficos en una grilla
+  do.call(grid.arrange, c(lista_graficos, ncol = 3))#, nrow=))
+}
+
+```
+
+```{r}
+#names(dum)
+#dum
+grafico_ceros_unos(dum)
+
+```
+
+```{r}
+
+
+
+names(datos)
+```
+
+```{r}
+
+
+
+```
+
+```{r}
+
+grafico_ceros_unos <- function(datos, ncol = 2, nrow = 2) {
+  # Verifica que todas las columnas del dataframe sean binarias (0 o 1)
+  columnas_binarias <- datos %>%
+    select(where(~ all(. %in% c(0, 1))))
+  
+  # Lista para almacenar los gráficos
+  lista_graficos <- list()
+  
+  # Genera un gráfico de barras para cada columna binaria
+  for (columna in names(datos)) {
+    grupillo <- datos %>%
+      group_by(.data[[columna]]) %>%
+      summarise(conteo = mean(data.frame(datos_2$Price)))
+    
+    grafico <- ggplot(grupillo, aes(x = .data[[columna]], y = conteo)) + 
+      geom_bar(stat = "identity") +
+      ggtitle(paste("Gráfico de", columna))
+    
+    lista_graficos[[columna]] <- grafico
+  }
+  
+  # Dividir gráficos en páginas
+  num_graficos <- length(lista_graficos)
+  num_paginas <- ceiling(num_graficos / (ncol * nrow))
+  
+  for (i in seq_len(num_paginas)) {
+    start_index <- (i - 1) * (ncol * nrow) + 1
+    end_index <- min(i * (ncol * nrow), num_graficos)
+    graficos_pagina <- lista_graficos[start_index:end_index]
+    
+    do.call(grid.arrange, c(graficos_pagina, ncol = ncol))
+  }
+}
+
+
+
+```
+
+```{r}
+
+grafico_ceros_unos(dum, ncol = 2, nrow = 2)
 
 
 
