@@ -63,12 +63,6 @@ datos
 
 
 
-# Datos sobre ingresos por barrios que vamos a usar para hacer un join
-ingresos_barrio <- read_excel(here("Ingresos_deflactados.xlsx"))
-ingresos_barrio
-
-
-
 
 # Datos sobre homicidios por barrio que vamos a usar para hacer un join
 datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
@@ -129,42 +123,6 @@ datos <-
   datos|>
   select(-Furnished...32, -Furnished...42, -Floors, -precio, -m2_const)
 ```
-
-
-```{r}
-prueba_2 <- datos %>%
-  mutate(Municipio = case_when(
-    Zone %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo
-                París","Prado")  ~ 
-      "Municipio_A",
-    Zone %in% c("Cordón","Parque Rodó","Palermo","Barrio Sur","Ciudad
-                Vieja","Centro","Aguada","La Comercial") ~ 
-      "Municipio_B",
-    Zone %in% c("Aguada", "Arroyo Seco", "Atahualpa", "Bella Vista", "Brazo
-                Oriental",  "Capurro",  "Goes",  "Jacinto Vera",  "La
-                Comercial",  "Mercado Modelo",  "Reducto",  "Villa Muñoz") ~
-      "Municipio_C",
-    Zone %in% c("Tres Cruces", "La Blanqueada", "Parque Batlle", "Villa
-                Dolores", "Buceo", "Pocitos", "Punta Carretas") ~
-      "Municipio_CH",
-    Zone %in% c("Piedras Blancas", "Villa Española",
-                "Unión","Bolivar","Cerrito") ~ 
-      "Municipio_D",
-    Zone %in% c("Malvín Norte","Malvín", "Carrasco Norte", "Carrasco", "Punta
-                Gorda") ~ 
-      "Municipio_E",
-    Zone %in% c("Maroñas", "Flor de Maroñas", "Ituzaingó", "Jardines del
-                Hipódromo") ~ 
-      "Municipio_F",
-    Zone %in% c("Lezica", "Peñarol", "Sayago", "Conciliación", "Colón") ~
-      "Municipio_G",
-    TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
-    )
-    )
-
-prueba_2
-```
-
 
 
 Tabla con las diferentes variables, tipo de variable y una descripcion 
@@ -228,6 +186,9 @@ tabla_variables[40,] <- c("Air_Conditioning", "Numérica", "Propiedad con aire a
 tabla_variables[41,] <- c("Solarium", "Numérica", "Propiedad con solarium")
 
 ```
+
+
+
 ```{r}
 print(tabla_variables)
 ```
@@ -659,5 +620,51 @@ ggplot(datos_2, aes(x = Condition, y = Price, fill = Municipio)) +
   scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
   theme(plot.title = element_text(hjust = 0.5), # Centrar el título
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+```
+
+
+
+```` {r}
+
+#
+
+
+
+
+
+```
+
+
+
+
+
+```` {r}
+
+
+```
+
+
+
+
+```` {r}
+
+
+```
+
+
+
+
+
+```` {r}
+
+
+```
+
+
+
+
+```` {r}
+
 
 ```
