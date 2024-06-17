@@ -763,5 +763,3 @@ funcion_dum <- function(datos){
 # Llamar a la función con el DataFrame
 funcion_dum(resultado_final)
 ```
-
-
