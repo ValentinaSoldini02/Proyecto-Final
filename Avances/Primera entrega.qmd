@@ -1,0 +1,971 @@
+---
+title: "Primera entrega"
+author: "Diego Da Rosa, Nahuel Bizoso, Valentina Soldini"
+format: pdf
+editor: visual
+---
+
+Nuestra variable de respuesta va a ser el precio. (Y)
+
+Las variables explicativas (X) van a ser todas las demás.
+
+Nuestra principal idea es hacer una regresión lineal múltiple.
+
+Cambios pendientes:
+
+Cambiar los nombres de las variables, a nombres más comunes.
+
+¿Se puede hacer tres regresiones?
+
+Separarlos en casas, apartamentos e industrias cambiar de dolares a pesos +
+
+Pensamos en agregar datos de criminología para complementar y ver que zonas son más peligrosas.
+
+¿Se puede hacer suposiciones?
+
+Preguntas que nos hemos hecho:
+
+\- Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+
+\- En que municipio hay más alquileres?
+
+\- ¿Cuál es la variable que más influye en el precio?
+
+\- Con respecto al precio de la propiedad, ¿qué porcentaje de personas puede acceder a las propiedades (sustentarse) ? (eliminar, es un bolazo)
+
+\- ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo?
+
+\- ¿Qué variables están correlacionadas entre sí?
+
+\- ¿Hay alguna variable que debería de eliminarse al modelo?
+
+Primero hacer preguntas que podamos responder con los datos y luego las que no le hacemos un join con datos externos (crimen, ingresos)
+
+# ESTRUCTURANDO
+
+Preguntas:
+
+P1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+
+P2) ¿En que municipio hay más alquileres?
+
+P3) ¿Qué tipo de inmuebles hay para alquilar?
+
+P4) ¿Cómo se distribuyen los tipos de inmuebles por municipio?
+
+P5) ¿En qué condición se encuentran los alquileres? (Subpregunta de esta: subdividiendo por tipo de alquiler)
+
+P6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
+
+```{r}
+
+
+# RECOMENDACIOENS DE LA PROFE EN CLASE
+
+# datos
+# Agrupar la base de incidentes por barrio para luego agruparlo.
+# Aunque no tenemos el barrio donde ocurrio, tenemos la seccional, pero podemos asumir que si a alguien le roban en X barrio va a ir a la seccional de ese barrio.
+#
+#
+# Ir respondiendo preguntas para las que tengamos datos.
+#
+#
+#
+# Usar las variables de 0 y 1 como factores porque sino el modelo se muere
+
+# Agrupar los barrios por zon o por municipios.
+# controlar las variables categoricas
+# dejar para el final lo de joinear datos de crimenes o de ingresos.
+#
+#
+#
+# 1) Precio por metro cuadrado ()
+# # Aclarar que el precio es mensual y en dolares.
+# No convertir a uruguayos, dejarlo en dolares
+# En las variables de 0 y 1, tiene que estar como factor.
+#
+# Obtener los datos de longitud y latitud y el mapa (que tiene valentina)
+# google maps api R  (mapsapi)
+# Usarla para obtener la dirección (para cada dirección te da la latitud y la longitud)
+#
+
+# Hacer una agrupación (por comunas por ejemplo que son 14) o por municipio.
+
+# Podemos hacer un mapa donde el precio sea el color, cuanto más intenso sea el color más precio hay en esa área. Gráfico de puntos. Agrupar por zonales tal vez
+
+
+# buscar la latitud y la longitud? Para reconocer las calles
+#
+#
+#
+# leaflet, map (librerias para hacer mapas)
+
+# Nuestra variable de respuesta Y es el Precio.
+
+
+```
+
+```{r}
+
+# Instalar librerías:
+
+#install.packages("readr")
+#install.packages("here")
+#install.packages("cowplot")
+#install.packages("gridExtra")
+
+
+
+```
+
+```{r}
+
+# Importar librerías:
+
+
+
+
+library(readr)
+library(readxl)
+library(here)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(tibble)
+library(cowplot)
+library(gridExtra)
+
+
+```
+
+```{r}
+# LECTURA DE DATOS
+
+
+# Datos sobre precio de casas
+datos <- read_csv(here("houses.csv"))
+datos
+
+
+
+
+# Datos sobre ingresos por barrios que vamos a usar para hacer un join
+ingresos_barrio <- read_excel(here("Ingresos_deflactados.xlsx"))
+ingresos_barrio
+
+
+
+
+# Datos sobre homicidios por barrio que vamos a usar para hacer un join
+datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
+datos_delitos
+
+
+```
+
+```{r}
+
+# APUNTES DE CLASE:
+
+
+# Agrupar la base de incidentes por barrio para luego agruparlo. 
+# Aunque no tenemos el barrio donde ocurrio, tenemos la seccional, pero podemos asumir que si a alguien le roban en X barrio va a ir a la seccional de ese barrio. 
+# 
+# 
+# Ir respondiendo preguntas para las que tengamos datos.
+# 
+# 
+# 
+# Usar las variables de 0 y 1 como factores porque sino el modelo se muere
+
+
+
+# Agrupar los barrios por zon o por municipios.
+# controlar las variables categoricas
+# dejar para el final lo de joinear datos de crimenes o de ingresos.
+# 
+# 
+# 
+# 1) Precio por metro cuadrado ()
+# # Aclarar que el precio es mensual y en dolares.
+# No convertir a uruguayos, dejarlo en dolares
+# En las variables de 0 y 1, tiene que estar como factor.
+# 
+# Obtener los datos de longitud y latitud y el mapa (que tiene valentina)
+# google maps api R  (mapsapi)
+# Usarla para obtener la dirección (para cada dirección te da la latitud y la longitud)
+# 
+
+
+
+
+```
+
+# Limpieza
+
+### Valores Nulos
+
+```{r}
+
+
+# Valores Nulos:
+data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
+data_nulos %>% filter(cantidad_nulos > 0)
+
+
+# Hay cuatro columnas que tienen valores nulos
+# Que son Address, Condition, Disposition, Floors
+
+```
+
+### Valores Duplicados
+
+```{r}
+
+# Duplicados:
+nrow(datos[duplicated(datos), ])
+
+# Datos sin duplicados
+datos <- datos[!duplicated(datos), ]
+datos
+
+# IMPORTANTE: Casi la mitad del dataframe estaba duplicada, paso de tener 2361 filas a tener 1078 !!!
+datos
+
+
+```
+
+### Outliers
+
+Pueden afectar la prediccion del modelo o los gráficos, para identificarlos vamos a usar una función que crea gráficos de cajas (que son útiles para ver los outliers) y también vamos a detectarlos con una función que usa el criterio de rango intercuartil para detectar outliers
+
+```{r}
+
+# Función gráficadora de boxplots
+funcion_outlier <- function(datos){
+       data <- select_if(datos, is.numeric)
+       for (col_name in colnames(data)) {
+         grafico <- ggplot(datos, aes_string(x = col_name)) +
+         geom_boxplot() +
+         ggtitle(paste("Boxplot de", col_name))
+                       print(grafico)
+
+       }
+
+       }
+
+
+funcion_outlier(datos)
+# 39 columnas
+
+
+
+```
+
+El criterio de rango intercuartilico es un criterio para detectar outliers, dice que si un valor esta por debajo del limite inferior (que es el quantil Q1 -1,5 \* IQR) o por encima del limite superior (que es el quantil Q3 + 1,5 \* IQR).
+
+```{r}
+
+# Función para el criterio de outliers
+detectar_outliers_iqr <- function(x) {
+  Q1 <- quantile(x, 0.25)
+  Q3 <- quantile(x, 0.75)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  outliers <- x[x < lower_bound | x > upper_bound]
+  return(outliers)
+}
+
+
+
+detectar_outliers_iqr(datos$Price)
+detectar_outliers_iqr(datos$Common_Expenses)
+detectar_outliers_iqr(datos$Air_Conditioning)
+detectar_outliers_iqr(datos$Solarium)
+detectar_outliers_iqr(datos$Pool)
+
+
+```
+
+# Visualización
+
+```{r}
+
+# Vamos a crear una nueva columna que va a buscar en los datos a los barrios y va a crear categorías de municipios basadas en los barrios.
+
+
+
+
+datos_2 <- datos %>%
+  mutate(Municipio = case_when(
+    Zone %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo París","Prado")  ~ "Municipio_A",
+
+    Zone %in% c("Cordón","Parque Rodó","Palermo","Barrio Sur","Ciudad Vieja","Centro","Aguada","La Comercial") ~ "Municipio_B",
+
+    Zone %in% c("Aguada", "Arroyo Seco", "Atahualpa", "Bella Vista", "Brazo Oriental", "Capurro", "Goes", "Jacinto Vera", "La Comercial", "Mercado Modelo", "Reducto", "Villa Muñoz") ~ "Municipio_C",
+
+    Zone %in% c("Tres Cruces", "La Blanqueada", "Parque Batlle", "Villa Dolores", "Buceo", "Pocitos", "Punta Carretas") ~ "Municipio_CH",
+
+    Zone %in% c("Piedras Blancas", "Villa Española", "Unión","Bolivar","Cerrito") ~ "Municipio_D",
+
+    Zone %in% c("Malvín Norte","Malvín", "Carrasco Norte", "Carrasco", "Punta Gorda", "Buceo", "La Blanqueada") ~ "Municipio_E",
+
+    Zone %in% c("Maroñas", "Flor de Maroñas", "Villa Española", "Ituzaingó", "Jardines del Hipódromo", "Piedras Blancas") ~ "Municipio_F",
+
+    Zone %in% c("Lezica", "Peñarol", "Nuevo París", "Sayago", "Conciliación", "Colón") ~ "Municipio_G",
+
+    TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
+  ))
+
+
+
+# Ver el resultado
+datos_2
+
+```
+
+```{r}
+
+# Vamos a eliminar los valores atípicos que estan en el dataframe
+datos_2 <- datos_2 %>% filter(Price <= 150000 & Common_Expenses <= 10000)
+
+
+
+```
+
+```{r}
+
+# Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+
+
+# Elegimos los colores manualmente
+colores_personalizados <- c(
+  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   "Municipio_CH" = "purple",  "Municipio_D" = "orange",   "Municipio_E" = "pink",
+  "Municipio_F" = "brown",  "Municipio_G" = "cyan")
+
+
+
+
+
+# Gráfico
+ggplot(datos_2, aes(x = Zone, y = Price, fill = Municipio)) +  # Datos y ejes
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  # Ancho y posición de las barras
+
+  facet_grid(. ~ Municipio, scales = "free_x") +
+  # Usar facet_grid para crear una grilla por Municipio
+
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Precio por Zona y Municipio") + # Título
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Centrar el título y modificar el texto de los elementos del eje X
+
+
+
+
+
+
+
+```
+
+Vemos que si, los barrios ubicados en el municipio A y E son los que tienen un precio más +6elevado, mientras que los barrios ubicados en los municipios D y G son los más baratos.
+
+```{r}
+
+# Pregunta 2) En que municipio hay más alquileres?
+
+
+
+# Cantidad de alquileres por municipio
+grupo_municipio <- datos_2 %>%  #
+  group_by(Municipio) %>%       # Agrupamos por municipio
+  summarise(Cantidad = n())     # Resumimos con la cantidad
+grupo_municipio
+
+
+ggplot(grupo_municipio, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) +
+  geom_bar(stat="identity") +
+  labs(x="Municipio", y="Precio") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+
+
+```
+
+Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de alquileres se dan en el Municipio F
+
+```{r}
+# Pregunta 3) Qué tipo de inmuebles para alquilar hay?
+
+
+grupo_tipo <- datos_2 %>%
+  group_by(Property_Type) %>%
+  summarise(Cantidad = n())
+grupo_tipo
+
+
+ggplot(grupo_tipo, aes(x=fct_reorder(Property_Type, Cantidad), y=Cantidad)) +
+  geom_bar(stat="identity") +
+  labs(x="Municipio", y="Precio") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+
+```
+
+La mayoría de alquileres son de Apartamentos, muy pocos son de Tierra, de Negocios Especiales, de Edificios o de Garages.
+
+```{r}
+
+# P4) ¿Cómo se distribuyen los tipos de inmuebles por municipio?
+
+
+
+# Crear el gráfico de barras con colores personalizados
+ggplot(datos_2, aes(x = Property_Type, y = Price, fill = Municipio)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Tipo de alquiler por municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+
+
+
+# subpregunta: hacer una intersección de tipo de alquileres con estado de alquiler
+# tipo los garages estan en construcción, las casas que estan en buen estado y así
+
+
+```
+
+```{r}
+
+
+# P5) ¿En qué condición se encuentran los alquileres? (Subpregunta de esta: subdividiendo por tipo de alquiler)
+
+
+datos_2
+
+grupo_estado <- datos_2 %>%
+  group_by(Condition) %>%
+  summarise(Cantidad = n())
+grupo_estado
+
+
+ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) +
+  geom_bar(stat="identity") +
+  labs(x="Municipio", y="Precio") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+
+
+
+
+
+# subpregunta: hacer una intersección de tipo de alquileres con estado de alquiler
+# tipo los garages estan en construcción, las casas que estan en buen estado y así
+
+
+```
+
+La mayoría de los inmuebles estan en buena condición o excelente condición. Pocos de ellos estan en construcción, o con necesidad de mantenimiento o por ser renovados.
+
+```{r}
+
+
+# P6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
+
+
+ggplot(datos_2, aes(x = Condition, y = Price, fill = Municipio)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Condición de la vivienda por Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+# Un gráfico de los precios de las casas con mejoras
+# y de los precios de las casas sin mejoras
+# gráfico de barras superpuestos.
+
+
+
+
+grupillo <- datos_2 %>%
+          group_by(Garden) %>%
+          summarise(conteo = mean(Price))
+
+grupillo
+
+
+ggplot(grupillo, aes(x=Garden, y=conteo)) + geom_bar(stat = "identity")
+
+```
+
+```{r}
+
+
+# Las columnas de ceros y unos
+# Son 22 columnas
+
+
+# quitar variables: Furnished...32, Furnished...42, y Flors
+
+
+dum <- datos_2 %>% select('Sea_View','Social_Housing','Barbecue','Living_Room','Closet','Patio','Pool','Garage','Pet','Gas_Pipeline','Playroom','Duplex','Heating','WiFi','Grill','Gym','Balcony','Storage','Air_Conditioning','Garden','Radiant_Floor_Heating','Solarium')
+
+
+
+dum
+```
+
+```{r}
+# Función para columnas de ceros y unos
+grafico_ceros_unos <- function(datos, columna){
+
+  grupillo <- datos %>%
+    group_by({{ columna }}) %>%
+    summarise(conteo = mean(Price))
+
+  ggplot(grupillo, aes(x = {{ columna }}, y = conteo)) + 
+    geom_bar(stat = "identity")
+}
+
+
+
+
+```
+
+```{r}
+
+colnames(dum)
+
+grafico_ceros_unos(datos_2, Sea_View)
+grafico_ceros_unos(datos_2, Barbecue)
+grafico_ceros_unos(datos_2, Closet)
+grafico_ceros_unos(datos_2, Pool)
+grafico_ceros_unos(datos_2, Pet)
+
+
+ [1] "Sea_View"              "Social_Housing"       
+ [3] "Barbecue"              "Living_Room"          
+ [5] "Closet"                "Patio"                
+ [7] "Pool"                  "Garage"               
+ [9] "Pet"                   "Gas_Pipeline"         
+[11] "Playroom"              "Duplex"               
+[13] "Heating"               "WiFi"                 
+[15] "Grill"                 "Gym"                  
+[17] "Balcony"               "Storage"              
+[19] "Air_Conditioning"      "Garden"               
+[21] "Radiant_Floor_Heating" "Solarium"  
+
+
+
+```
+
+```{r}
+
+
+
+grafico_ceros_unos <- function(datos) {
+  # Verifica que todas las columnas del dataframe sean binarias (0 o 1)
+
+
+  # Lista para almacenar los gráficos
+  lista_graficos <- list()
+  
+  # Genera un gráfico de barras para cada columna binaria
+   for (columna in names(datos)) {
+    grupillo <- datos %>%
+      group_by(.data[[columna]]) %>%
+      summarise(conteo = mean(datos_2$Price))
+    
+    grafico <- ggplot(grupillo, aes(x = .data[[columna]], y = conteo)) + 
+      geom_bar(stat = "identity") +
+      ggtitle(paste("Gráfico de", columna))
+    
+    lista_graficos[[columna]] <- grafico
+  }
+  
+  # Muestra todos los gráficos en una grilla
+  do.call(grid.arrange, c(lista_graficos, ncol = 3))#, nrow=))
+}
+
+```
+
+```{r}
+#names(dum)
+#dum
+grafico_ceros_unos(dum)
+
+```
+
+```{r}
+
+
+
+names(datos)
+```
+
+```{r}
+
+
+
+```
+
+```{r}
+
+grafico_ceros_unos <- function(datos, ncol = 2, nrow = 2) {
+  # Verifica que todas las columnas del dataframe sean binarias (0 o 1)
+  columnas_binarias <- datos %>%
+    select(where(~ all(. %in% c(0, 1))))
+  
+  # Lista para almacenar los gráficos
+  lista_graficos <- list()
+  
+  # Genera un gráfico de barras para cada columna binaria
+  for (columna in names(datos)) {
+    grupillo <- datos %>%
+      group_by(.data[[columna]]) %>%
+      summarise(conteo = mean(data.frame(datos_2$Price)))
+    
+    grafico <- ggplot(grupillo, aes(x = .data[[columna]], y = conteo)) + 
+      geom_bar(stat = "identity") +
+      ggtitle(paste("Gráfico de", columna))
+    
+    lista_graficos[[columna]] <- grafico
+  }
+  
+  # Dividir gráficos en páginas
+  num_graficos <- length(lista_graficos)
+  num_paginas <- ceiling(num_graficos / (ncol * nrow))
+  
+  for (i in seq_len(num_paginas)) {
+    start_index <- (i - 1) * (ncol * nrow) + 1
+    end_index <- min(i * (ncol * nrow), num_graficos)
+    graficos_pagina <- lista_graficos[start_index:end_index]
+    
+    do.call(grid.arrange, c(graficos_pagina, ncol = ncol))
+  }
+}
+
+
+
+```
+
+```{r}
+
+grafico_ceros_unos(dum, ncol = 2, nrow = 2)
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
