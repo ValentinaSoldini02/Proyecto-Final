@@ -338,9 +338,11 @@ P12) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son
 ```{r}
 
 
-# Valores Nulos:
 data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
+# Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+
 data_nulos %>% filter(cantidad_nulos > 0)
+# De este DataFrame filtramos solo las columnas que tengan una cantidad total de valores nulos mayor a 0
 
 
 # Hay cuatro columnas que tienen valores nulos
@@ -352,15 +354,15 @@ data_nulos %>% filter(cantidad_nulos > 0)
 
 ```{r}
 
-# Duplicados:
-nrow(datos[duplicated(datos), ])
+# Contamos la cantidad de duplicados en el DataFrame
+sum(duplicated(datos))
+
 
 # Datos sin duplicados
 datos <- datos[!duplicated(datos), ]
 datos
 
-# IMPORTANTE: Casi la mitad del dataframe estaba duplicada, paso de tener 2361 filas a tener 1078 !!!
-datos
+# IMPORTANTE: Casi la mitad del dataframe estaba duplicada, paso de tener 2361 filas a tener 1078 !!
 
 
 ```
@@ -372,21 +374,27 @@ Pueden afectar la prediccion del modelo o los gráficos, para identificarlos vam
 ```{r}
 
 # Función gráficadora de boxplots
-funcion_outlier <- function(datos){
-       data <- select_if(datos, is.numeric)
-       for (col_name in colnames(data)) {
-         grafico <- ggplot(datos, aes_string(x = col_name)) +
-         geom_boxplot() +
-         ggtitle(paste("Boxplot de", col_name))
-                       print(grafico)
+
+
+# Pueden afectar la prediccion del modelo hacer un gráfico de caja para verlos con una función que reciba solo columnas númericas
+ 
+funcion_outlier <- function(datos){ # Datos
+       data <- select_if(datos, is.numeric) # Seleccionamos las columnas de datos que sean númericas y lo guardamos en un DataFrame llamado data
+       for (col_name in colnames(data)) { # Para cada columna que este en data
+         grafico <- ggplot(datos, aes_string(x = col_name)) + # Datos y ejes para el gráfico
+         geom_boxplot() +  # Gráfico de caja
+         ggtitle(paste("Boxplot de", col_name)) # Título
+                       print(grafico) # Que la función retorne el gráfico
+
 
        }
 
        }
 
 
+# Resultados
 funcion_outlier(datos)
-# 39 columnas
+
 
 
 
@@ -395,20 +403,32 @@ funcion_outlier(datos)
 El criterio de rango intercuartilico es un criterio para detectar outliers, dice que si un valor esta por debajo del limite inferior (que es el quantil Q1 -1,5 \* IQR) o por encima del limite superior (que es el quantil Q3 + 1,5 \* IQR).
 
 ```{r}
+# Criterio de rango intercuartilico
+# Es un criterio que se usa para detectar Outliers
+
+# El criterio de rango intercuartilico dice que si un valor esta por
+# debajo del limite inferior (que es el quantil Q1 -1,5 * IQR) o por
+# encima del limite superior (que es el quantil Q3 + 1,5 * IQR)
+
+
+
 
 # Función para el criterio de outliers
-detectar_outliers_iqr <- function(x) {
-  Q1 <- quantile(x, 0.25)
-  Q3 <- quantile(x, 0.75)
-  IQR <- Q3 - Q1
-  lower_bound <- Q1 - 1.5 * IQR
-  upper_bound <- Q3 + 1.5 * IQR
-  outliers <- x[x < lower_bound | x > upper_bound]
-  return(outliers)
+detectar_outliers_iqr <- function(x) { # Función
+  Q1 <- quantile(x, 0.25)              # Primer Quantil
+  Q3 <- quantile(x, 0.75)              # Tercer Quantil
+  IQR <- Q3 - Q1                       # Rango Intercuartilico
+  lower_bound <- Q1 - 1.5 * IQR        # Límite Inferior
+  upper_bound <- Q3 + 1.5 * IQR        # Límite Superior
+  
+  outliers <- x[x < lower_bound | x > upper_bound] 
+  # Si el valor esta por debajo del limite inferior o por encima del límite superior, entonces es un outlier
+  
+  return(outliers) # Retorno
 }
 
 
-
+# Pruebas
 detectar_outliers_iqr(datos$Price)
 detectar_outliers_iqr(datos$Common_Expenses)
 detectar_outliers_iqr(datos$Air_Conditioning)
@@ -427,8 +447,9 @@ detectar_outliers_iqr(datos$Pool)
 
 
 
-datos_2 <- datos %>%
-  mutate(Municipio = case_when(
+datos_2 <- datos %>% # Datos
+  mutate(Municipio = case_when( # Casos donde a cada barrio le vamos a asociar un municipio
+    
     Zone %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo París","Prado")  ~ "Municipio_A",
 
     Zone %in% c("Cordón","Parque Rodó","Palermo","Barrio Sur","Ciudad Vieja","Centro","Aguada","La Comercial") ~ "Municipio_B",
