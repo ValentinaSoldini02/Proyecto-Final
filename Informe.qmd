@@ -29,12 +29,10 @@ Con el objetivo de responder las preguntas planteadas, en primer lugar, se reali
 Otra modificacion que se realizo fue que en vez de trabajar todas las zonas de Montevideo, las separamos en municipios de la sigiente manera:
 
 ```{r}
-municipio <- character()  
-zonas <- character()  
-
+#| eval: false
 tabla_municipio <- data.frame(
   Municipio = c("Municipio A","Municipio B", "Municipio C", "Municipio CH", "Municipio D", "Municipio E", "Municipio F", "Municipio G"),
-  Zonas = I(list(
+  Zonas = list(
     c("Cerro, La Teja, Paso de la Arena, Belvedere, Nuevo París, Prado"),
     c("Cordón, Parque Rodó, Palermo, Barrio Sur, Ciudad Vieja, Centro, Aguada, La Comercial"),
     c("Aguada, Arroyo Seco, Atahualpa, Bella Vista, Brazo Oriental, Capurro, Goes, Jacinto Vera, La Comercial, Mercado Modelo, Reducto, Villa Muñoz"),
@@ -43,24 +41,78 @@ tabla_municipio <- data.frame(
     c("Malvín Norte, Malvín, Carrasco Norte, Carrasco, Punta Gorda, Buceo, La Blanqueada"),
     c("Maroñas, Flor de Maroñas, Villa Española, Ituzaingó, Jardines del Hipódromo, Piedras Blancas"),
     c("Lezica, Peñarol, Nuevo París, Sayago, Conciliación, Colón")
-  )),
-  stringsAsFactors = FALSE
-)
+  ))
 
-# Mostrar el data frame creado
 print(tabla_municipio)
 
-#ESTO ESTA MAL
-
 ```
+
+Lectura de los datos:
 
 ```{r}
-print(tabla_municipio)
+# Datos sobre precio de casas
+datos <- read_csv(here("houses.csv"))
+datos
+
+# Datos sobre homicidios por barrio que vamos a usar para hacer un join
+datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
+datos_delitos
 ```
 
+Reenombramos las variables:
+
+```{r}
+datos <- datos|>
+  rename(precio = Price,
+         nro_de_piso = Floor,
+         cant_de_piso = Number_of_Floors,
+         zona = Zone,
+         disposicion = Disposition,
+         cant_cuartos = Bedrooms...18,
+         cant_habitaciones = Bedrooms...13,
+         m2_terraza = Terrace_Square_Meters,
+         año_de_const = Year_of_Construction,
+         vista_al_mar = Sea_View,
+         deposito = Storage,
+         jardin = Garden,
+         losa_radiante = Radiant_Floor_Heating,
+         amueblado = Furnished...45,
+         direccion = Address,
+         tipo_prop = Property_Type,
+         baños = Bathrooms,
+         m2_const = Built_Square_Meters,
+         m2_totales = Land_Square_Meters,
+         vivienda_social = Social_Housing,
+         cant_de_est = Garages,
+         coneccion_cas = Gas_Pipeline,
+         calefaccion = Heating,
+         zona_barbacoa = Grill,
+         balcon = Balcony
+         )
+
+```
  
- 
- 
+Oredenando los datos:
+```{r}
+# Precio por metro cuadrado
+
+datos <- datos|>
+  mutate(precio_m2 = precio/m2_const)
+
+# Quitando las columnas Furnished...32, Furnished...42, y Flors
+
+datos <- 
+  datos|>
+  select(-Furnished...32, -Furnished...42, -Floors, -precio, -m2_const)
+
+# Valores Nulos:
+data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
+data_nulos %>% filter(cantidad_nulos > 0)
+
+# Datos sin duplicados
+datos <- datos[!duplicated(datos), ]
+datos
+```
  
  
  
