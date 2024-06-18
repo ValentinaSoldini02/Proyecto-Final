@@ -1,0 +1,70 @@
+---
+title: "Informe"
+format: pdf
+editor: visual
+---
+
+## Introducción:
+
+El mercado inmobiliario ha sido ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan un alquiler una propiedad. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios de las propiedades teniendo en cuenta diferentes aspectos.
+Para realizar este análisis, plenteamos las diferentes preguntas de investigación:
+
+ - ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+ - ¿En que municipio hay más alquileres?
+ - ¿Cuál es la variable que más influye en el precio?
+ - ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo?
+ - ¿Hay alguna variable que debería de eliminarse al modelo?
+
+Estas preguntas guiarán nuestro analisis para comprender mejor los factores que afectan los precios en el mercado inmobiliario y proporcionar una herramienta útil para los distintos agentes, ya sean compradores, vendedores, inversores y agentes inmobiliarios.
+
+
+## Datos :
+
+Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes caracteristicas internas y externas de la propiedad.
+
+
+## Análisis exploratorio de los datos
+
+Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza profunda de los datos. Esta limpieza incluyó la eliminación de los datos duplicaods,valores atípicos, valores nulos, Además, se decidió eliminar las columnas "Furnished...32", "Furnished...42", y "Flors". Las dos primeras columnas fueron eliminadas porque existía una tercer columna que contenía la misma información. La columna "Flors" fue eliminada devido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.
+Otra modificacion que se realizo fue que en vez de trabajar todas las zonas de Montevideo, las separamos en municipios de la sigiente manera:
+
+```{r}
+municipio <- character()  
+zonas <- character()  
+
+tabla_municipio <- data.frame(
+  Municipio = c("Municipio A","Municipio B", "Municipio C", "Municipio CH", "Municipio D", "Municipio E", "Municipio F", "Municipio G"),
+  Zonas = I(list(
+    c("Cerro, La Teja, Paso de la Arena, Belvedere, Nuevo París, Prado"),
+    c("Cordón, Parque Rodó, Palermo, Barrio Sur, Ciudad Vieja, Centro, Aguada, La Comercial"),
+    c("Aguada, Arroyo Seco, Atahualpa, Bella Vista, Brazo Oriental, Capurro, Goes, Jacinto Vera, La Comercial, Mercado Modelo, Reducto, Villa Muñoz"),
+    c("Tres Cruces, La Blanqueada, Parque Batlle, Villa Dolores, Buceo, Pocitos, Punta Carretas"),
+    c("Piedras Blancas, Villa Española, Unión, Bolivar, Cerrito"),
+    c("Malvín Norte, Malvín, Carrasco Norte, Carrasco, Punta Gorda, Buceo, La Blanqueada"),
+    c("Maroñas, Flor de Maroñas, Villa Española, Ituzaingó, Jardines del Hipódromo, Piedras Blancas"),
+    c("Lezica, Peñarol, Nuevo París, Sayago, Conciliación, Colón")
+  )),
+  stringsAsFactors = FALSE
+)
+
+# Mostrar el data frame creado
+print(tabla_municipio)
+
+#ESTO ESTA MAL
+
+```
+
+```{r}
+print(tabla_municipio)
+```
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
