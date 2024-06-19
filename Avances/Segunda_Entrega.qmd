@@ -5,7 +5,7 @@ format: pdf
 editor: visual
 ---
 
-Introduccion:
+# Introduccion:
 
 El mercado inmobiliario ha sido, durante muchos años de gran importancia tanto para inversores como para personas que buscan un alquiler. La variabilidad de los precios puede depender de diferentes factores como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros.Este proyecto se basa en analizar como estas variables afectan en los precios de las propiedades en los diferentes municipios.
 
@@ -188,6 +188,8 @@ tabla_variables[40,] <- c("Air_Conditioning", "Numérica", "Propiedad con aire a
 tabla_variables[41,] <- c("Solarium", "Numérica", "Propiedad con solarium")
 
 ```
+
+
 
 ```{r}
 print(tabla_variables)
@@ -826,6 +828,25 @@ funcion_dum(resultado_final)
 
 
 # RESTRUCTURA 2
+
+
+
+El mercado inmobiliario ha sido, durante muchos años de gran importancia tanto para inversores como para personas que buscan un alquiler. La variabilidad de los precios puede depender de diferentes factores como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros.Este proyecto se basa en analizar como estas variables afectan en los precios de las propiedades en los diferentes municipios.
+
+Descripcion de los datos:
+
+Los datos utilizados, incluyen inoformación sobre propiedades disponibles para ser alquiladas en todo el año 2023. Contiene múltiples variables como la dirección, el precio, caracteristícas fisicas de la prpiedad, tipo de propiedad, condiciones de la propiedad, y caracterizticas adicionales como terraza, vista al mar, garage. En un primer momento se va a realizar una analisis exploratorio de los datos para ver que relación tienen las diferentes variabes con respecto al precio.
+
+
+
+
+
+
+
+
+
+
+
 Código reestructurado con los nombres de las variables en el español
 
 ```{r}
@@ -865,6 +886,143 @@ datos
 
 
 ```
+
+Descripcion de las variables:
+
+```{r}
+#datos
+
+# DUDA: Podríamos cambiar también los elementos de las columnas que esten en ingles a español con case_match
+
+
+
+
+datos <- datos|>
+  rename(precio = Price,
+         nro_de_piso = Floor,
+         Gastos_Comunes = Common_Expenses,
+         cant_de_piso = Number_of_Floors,
+         zona = Zone,
+         Condicion = Condition,
+         disposicion = Disposition,
+         cant_cuartos = Bedrooms...18,
+         cant_habitaciones = Bedrooms...13,
+         m2_terraza = Terrace_Square_Meters,
+         año_de_const = Year_of_Construction,
+         vista_al_mar = Sea_View,
+         deposito = Storage,
+         jardin = Garden,
+         losa_radiante = Radiant_Floor_Heating,
+         amueblado = Furnished...45,
+         direccion = Address,
+         tipo_prop = Property_Type,
+         baños = Bathrooms,
+         m2_const = Built_Square_Meters,
+         m2_totales = Land_Square_Meters,
+         vivienda_social = Social_Housing,
+         cant_de_est = Garages,
+         coneccion_cas = Gas_Pipeline,
+         calefaccion = Heating,
+         zona_barbacoa = Grill,
+         balcon = Balcony
+         )
+
+#names(datos)
+#eliminar Furnished...32, Furnished...42, y Flors?
+
+
+# Pasar el precio a precio por metro cuadrado
+datos <- datos|>
+  mutate(precio_m2 = precio/m2_const)
+
+
+
+
+# Eliminamos columnas innecesarias
+ datos <- 
+   datos|>
+   select(-Furnished...32, -Furnished...42, -Floors)#
+
+ 
+ 
+
+ 
+```
+
+
+
+
+Tabla con las diferentes variables, tipo de variable y una descripcion
+
+```{r}
+nombre_variable <- character()
+tipo_variable <- character()
+descripcion <- character()
+```
+
+```{r}
+tabla_variables <- data.frame(
+  "Nombre de la variable" = nombre_variable,
+  "Tipo de variable" = tipo_variable,
+  "Descripción" = descripcion,
+  stringsAsFactors = FALSE
+)
+
+
+datos
+```
+
+```{r}
+tabla_variables[1,] <- c("direccion", "Numérica", "Ubicación donde se encuentra la propiedad")
+tabla_variables[2,] <- c("nro_de_piso", "Character", "Número de piso de la propiedad")
+tabla_variables[3,] <- c("tipo_prop", "Character", "Tipo de poropiedad, como apartamento, oficina, casa")
+tabla_variables[4,] <- c("Condicion", "Character", "Condición en la que esta la vivienda, como Excelente, Buena, Renovada")
+tabla_variables[5,] <- c("disposicion", "Character", "En que posición se encuentra la pripiedad como, interior, frente, fondo")
+tabla_variables[6,] <- c("m2_terraza", "Numérica", "Metros cuadrado de la terraza")
+tabla_variables[7,] <- c("cant_cuartos", "Numérica", "Cantidad de dormitoros de la propiedad")
+tabla_variables[8,] <- c("vivienda_social", "Numérica", "Si la propiedad esta destinada para vivienda social es 1 y sino 0")
+tabla_variables[9,] <- c("Closet", "Numérica", "Espacio de guardaropas en la propiedad")
+tabla_variables[10,] <- c("Garage", "Numérica", "Garage en la propiedad")
+tabla_variables[11,] <- c("Playroom", "Numérica", "Sala de juegos en la propiedad")
+tabla_variables[12,] <- c("WiFi", "Numérica", "Conección a wifi en la propiedad")
+tabla_variables[13,] <- c("balcon", "Numérica", "Balcon en la propiedad")
+tabla_variables[14,] <- c("jardin", "Numérica", "Jardin en la propiedad ")
+tabla_variables[15,] <- c("amueblado", "Numérica", "La propiedad viene con los muebles incluidos a la hora de ser alquilado")
+tabla_variables[16,] <- c("Updated", "Fecha", "Última fecha que fue actualizado el listado")
+tabla_variables[17,] <- c("Apartments_per_Floor", "Numérica", "Número de apartamentos por piso en el edificio")
+tabla_variables[18,] <- c("zona", "Character", "En que zona de Montevideo se encuentra la propiedad")
+tabla_variables[19,] <- c("baños", "Numérica", "Cuántos cuartos hay en la propiedad")
+tabla_variables[20,] <- c("m2_totales", "Numérica", "Metros cuadrados de la propiedad")
+tabla_variables[21,] <- c("cant_de_est", "Numérica", "Cantidad de estacionamientos que tiene disponible la propiedad")
+tabla_variables[22,] <- c("Barbecue", "Numérica", "Barbacoa en la propiedad")
+tabla_variables[23,] <- c("Patio", "Numérica", "Patio en la propiedad")
+tabla_variables[24,] <- c("Pet", "Numérica", "Si se aceptan perros o no")
+tabla_variables[25,] <- c("Duplex", "Numérica", "Si es un duplex o no, duplex es una propiedad que esta encima de otra y generalmente son dos")
+tabla_variables[26,] <- c("zona_barbacoa", "Numérica", "Si hay una zona de barbacoa en el edificio de la propiedad")
+tabla_variables[27,] <- c("deposito", "Numérica", "Área de almacenaiento o depósito en la propiedad")
+tabla_variables[28,] <- c("losa_radiante", "Numérica", "Losa radiante en la propiedad")
+tabla_variables[29,] <- c("precio_m2", "Numérica", "El precio de la propiedad por metros cuadrados")
+tabla_variables[30,] <- c("Common_Expenses", "Numérica", "Gastos comunes asociados a la propiedad")
+tabla_variables[31,] <- c("cant_de_piso", "Numérica", "Núemero total de piso en el edificio")
+tabla_variables[32,] <- c("Condition", "Character", "En que condición se encuentra el apartamento")
+tabla_variables[33,] <- c("cant_habitaciones", "Numérica", "Cantidad de habitaciones en la propiedad")
+tabla_variables[34,] <- c("año_de_const", "Numérica", "En que año fue construida la propiedad")
+tabla_variables[35,] <- c("vista_al_mar", "Numérica", "Propiedad con vista al mar o no")
+tabla_variables[36,] <- c("Living_Room", "Numérica", "Propiedad con living o no")
+tabla_variables[37,] <- c("Pool", "Numérica", "Pool en la propiedad")
+tabla_variables[38,] <- c("coneccion_cas", "Numérica", "Propiedad cuenta con conección a gas directa o no")
+tabla_variables[39,] <- c("calefaccion", "Numérica", "Propiedad con calefacción")
+tabla_variables[40,] <- c("Gym", "Numérica", "Propiedad con gym")
+tabla_variables[41,] <- c("Air_Conditioning", "Numérica", "Propiedad con aire acondicionado")
+tabla_variables[42,] <- c("Solarium", "Numérica", "Propiedad con solarium")
+
+```
+
+```{r}
+print(tabla_variables)
+```
+
+
 
 
 ```{r}
