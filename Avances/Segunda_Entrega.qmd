@@ -1579,6 +1579,4 @@ table(datos_2$Condicion)
 table(datos_2$disposicion)
 ```
 
-jdscmkxadjjvcnsmxkal,vj
-nsxkdcnmasx
-snxsdcn xmskdnmx
+
