@@ -1466,18 +1466,39 @@ funcion_dum(resultado_final)
 ```
 
 
-``` 
 
-
-```{r}
-
-
-
-``` 
-
+Modelo de regrecion lineal multiple:
 
 ```{r}
+datos_2
+names(datos)
+
+library(tidyverse)
+library(GGally)
+library(car)
+library(skedastic)
+library(robustbase)
+library(tseries)
+
+
+```
+
+```{r}
+categorical_vars <- c("direccion", "tipo_prop", "zona", "Condicion", "disposicion", 
+                      "vista_al_mar", "vivienda_social", "Barbecue", "Living_Room", 
+                      "Closet", "Patio", "Pool", "Garage", "Pet", "coneccion_cas", 
+                      "Playroom", "Duplex", "calefaccion", "WiFi", "zona_barbacoa", 
+                      "Gym", "balcon", "deposito", "Air_Conditioning", "jardin", 
+                      "losa_radiante", "Solarium", "amueblado")
+
+datos[categorical_vars] <- lapply(datos[categorical_vars], as.factor)
 
 
 
-``` 
+modelo <- lm(precio ~ ., data = datos_2)
+```
+
+
+
+
+
