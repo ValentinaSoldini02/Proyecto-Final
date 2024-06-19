@@ -815,3 +815,430 @@ funcion_dum <- function(datos){
 # Resultados
 funcion_dum(resultado_final)
 ```
+
+
+
+
+
+
+
+
+# RESTRUCTURA 2
+Código reestructurado con los nombres de las variables en el español
+
+```{r}
+# Instalar librerías:
+
+#install.packages("readr")
+#install.packages("here")
+#install.packages("cowplot")
+#install.packages("gridExtra")
+
+
+
+```
+
+
+```{r}
+
+
+library(readr)
+library(readxl)
+library(here)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(tibble)
+library(cowplot)
+library(gridExtra)
+
+```
+
+
+```{r}
+
+# Datos sobre precio de casas
+datos <- read_csv(here("houses.csv"))
+datos
+
+
+```
+
+
+```{r}
+
+datos <- datos|>
+  rename(precio = Price,
+         nro_de_piso = Floor,
+         Gastos_Comunes = Common_Expenses,
+         cant_de_piso = Number_of_Floors,
+         zona = Zone,
+         disposicion = Disposition,
+         cant_cuartos = Bedrooms...18,
+         cant_habitaciones = Bedrooms...13,
+         m2_terraza = Terrace_Square_Meters,
+         año_de_const = Year_of_Construction,
+         vista_al_mar = Sea_View,
+         deposito = Storage,
+         jardin = Garden,
+         losa_radiante = Radiant_Floor_Heating,
+         amueblado = Furnished...45,
+         direccion = Address,
+         tipo_prop = Property_Type,
+         baños = Bathrooms,
+         m2_const = Built_Square_Meters,
+         m2_totales = Land_Square_Meters,
+         vivienda_social = Social_Housing,
+         cant_de_est = Garages,
+         coneccion_cas = Gas_Pipeline,
+         calefaccion = Heating,
+         zona_barbacoa = Grill,
+         balcon = Balcony
+         )
+
+#names(datos)
+#eliminar Furnished...32, Furnished...42, y Flors?
+
+
+
+
+
+
+
+# Ver el resultado
+datos <- datos|>
+  mutate(precio_m2 = precio/m2_const)
+
+
+datos
+
+
+```
+
+
+
+
+```{r}
+
+datos_2 <- datos %>% # Datos
+  mutate(Municipio = case_when( # Casos donde a cada barrio le vamos a asociar un municipio
+    
+    zona %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo París","Prado")  ~ "Municipio_A",
+
+    zona %in% c("Cordón","Parque Rodó","Palermo","Barrio Sur","Ciudad Vieja","Centro","Aguada","La Comercial") ~ "Municipio_B",
+
+    zona %in% c("Aguada", "Arroyo Seco", "Atahualpa", "Bella Vista", "Brazo Oriental", "Capurro", "Goes", "Jacinto Vera", "La Comercial", "Mercado Modelo", "Reducto", "Villa Muñoz") ~ "Municipio_C",
+
+    zona %in% c("Tres Cruces", "La Blanqueada", "Parque Batlle", "Villa Dolores", "Buceo", "Pocitos", "Punta Carretas") ~ "Municipio_CH",
+
+    zona %in% c("Piedras Blancas", "Villa Española", "Unión","Bolivar","Cerrito") ~ "Municipio_D",
+
+    zona %in% c("Malvín Norte","Malvín", "Carrasco Norte", "Carrasco", "Punta Gorda", "Buceo", "La Blanqueada") ~ "Municipio_E",
+
+    zona %in% c("Maroñas", "Flor de Maroñas", "Villa Española", "Ituzaingó", "Jardines del Hipódromo", "Piedras Blancas") ~ "Municipio_F",
+
+    zona %in% c("Lezica", "Peñarol", "Nuevo París", "Sayago", "Conciliación", "Colón") ~ "Municipio_G",
+
+    TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
+  ))
+
+
+
+datos_2
+``` 
+
+
+```{r}
+
+# Vamos a eliminar los valores atípicos que estan en el dataframe
+datos_2 <- datos_2 %>% filter(precio <= 150000 & Gastos_Comunes <= 10000)
+
+
+
+datos_2
+
+``` 
+
+
+```{r}
+
+
+# Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+
+
+# Elegimos los colores manualmente
+colores_personalizados <- c(
+  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   "Municipio_CH" = "purple",  "Municipio_D" = "orange",   "Municipio_E" = "pink",
+  "Municipio_F" = "brown",  "Municipio_G" = "cyan")
+
+
+
+
+
+# Gráfico
+ggplot(datos_2, aes(x = zona, y = precio, fill = Municipio)) +  # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  # Ancho y posición de las barras
+
+  facet_grid(. ~ Municipio, scales = "free_x") +
+  # Usar facet_grid para crear una grilla por Municipio
+
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Precio por Zona y Municipio") + # Título
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Centrar el título y modificar el texto de los elementos del eje X
+
+
+
+
+``` 
+
+
+Vemos que si, los barrios ubicados en el municipio A y E son los que tienen un precio más +6elevado, mientras que los barrios ubicados en los municipios D y G son los más baratos.
+
+```{r}
+
+
+# Cantidad de alquileres por municipio
+grupo_municipio <- datos_2 %>%  # Datos
+  group_by(Municipio) %>%       # Agrupamos por municipio
+  summarise(Cantidad = n())     # Resumimos con la cantidad
+grupo_municipio
+
+
+# Gráfico
+ggplot(grupo_municipio, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) + # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  labs(x="Municipio", y="Precio") + # Nombres de los ejes
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+```
+
+
+Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de alquileres se dan en el Municipio F
+
+
+
+```{r}
+# Pregunta 3) Qué tipo de inmuebles para alquilar hay?
+
+
+grupo_tipo <- datos_2 %>% # Datos
+  group_by(Property_Type) %>% # Agrupar por tipo de propiedad
+  summarise(Cantidad = n()) # Resumir por cantidad 
+grupo_tipo
+
+
+# Gráfico
+ggplot(grupo_tipo, aes(x=fct_reorder(Property_Type, Cantidad), y=Cantidad)) + # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  labs(x="Municipio", y="Precio") + # Nombres de los ejes
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+
+
+```
+
+
+
+
+La mayoría de alquileres son de Apartamentos, muy pocos son de Tierra, de Negocios Especiales, de Edificios o de Garages.
+
+```{r}
+
+# P4) ¿Cómo se distribuyen los tipos de inmuebles por municipio?
+
+
+
+# Gráfico
+ggplot(datos_2, aes(x = Property_Type, y = Price, fill = Municipio)) + # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Tipo de alquiler por municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+
+
+
+# subpregunta: hacer una intersección de tipo de alquileres con estado de alquiler
+# tipo los garages estan en construcción, las casas que estan en buen estado y así
+
+
+```
+
+``` 
+
+
+```{r}
+
+
+# P5) ¿En qué condición se encuentran los alquileres? (Subpregunta de esta: subdividiendo por tipo de alquiler)
+
+
+
+
+grupo_estado <- datos_2 %>% # Datos
+  group_by(Condition) %>%   # Agrupar por condición de la vivienda
+  summarise(Cantidad = n()) # Resumir por la cantidad
+grupo_estado
+
+
+# Gráfico
+ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) + # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  labs(x="Municipio", y="Precio") + # Nombre de los ejes
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+<!-- subpregunta: hacer una intersección de tipo de alquileres con estado de alquiler -->
+<!--  tipo los garages estan en construcción, las casas que estan en buen estado y así -->
+
+
+```
+
+La mayoría de los inmuebles estan en buena condición o excelente condición. Pocos de ellos estan en construcción, o con necesidad de mantenimiento o por ser renovados.
+
+```{r}
+
+
+# P6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
+
+# Gráfico
+ggplot(datos_2, aes(x = Condition, y = Price, fill = Municipio)) + # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Condición de la vivienda por Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+
+```
+
+```{r}
+
+
+# A ver los gastos comunes se pueden relacionar
+# con: Municipio, Estado de la vivienda, Tipo de vivienda,
+
+
+# P7) ¿Como se distribuyen los gastos comúnes por Municipio?
+ggplot(datos_2, aes(x = Municipio , y = Common_Expenses)) +  # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+```
+
+```{r}
+# P8) ¿Cómo influye el tipo de alquiler en el nivel de gastos comunes?
+
+ggplot(datos_2, aes(x = Property_Type, y = Common_Expenses)) +  # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+
+
+# subdiviridr por municipio? Que gastos son más comunes según el tipo de alquiler por municipio
+
+```
+
+```{r}
+
+
+# P9) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
+
+
+ggplot(datos_2, aes(x = Condition , y = Common_Expenses)) +  # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+```
+
+```{r}
+
+# P10) ¿Cómo se distribuyen los Gastos Comunes en relación al tipo de alquiler por Municipio?
+
+
+ggplot(datos_2, aes(x = Property_Type, y = Common_Expenses, fill = Municipio)) + # Datos, ejes y municipio
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Condición de la vivienda por Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+
+
+```
+
+```{r}
+
+# P11) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
+
+
+ggplot(datos_2, aes(x = Condition, y = Common_Expenses, fill = Municipio)) + # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Condición de la vivienda por Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+```
+
+``` 
+
+
+```{r}
+
+
+
+``` 
+
+
+```{r}
+
+
+
+``` 
+
+
+```{r}
+
+
+
+``` 
+
+
+```{r}
+
+
+
+``` 
