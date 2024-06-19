@@ -71,67 +71,67 @@ Descripcion de las variables:
 #datos
 
 # DUDA: Podríamos cambiar también los elementos de las columnas que esten en ingles a español con case_match
-
-datos <- datos|>
-  rename(precio = Price,
-         nro_de_piso = Floor,
-         Gastos_Comunes = Common_Expenses,
-         cant_de_piso = Number_of_Floors,
-         zona = Zone,
-         disposicion = Disposition,
-         cant_cuartos = Bedrooms...18,
-         cant_habitaciones = Bedrooms...13,
-         m2_terraza = Terrace_Square_Meters,
-         año_de_const = Year_of_Construction,
-         vista_al_mar = Sea_View,
-         deposito = Storage,
-         jardin = Garden,
-         losa_radiante = Radiant_Floor_Heating,
-         amueblado = Furnished...45,
-         direccion = Address,
-         tipo_prop = Property_Type,
-         baños = Bathrooms,
-         m2_const = Built_Square_Meters,
-         m2_totales = Land_Square_Meters,
-         vivienda_social = Social_Housing,
-         cant_de_est = Garages,
-         coneccion_cas = Gas_Pipeline,
-         calefaccion = Heating,
-         zona_barbacoa = Grill,
-         balcon = Balcony
-         )
-
-names(datos)
-#eliminar Furnished...32, Furnished...42, y Flors?
-
-
-
-datos
+# 
+# datos <- datos|>
+#   rename(precio = Price,
+#          nro_de_piso = Floor,
+#          Gastos_Comunes = Common_Expenses,
+#          cant_de_piso = Number_of_Floors,
+#          zona = Zone,
+#          disposicion = Disposition,
+#          cant_cuartos = Bedrooms...18,
+#          cant_habitaciones = Bedrooms...13,
+#          m2_terraza = Terrace_Square_Meters,
+#          año_de_const = Year_of_Construction,
+#          vista_al_mar = Sea_View,
+#          deposito = Storage,
+#          jardin = Garden,
+#          losa_radiante = Radiant_Floor_Heating,
+#          amueblado = Furnished...45,
+#          direccion = Address,
+#          tipo_prop = Property_Type,
+#          baños = Bathrooms,
+#          m2_const = Built_Square_Meters,
+#          m2_totales = Land_Square_Meters,
+#          vivienda_social = Social_Housing,
+#          cant_de_est = Garages,
+#          coneccion_cas = Gas_Pipeline,
+#          calefaccion = Heating,
+#          zona_barbacoa = Grill,
+#          balcon = Balcony
+#          )
+# 
+# names(datos)
+# #eliminar Furnished...32, Furnished...42, y Flors?
+# 
+# 
+# 
+# datos
 ```
 
 precio por metro cuadrado:
 
 ```{r}
-datos <- datos|>
-  mutate(precio_m2 = precio/m2_const)
-
-
-datos
+# datos <- datos|>
+#   mutate(precio_m2 = precio/m2_const)
+# 
+# 
+# datos
 ```
 
 quitar variables: Furnished...32, Furnished...42, y Flors
 
 ```{r}
-datos <- 
-  datos|>
-  select(-Furnished...32, -Furnished...42, -Floors, -precio, -m2_const)
+# datos <- 
+#   datos|>
+#   select(-Furnished...32, -Furnished...42, -Floors, -precio, -m2_const)
 ```
 
 Tabla con las diferentes variables, tipo de variable y una descripcion
 
 ```{r}
-nombre_variable <- character()  
-tipo_variable <- character()    
+nombre_variable <- character()
+tipo_variable <- character()
 descripcion <- character()
 ```
 
@@ -140,7 +140,7 @@ tabla_variables <- data.frame(
   "Nombre de la variable" = nombre_variable,
   "Tipo de variable" = tipo_variable,
   "Descripción" = descripcion,
-  stringsAsFactors = FALSE  
+  stringsAsFactors = FALSE
 )
 ```
 
