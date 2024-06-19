@@ -1077,7 +1077,7 @@ ggplot(datos_2, aes(x = Property_Type, y = Price, fill = Municipio)) + # Datos, 
 
 ```
 
-``` 
+
 
 
 ```{r}
@@ -1102,13 +1102,14 @@ ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) + # Da
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
 
-<!-- subpregunta: hacer una intersección de tipo de alquileres con estado de alquiler -->
-<!--  tipo los garages estan en construcción, las casas que estan en buen estado y así -->
-
+# subpregunta: hacer una intersección de tipo de alquileres con estado de alquiler
+# tipo los garages estan en construcción, las casas que estan en buen estado y así 
 
 ```
 
 La mayoría de los inmuebles estan en buena condición o excelente condición. Pocos de ellos estan en construcción, o con necesidad de mantenimiento o por ser renovados.
+
+
 
 ```{r}
 
@@ -1213,18 +1214,84 @@ ggplot(datos_2, aes(x = Condition, y = Common_Expenses, fill = Municipio)) + # D
 
 ```
 
+
+
+```{r}
+
+# P12) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
+
+# quitar variables: Furnished...32, Furnished...42, y Flors
+
+
+# Obtenemos las columnas que tienen valores entre 0 y 1
+dum <- datos_2 %>% select('Sea_View','Social_Housing','Barbecue','Living_Room','Closet','Patio','Pool','Garage','Pet','Gas_Pipeline','Playroom','Duplex','Heating','WiFi','Grill','Gym','Balcony','Storage','Air_Conditioning','Garden','Radiant_Floor_Heating','Solarium')
+
+dum
+
+
+
+# Función para crear el dataframe que tiene 0 y 1 en sus filas, las variables en sus columnas y el promedio de precio en cada celda.
+
+calcular_y_unir <- function(df, col, resultado_final) { # Función
+  temp <- df %>%       # Datos
+    group_by(valor = .data[[col]]) %>% # Agrupamos por todas las columnas
+    summarise(Mean = mean(Price, na.rm = TRUE), .groups = "drop")
+  # Resumimos con la media, ignorando los nulos
+
+  colnames(temp)[2] <- paste0(col, "_Mean") # A cada columna del dataframe resultante le vamos a pegar la palabra "_Mean"
+  resultado_final <- left_join(resultado_final, temp, by = "valor", relationship = "many-to-one") # Hacemos un join con todos los resultados, teniendo la columna "valor" como columna común entre las tablas para unirlas
+  return(resultado_final) # Resultado
+}
+
+
+
+# DataFrame inicial
+resultado_final <- data.frame(valor = c(0, 1))
+
+
+# Obtenemos las columnas del dataframe dum
+columnas <- colnames(dum)
+
+
+
+# Aplicar la función creada a cada columna
+for (col in columnas) { # Para cada columna
+  resultado_final <- calcular_y_unir(datos_2, col, resultado_final)
+} # Aplicamos la función
+
+
+# DataFrame resultante
+resultado_final
+
+
+
+
 ``` 
 
 
 ```{r}
 
 
+# Función para gráficar 
+funcion_dum <- function(datos){
 
-``` 
+# Pasamos los datos al formato largo con pivot_longer
+  data_long <- datos %>%
+    pivot_longer(-valor, names_to = "variable", values_to = "value")
+
+  # Gráfico
+  ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) + # Datos, ejes y color
+    geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +  # Gráfico de barras, con barras superpuestas
+    labs(x = "Variable", y = "Value", fill = "Value") + # Nombre de los ejes
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+#Cambiar ángulo y tamaño del texto de los elementos del eje X
+  
+}
 
 
-```{r}
-
+# Resultados
+funcion_dum(resultado_final)
+```
 
 
 ``` 
