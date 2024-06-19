@@ -372,9 +372,7 @@ data_nulos %>% filter(cantidad_nulos > 0)
 sum(duplicated(datos))
 
 
-# Datos sin duplicados
-datos <- datos[!duplicated(datos), ]
-datos
+
 
 # IMPORTANTE: Casi la mitad del dataframe estaba duplicada, paso de tener 2361 filas a tener 1078 !!
 
@@ -499,7 +497,11 @@ datos_2 <- datos_2 %>% filter(Price <= 150000 & Common_Expenses <= 10000)
 
 datos_2
 ```
-
+```{r}
+# Datos sin duplicados
+datos_2 <- datos_2[!duplicated(datos_2), ]
+datos_2
+```
 ```{r}
 
 # Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
@@ -897,7 +899,7 @@ Descripcion de las variables:
 
 
 
-datos <- datos|>
+datos_2 <- datos_2|>
   rename(precio = Price,
          nro_de_piso = Floor,
          Gastos_Comunes = Common_Expenses,
@@ -1027,7 +1029,7 @@ print(tabla_variables)
 
 ```{r}
 
-datos <- datos|>
+datos <- datos |>
   rename(precio = Price,
          nro_de_piso = Floor,
          Gastos_Comunes = Common_Expenses,
@@ -1056,7 +1058,6 @@ datos <- datos|>
          zona_barbacoa = Grill,
          balcon = Balcony
          )
-
 #names(datos)
 #eliminar Furnished...32, Furnished...42, y Flors?
 
@@ -1483,22 +1484,99 @@ library(tseries)
 
 ```
 
+
 ```{r}
-categorical_vars <- c("direccion", "tipo_prop", "zona", "Condicion", "disposicion", 
-                      "vista_al_mar", "vivienda_social", "Barbecue", "Living_Room", 
-                      "Closet", "Patio", "Pool", "Garage", "Pet", "coneccion_cas", 
-                      "Playroom", "Duplex", "calefaccion", "WiFi", "zona_barbacoa", 
-                      "Gym", "balcon", "deposito", "Air_Conditioning", "jardin", 
-                      "losa_radiante", "Solarium", "amueblado")
+# Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
+reemplazar_direccion <- function(datos_2) {
+  if (!"direccion" %in% colnames(datos_2) || !"zona" %in% colnames(datos_2)) {
+    stop("Las columnas 'direccion' y 'zona' deben estar presentes en los datos.")
+  }
+  datos_2$direccion <- ifelse(is.na(datos_2$direccion), datos_2$zona, datos_2$direccion)
+  return(datos_2)
+}
 
-datos[categorical_vars] <- lapply(datos[categorical_vars], as.factor)
+datos_2 <- reemplazar_direccion(datos_2)
+
+datos_2 <- datos_2|>
+  mutate(precio_m2 = precio/m2_const)
 
 
+# Función para rellenar valores NA en 'precio_m2' con la media de los valores existentes
+rellenar_na_precio_m2 <- function(datos_2) {
+  # Verificar si la columna 'precio_m2' existe
+  if (!"precio_m2" %in% colnames(datos_2)) {
+    stop("La columna 'precio_m2' no está presente en los datos.")
+  }
+media_precio_m2 <- mean(datos_2$precio_m2, na.rm = TRUE)
+  
+  # Rellenar los valores NA con la media calculada
+  datos_2$precio_m2[is.na(datos_2$precio_m2)] <- media_precio_m2
+  
+  return(datos_2)
+}
 
-modelo <- lm(precio ~ ., data = datos_2)
+datos_2 <- rellenar_na_precio_m2(datos_2)
+
+# Función para reemplazar valores NA en 'Condicion' con 'Good condition'
+reemplazar_na_condicion <- function(datos_2) {
+  if (!"Condicion" %in% colnames(datos_2)) {
+    stop("La columna 'Condicion' no está presente en los datos.")
+  }
+  
+  datos_2$Condicion[is.na(datos_2$Condicion)] <- "Good condition"
+  
+  return(datos_2)
+}
+
+datos_2 <- reemplazar_na_condicion(datos_2)
+
+# Función para reemplazar valores NA en 'disposicion' con 'Front'
+reemplazar_na_disposicion <- function(datos_2) {
+  if (!"disposicion" %in% colnames(datos_2)) {
+    stop("La columna 'disposicion' no está presente en los datos.")
+  }
+  
+  datos_2$disposicion[is.na(datos_2$disposicion)] <- "Front"
+  
+  return(datos_2)
+}
+
+datos_2 <- reemplazar_na_disposicion(datos_2)
+
+print(colSums(is.na(datos_2)))
 ```
+```{r}
+
+# Eliminamos columnas innecesarias
+ datos_2 <- 
+   datos_2|>
+   select(-Furnished...32, -Furnished...42, -Floors, -precio, -zona)
+
+names(datos_2)
+modelo <- lm(precio_m2 ~ ., data = datos_2)
+vif(modelo)
+summary(modelo)
+names(datos_2)
 
 
+vif_values <- vif(modelo)
 
+# Mostrar los valores de VIF
+print(vif_values)
+```
+valores nulos
+```{r}
+
+datos_2_nulos <- data.frame(cantidad_2_nulos = sapply(datos_2, function(x) sum(is.na(x))))
+# Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+
+data_2_nulos %>% filter(cantidad_2_nulos > 0)
+
+datos_2 <- datos_2[!duplicated(datos_2), ]
+datos_2
+
+table(datos_2$Condicion)
+table(datos_2$disposicion)
+```
 
 
