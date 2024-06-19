@@ -60,7 +60,7 @@ datos
 
 # Datos sobre homicidios por barrio que vamos a usar para hacer un join
 datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
-datos_delitos
+#datos_delitos
 
 
 ```
@@ -68,9 +68,12 @@ datos_delitos
 Descripcion de las variables:
 
 ```{r}
+#datos
+
 datos <- datos|>
   rename(precio = Price,
          nro_de_piso = Floor,
+         Gastos_Comunes = Common_Expenses,
          cant_de_piso = Number_of_Floors,
          zona = Zone,
          disposicion = Disposition,
@@ -98,6 +101,10 @@ datos <- datos|>
 
 names(datos)
 #eliminar Furnished...32, Furnished...42, y Flors?
+
+
+
+datos
 ```
 
 precio por metro cuadrado:
@@ -105,6 +112,9 @@ precio por metro cuadrado:
 ```{r}
 datos <- datos|>
   mutate(precio_m2 = precio/m2_const)
+
+
+datos
 ```
 
 quitar variables: Furnished...32, Furnished...42, y Flors
@@ -443,8 +453,8 @@ detectar_outliers_iqr(datos$Pool)
 ```{r}
 
 # Vamos a crear una nueva columna que va a buscar en los datos a los barrios y va a crear categorías de municipios basadas en los barrios.
-
-
+#datos
+#datos
 
 
 datos_2 <- datos %>% # Datos
@@ -483,6 +493,7 @@ datos_2 <- datos_2 %>% filter(Price <= 150000 & Common_Expenses <= 10000)
 
 
 
+datos_2
 ```
 
 ```{r}
@@ -500,7 +511,7 @@ colores_personalizados <- c(
 
 
 # Gráfico
-ggplot(datos_2, aes(x = Zone, y = Price, fill = Municipio)) +  # Datos y ejes
+ggplot(datos_2, aes(x = Zone, y = Price, fill = Municipio)) +  # Datos, ejes y color
   geom_bar(stat = "identity", position = "dodge", width = 0.7) +
   # Ancho y posición de las barras
 
@@ -511,7 +522,7 @@ ggplot(datos_2, aes(x = Zone, y = Price, fill = Municipio)) +  # Datos y ejes
   ggtitle("Precio por Zona y Municipio") + # Título
   scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
 
-  theme(plot.title = element_text(hjust = 0.5),
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 # Centrar el título y modificar el texto de los elementos del eje X
 
@@ -527,22 +538,20 @@ Vemos que si, los barrios ubicados en el municipio A y E son los que tienen un p
 
 ```{r}
 
-# Pregunta 2) En que municipio hay más alquileres?
-
-
 
 # Cantidad de alquileres por municipio
-grupo_municipio <- datos_2 %>%  #
+grupo_municipio <- datos_2 %>%  # Datos
   group_by(Municipio) %>%       # Agrupamos por municipio
   summarise(Cantidad = n())     # Resumimos con la cantidad
 grupo_municipio
 
 
-ggplot(grupo_municipio, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) +
-  geom_bar(stat="identity") +
-  labs(x="Municipio", y="Precio") +
+# Gráfico
+ggplot(grupo_municipio, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) + # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  labs(x="Municipio", y="Precio") + # Nombres de los ejes
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
-
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
 ```
 
@@ -552,16 +561,21 @@ Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de a
 # Pregunta 3) Qué tipo de inmuebles para alquilar hay?
 
 
-grupo_tipo <- datos_2 %>%
-  group_by(Property_Type) %>%
-  summarise(Cantidad = n())
+grupo_tipo <- datos_2 %>% # Datos
+  group_by(Property_Type) %>% # Agrupar por tipo de propiedad
+  summarise(Cantidad = n()) # Resumir por cantidad 
 grupo_tipo
 
 
-ggplot(grupo_tipo, aes(x=fct_reorder(Property_Type, Cantidad), y=Cantidad)) +
-  geom_bar(stat="identity") +
-  labs(x="Municipio", y="Precio") +
+# Gráfico
+ggplot(grupo_tipo, aes(x=fct_reorder(Property_Type, Cantidad), y=Cantidad)) + # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  labs(x="Municipio", y="Precio") + # Nombres de los ejes
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+
 
 ```
 
@@ -573,8 +587,8 @@ La mayoría de alquileres son de Apartamentos, muy pocos son de Tierra, de Negoc
 
 
 
-# Crear el gráfico de barras con colores personalizados
-ggplot(datos_2, aes(x = Property_Type, y = Price, fill = Municipio)) +
+# Gráfico
+ggplot(datos_2, aes(x = Property_Type, y = Price, fill = Municipio)) + # Datos, ejes y color
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
   labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
@@ -582,6 +596,8 @@ ggplot(datos_2, aes(x = Property_Type, y = Price, fill = Municipio)) +
   scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
   theme(plot.title = element_text(hjust = 0.5), # Centrar el título
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
 
 
 
@@ -598,18 +614,20 @@ ggplot(datos_2, aes(x = Property_Type, y = Price, fill = Municipio)) +
 # P5) ¿En qué condición se encuentran los alquileres? (Subpregunta de esta: subdividiendo por tipo de alquiler)
 
 
-datos_2
 
-grupo_estado <- datos_2 %>%
-  group_by(Condition) %>%
-  summarise(Cantidad = n())
+
+grupo_estado <- datos_2 %>% # Datos
+  group_by(Condition) %>%   # Agrupar por condición de la vivienda
+  summarise(Cantidad = n()) # Resumir por la cantidad
 grupo_estado
 
 
-ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) +
-  geom_bar(stat="identity") +
-  labs(x="Municipio", y="Precio") +
+# Gráfico
+ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) + # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  labs(x="Municipio", y="Precio") + # Nombre de los ejes
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
 
 
@@ -628,8 +646,8 @@ La mayoría de los inmuebles estan en buena condición o excelente condición. P
 
 # P6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
 
-
-ggplot(datos_2, aes(x = Condition, y = Price, fill = Municipio)) +
+# Gráfico
+ggplot(datos_2, aes(x = Condition, y = Price, fill = Municipio)) + # Datos, ejes y color
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
   labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
@@ -637,6 +655,9 @@ ggplot(datos_2, aes(x = Condition, y = Price, fill = Municipio)) +
   scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
   theme(plot.title = element_text(hjust = 0.5), # Centrar el título
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
 
 ```
 
@@ -647,10 +668,12 @@ ggplot(datos_2, aes(x = Condition, y = Price, fill = Municipio)) +
 # con: Municipio, Estado de la vivienda, Tipo de vivienda,
 
 
-# P7)  ¿Como se distribuyen los gastos comúnes por Municipio?
+# P7) ¿Como se distribuyen los gastos comúnes por Municipio?
 ggplot(datos_2, aes(x = Municipio , y = Common_Expenses)) +  # Datos y ejes
-  geom_bar(stat="identity") +
+  geom_bar(stat="identity") + # Gráfico de barras
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
 
 ```
 
@@ -658,8 +681,13 @@ ggplot(datos_2, aes(x = Municipio , y = Common_Expenses)) +  # Datos y ejes
 # P8) ¿Cómo influye el tipo de alquiler en el nivel de gastos comunes?
 
 ggplot(datos_2, aes(x = Property_Type, y = Common_Expenses)) +  # Datos y ejes
-  geom_bar(stat="identity") +
+  geom_bar(stat="identity") + # Gráfico de barras
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+
+
 # subdiviridr por municipio? Que gastos son más comunes según el tipo de alquiler por municipio
 
 ```
@@ -671,8 +699,9 @@ ggplot(datos_2, aes(x = Property_Type, y = Common_Expenses)) +  # Datos y ejes
 
 
 ggplot(datos_2, aes(x = Condition , y = Common_Expenses)) +  # Datos y ejes
-  geom_bar(stat="identity") +
+  geom_bar(stat="identity") + # Gráfico de barras
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
 
 ```
@@ -682,14 +711,16 @@ ggplot(datos_2, aes(x = Condition , y = Common_Expenses)) +  # Datos y ejes
 # P10) ¿Cómo se distribuyen los Gastos Comunes en relación al tipo de alquiler por Municipio?
 
 
-ggplot(datos_2, aes(x = Property_Type, y = Common_Expenses, fill = Municipio)) +
+ggplot(datos_2, aes(x = Property_Type, y = Common_Expenses, fill = Municipio)) + # Datos, ejes y municipio
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
   labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
   ggtitle("Condición de la vivienda por Municipio") + # Título del gráfico
   scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
   theme(plot.title = element_text(hjust = 0.5), # Centrar el título
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
 
 
 
@@ -700,64 +731,61 @@ ggplot(datos_2, aes(x = Property_Type, y = Common_Expenses, fill = Municipio)) +
 # P11) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
 
 
-ggplot(datos_2, aes(x = Condition, y = Common_Expenses, fill = Municipio)) +
+ggplot(datos_2, aes(x = Condition, y = Common_Expenses, fill = Municipio)) + # Datos, ejes y color
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
   labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
   ggtitle("Condición de la vivienda por Municipio") + # Título del gráfico
   scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
   theme(plot.title = element_text(hjust = 0.5), # Centrar el título
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
 
 ```
 
 ```{r}
-
 # P12) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
-
-
-
-# Las columnas de ceros y unos
-# Son 22 columnas
-
 
 # quitar variables: Furnished...32, Furnished...42, y Flors
 
 
+# Obtenemos las columnas que tienen valores entre 0 y 1
 dum <- datos_2 %>% select('Sea_View','Social_Housing','Barbecue','Living_Room','Closet','Patio','Pool','Garage','Pet','Gas_Pipeline','Playroom','Duplex','Heating','WiFi','Grill','Gym','Balcony','Storage','Air_Conditioning','Garden','Radiant_Floor_Heating','Solarium')
 
 dum
 
 
 
-# EN FORMA DE FUNCIÓN
 # Función para crear el dataframe que tiene 0 y 1 en sus filas, las variables en sus columnas y el promedio de precio en cada celda.
 
-
-calcular_y_unir <- function(df, col, resultado_final) {
-  temp <- df %>%
-    group_by(valor = .data[[col]]) %>%
+calcular_y_unir <- function(df, col, resultado_final) { # Función
+  temp <- df %>%       # Datos
+    group_by(valor = .data[[col]]) %>% # Agrupamos por todas las columnas
     summarise(Mean = mean(Price, na.rm = TRUE), .groups = "drop")
+  # Resumimos con la media, ignorando los nulos
 
-  colnames(temp)[2] <- paste0(col, "_Mean")
-  resultado_final <- left_join(resultado_final, temp, by = "valor", relationship = "many-to-one")
-  return(resultado_final)
+  colnames(temp)[2] <- paste0(col, "_Mean") # A cada columna del dataframe resultante le vamos a pegar la palabra "_Mean"
+  resultado_final <- left_join(resultado_final, temp, by = "valor", relationship = "many-to-one") # Hacemos un join con todos los resultados, teniendo la columna "valor" como columna común entre las tablas para unirlas
+  return(resultado_final) # Resultado
 }
+
+
 
 # DataFrame inicial
 resultado_final <- data.frame(valor = c(0, 1))
 
-# Columnas de interés
-# columnas <- c("Sea_View", "Barbecue")
+
+# Obtenemos las columnas del dataframe dum
 columnas <- colnames(dum)
 
 
 
-# Aplicar la función para cada columna
-for (col in columnas) {
+# Aplicar la función creada a cada columna
+for (col in columnas) { # Para cada columna
   resultado_final <- calcular_y_unir(datos_2, col, resultado_final)
-}
+} # Aplicamos la función
+
 
 # DataFrame resultante
 resultado_final
@@ -767,20 +795,23 @@ resultado_final
 
 ```{r}
 
-# Función para
+# Función para gráficar 
 funcion_dum <- function(datos){
-  # Convertir el DataFrame al formato largo
+
+# Pasamos los datos al formato largo con pivot_longer
   data_long <- datos %>%
     pivot_longer(-valor, names_to = "variable", values_to = "value")
 
-  # Crear el gráfico
-  ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) +
-    geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +  # Ajusta el valor de 'width' para aumentar el espacio entre barras
-    labs(x = "Variable", y = "Value", fill = "Value") +
+  # Gráfico
+  ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) + # Datos, ejes y color
+    geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +  # Gráfico de barras, con barras superpuestas
+    labs(x = "Variable", y = "Value", fill = "Value") + # Nombre de los ejes
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
+#Cambiar ángulo y tamaño del texto de los elementos del eje X
+  
 }
 
 
-# Llamar a la función con el DataFrame
+# Resultados
 funcion_dum(resultado_final)
 ```
