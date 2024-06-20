@@ -1102,7 +1102,7 @@ data_nulos %>% filter(cantidad_nulos > 0)
 
 # Vamos a usar el método de inputar los valores nulos con sus valores más comunes en el caso de variables categoricas y con su media en el caso de variables númericas.
 
-
+table(datos$Condicion)
 
 
 
