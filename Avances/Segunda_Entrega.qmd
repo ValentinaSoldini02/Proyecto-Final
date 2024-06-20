@@ -1161,23 +1161,44 @@ sum(datos$precio_m2 %in% "Inf")
 
 ```{r}
 
-datos_sin_na <- datos[!is.na(datos$precio_m2), ]
-datos_sin_na
+datos <- datos[!is.na(datos$precio_m2), ]
+datos
 
 
 
 
-data_nulos <- data.frame(cantidad_nulos = sapply(datos_sin_na, function(x) sum(is.na(x))))
+data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
 # Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
 
-data_nulos %>% filter(cantidad_nulos > 0)
+data_nulos %>% filter(data_nulos > 0)
+# Hacer esto en formad de función
 
 
 
 ```
 
 
+```{r}
+# Datos nulos en direccion reemplazarlos con datos de zona
 
+DMELO <- datos %>%
+  mutate(direccion = if_else(is.na(direccion), zona, direccion))
+
+
+DMELO
+
+
+```
+
+```{r}
+
+
+data_nulos_2 <- data.frame(cantidad_nulos = sapply(DMELO, function(x) sum(is.na(x))))
+# Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+
+data_nulos_2 %>% filter(data_nulos_2 > 0)
+
+```
 
 
 
