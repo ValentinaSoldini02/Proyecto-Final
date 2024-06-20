@@ -189,8 +189,6 @@ tabla_variables[41,] <- c("Solarium", "Numérica", "Propiedad con solarium")
 
 ```
 
-
-
 ```{r}
 print(tabla_variables)
 ```
@@ -501,11 +499,13 @@ datos_2 <- datos_2 %>% filter(Price <= 150000 & Common_Expenses <= 10000)
 
 datos_2
 ```
+
 ```{r}
 # Datos sin duplicados
 datos_2 <- datos_2[!duplicated(datos_2), ]
 datos_2
 ```
+
 ```{r}
 
 # Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
@@ -826,32 +826,13 @@ funcion_dum <- function(datos){
 funcion_dum(resultado_final)
 ```
 
-
-
-
-
-
-
-
 # RESTRUCTURA 2
-
-
 
 El mercado inmobiliario ha sido, durante muchos años de gran importancia tanto para inversores como para personas que buscan un alquiler. La variabilidad de los precios puede depender de diferentes factores como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros.Este proyecto se basa en analizar como estas variables afectan en los precios de las propiedades en los diferentes municipios.
 
 Descripcion de los datos:
 
 Los datos utilizados, incluyen inoformación sobre propiedades disponibles para ser alquiladas en todo el año 2023. Contiene múltiples variables como la dirección, el precio, caracteristícas fisicas de la prpiedad, tipo de propiedad, condiciones de la propiedad, y caracterizticas adicionales como terraza, vista al mar, garage. En un primer momento se va a realizar una analisis exploratorio de los datos para ver que relación tienen las diferentes variabes con respecto al precio.
-
-
-
-
-
-
-
-
-
-
 
 Código reestructurado con los nombres de las variables en el español
 
@@ -866,7 +847,6 @@ Código reestructurado con los nombres de las variables en el español
 
 
 ```
-
 
 ```{r}
 # Importar librerías
@@ -883,8 +863,8 @@ library(gridExtra)
 
 ```
 
-
 Datos
+
 ```{r}
 
 # Datos sobre precio de casas
@@ -893,7 +873,6 @@ datos
 
 
 ```
-
 
 Tabla con las diferentes variables, tipo de variable y una descripcion
 
@@ -976,18 +955,21 @@ tabla_variables
 ```
 
 # Limpieza
-1) Renombrar columnas de ingles a español 
-2) Poner columna de precio por metro cuadrado
-3) Eliminar columnas inecesarias
-4) Eliminar duplicados
-5) Eliminar y rellenar valores nulos
-6) Eliminar outliers
 
+1)  Renombrar columnas de ingles a español
 
+2)  Poner columna de precio por metro cuadrado
 
+3)  Eliminar columnas inecesarias
 
+4)  Eliminar duplicados
 
-1) Renombrar columnas de ingles a español
+5)  Eliminar y rellenar valores nulos
+
+6)  Eliminar outliers
+
+7)  Renombrar columnas de ingles a español
+
 ```{r}
 
 #datos
@@ -1032,8 +1014,8 @@ datos
 
 ```
 
+2)  Poner columna de precio por metro cuadrado
 
-2) Poner columna de precio por metro cuadrado
 ```{r}
 # Pasar el precio a precio por metro cuadrado
 datos <- datos|>
@@ -1043,8 +1025,8 @@ datos
 
 ```
 
+3)  Eliminar columnas inecesarias
 
-3) Eliminar columnas inecesarias
 ```{r}
 # Eliminamos columnas innecesarias
  datos <- 
@@ -1056,8 +1038,8 @@ datos
 
 ```
 
+4)  Eliminar duplicados
 
-4) Eliminar duplicados
 ```{r}
 
 # Contamos la cantidad de duplicados en el DataFrame
@@ -1074,9 +1056,7 @@ datos
 
 ```
 
-
-
-5) Eliminar o rellenar valores nulos
+5)  Eliminar o rellenar valores nulos
 
 ```{r}
 
@@ -1102,18 +1082,23 @@ data_nulos %>% filter(cantidad_nulos > 0)
 
 # Vamos a usar el método de inputar los valores nulos con sus valores más comunes en el caso de variables categoricas y con su media en el caso de variables númericas.
 
-table(datos$Condicion)
 
 
 
+# Seleccionar el elemento que más se repite, para esto hacemos un table de la columna en el dataframe, ordenamos esa tabla de mayor a menor y seleccionamos el primer elemento en formato númerico.
+as.numeric(sort(table(datos$Condicion), decreasing = TRUE)[1])
 
+as.numeric(sort(table(datos$disposicion), decreasing = TRUE)[1])
+
+
+datos %>% filter(precio_m2 == "NA")
+
+
+datos
 ```
 
+5)  
 
-
-
-
-5)
 ```{r}
 
 
@@ -1121,27 +1106,14 @@ table(datos$Condicion)
 
 ```
 
+6)  
 
-
-
-6)
 ```{r}
 
 
 
 
 ```
-
-
-
-
-
-
-
-
-
-
-
 
 ```{r}
 
@@ -1170,8 +1142,7 @@ datos_2 <- datos %>% # Datos
 
 
 datos_2
-``` 
-
+```
 
 ```{r}
 
@@ -1182,20 +1153,10 @@ datos_2 <- datos_2 %>% filter(precio <= 150000 & Gastos_Comunes <= 10000)
 
 datos_2
 
-``` 
-
-
-
-
-
-
-
-
-
-
-
+```
 
 # Visualización
+
 ```{r}
 
 
@@ -1230,8 +1191,7 @@ ggplot(datos_2, aes(x = zona, y = precio, fill = Municipio)) +  # Datos, ejes y 
 
 
 
-``` 
-
+```
 
 Vemos que si, los barrios ubicados en el municipio A y E son los que tienen un precio más +6elevado, mientras que los barrios ubicados en los municipios D y G son los más baratos.
 
@@ -1254,10 +1214,7 @@ ggplot(grupo_municipio, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) + #
 
 ```
 
-
 Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de alquileres se dan en el Municipio F
-
-
 
 ```{r}
 # Pregunta 3) Qué tipo de inmuebles para alquilar hay?
@@ -1280,9 +1237,6 @@ ggplot(grupo_tipo, aes(x=fct_reorder(tipo_prop, Cantidad), y=Cantidad)) + # Dato
 
 
 ```
-
-
-
 
 La mayoría de alquileres son de Apartamentos, muy pocos son de Tierra, de Negocios Especiales, de Edificios o de Garages.
 
@@ -1313,9 +1267,6 @@ ggplot(datos_2, aes(x = tipo_prop, y = precio, fill = Municipio)) + # Datos, eje
 
 ```
 
-
-
-
 ```{r}
 datos_2
 
@@ -1344,8 +1295,6 @@ ggplot(grupo_estado, aes(x=fct_reorder(Condicion, Cantidad), y=Cantidad)) + # Da
 ```
 
 La mayoría de los inmuebles estan en buena condición o excelente condición. Pocos de ellos estan en construcción, o con necesidad de mantenimiento o por ser renovados.
-
-
 
 ```{r}
 
@@ -1452,8 +1401,6 @@ ggplot(datos_2, aes(x = Condicion, y = Gastos_Comunes, fill = Municipio)) + # Da
 
 ```
 
-
-
 ```{r}
 
 # P12) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
@@ -1513,8 +1460,7 @@ resultado_final
 
 
 
-``` 
-
+```
 
 ```{r}
 
@@ -1540,8 +1486,6 @@ funcion_dum <- function(datos){
 funcion_dum(resultado_final)
 ```
 
-
-
 Modelo de regrecion lineal multiple:
 
 ```{r}
@@ -1557,7 +1501,6 @@ library(tseries)
 
 
 ```
-
 
 ```{r}
 # Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
@@ -1619,6 +1562,7 @@ datos_2 <- reemplazar_na_disposicion(datos_2)
 
 print(colSums(is.na(datos_2)))
 ```
+
 ```{r}
 
 # Eliminamos columnas innecesarias
@@ -1638,7 +1582,9 @@ vif_values <- vif(modelo)
 # Mostrar los valores de VIF
 print(vif_values)
 ```
+
 valores nulos
+
 ```{r}
 
 datos_2_nulos <- data.frame(cantidad_2_nulos = sapply(datos_2, function(x) sum(is.na(x))))
@@ -1651,6 +1597,8 @@ datos_2
 
 table(datos_2$Condicion)
 table(datos_2$disposicion)
+
+
+
+
 ```
-
-
