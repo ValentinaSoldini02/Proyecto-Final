@@ -943,16 +943,6 @@ tabla_variables[42,] <- c("Solarium", "Numérica", "Propiedad con solarium")
 tabla_variables
 ```
 
-```{r}
-
-
-
-
-```
-
-```{r}
-
-```
 
 # Limpieza
 
@@ -1031,7 +1021,7 @@ datos
 # Eliminamos columnas innecesarias
  datos <- 
    datos|>
-   select(-Furnished...32, -Furnished...42, -Floors)#
+    select(-Furnished...32, -Furnished...42, -Floors)#
 
 datos
  
@@ -1086,15 +1076,15 @@ data_nulos %>% filter(cantidad_nulos > 0)
 
 
 # Seleccionar el elemento que más se repite, para esto hacemos un table de la columna en el dataframe, ordenamos esa tabla de mayor a menor y seleccionamos el primer elemento en formato númerico.
-as.numeric(sort(table(datos$Condicion), decreasing = TRUE)[1])
+prueba1 <- as.numeric(sort(table(datos$Condicion), decreasing = TRUE)[1])
 
 as.numeric(sort(table(datos$disposicion), decreasing = TRUE)[1])
 
 
-datos %>% filter(precio_m2 == "NA")
+datos %>% filter(disposicion == "")
 
+datos %>% filter(disposicion == is.na(disposicion))
 
-datos
 ```
 
 5)  
