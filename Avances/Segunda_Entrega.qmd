@@ -1074,12 +1074,6 @@ data_nulos %>% filter(cantidad_nulos > 0)
 
 
 
-# Seleccionar el elemento que más se repite, para esto hacemos un table de la columna en el dataframe, ordenamos esa tabla de mayor a menor y seleccionamos el primer elemento en formato númerico.
-as.numeric(sort(table(datos$Condicion), decreasing = TRUE)[1])
-
-as.numeric(sort(table(datos$disposicion), decreasing = TRUE)[1])
-
-
   
   
 mas_comun_1 <- names(sort(table(datos$Condicion), decreasing=TRUE)[1])
@@ -1109,6 +1103,105 @@ datos[426:444, c("Condicion")]
 
 
 ```
+
+
+```{r}
+
+
+
+# Seleccionar el elemento que más se repite, para esto hacemos un table de la columna en el dataframe, ordenamos esa tabla de mayor a menor y seleccionamos el primer elemento en formato texto
+nombre_1 <- names(sort(table(datos$Condicion), decreasing = TRUE)[1])
+
+nombre_2 <- names(sort(table(datos$disposicion), decreasing = TRUE)[1])
+
+
+```
+
+```{r}
+
+datos$Condicion[datos$Condicion %in% NA] <- nombre_1
+datos$disposicion[datos$disposicion %in% NA] <- nombre_2
+
+
+```
+
+
+```{r}
+
+
+
+data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
+# Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+
+data_nulos %>% filter(cantidad_nulos > 0)
+
+
+```
+
+
+```{r}
+
+# Filtrar los valores de Inf en la columnad de precio_m2
+mean_filtrada <- datos %>%
+  filter(is.finite(precio_m2)) %>%
+  summarise(media = mean(precio_m2)) %>%
+  pull(media)
+mean_filtrada
+  
+
+datos$precio_m2[datos$precio_m2 %in% "Inf"] <- mean_filtrada
+
+
+datos$precio_m2[datos$precio_m2 %in% "Inf"]
+
+
+sum(datos$precio_m2 %in% "Inf")
+
+```
+
+```{r}
+
+datos <- datos[!is.na(datos$precio_m2), ]
+datos
+
+
+
+
+data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
+# Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+
+data_nulos %>% filter(data_nulos > 0)
+# Hacer esto en formad de función
+
+
+
+```
+
+
+```{r}
+# Datos nulos en direccion reemplazarlos con datos de zona
+
+DMELO <- datos %>%
+  mutate(direccion = if_else(is.na(direccion), zona, direccion))
+
+
+DMELO
+
+
+```
+
+```{r}
+
+
+data_nulos_2 <- data.frame(cantidad_nulos = sapply(DMELO, function(x) sum(is.na(x))))
+# Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+
+data_nulos_2 %>% filter(data_nulos_2 > 0)
+
+```
+
+
+
 
 5)  
 
