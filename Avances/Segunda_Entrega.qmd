@@ -943,7 +943,6 @@ tabla_variables[42,] <- c("Solarium", "Numérica", "Propiedad con solarium")
 tabla_variables
 ```
 
-
 # Limpieza
 
 1)  Renombrar columnas de ingles a español
@@ -1076,14 +1075,38 @@ data_nulos %>% filter(cantidad_nulos > 0)
 
 
 # Seleccionar el elemento que más se repite, para esto hacemos un table de la columna en el dataframe, ordenamos esa tabla de mayor a menor y seleccionamos el primer elemento en formato númerico.
-prueba1 <- as.numeric(sort(table(datos$Condicion), decreasing = TRUE)[1])
+as.numeric(sort(table(datos$Condicion), decreasing = TRUE)[1])
 
 as.numeric(sort(table(datos$disposicion), decreasing = TRUE)[1])
 
 
-datos %>% filter(disposicion == "")
+  
+  
+mas_comun_1 <- names(sort(table(datos$Condicion), decreasing=TRUE)[1])
 
-datos %>% filter(disposicion == is.na(disposicion))
+mas_comun_2 <- names(sort(table(datos$disposicion), decreasing=TRUE)[1])
+
+
+
+# Reemplazo
+pruebA <- datos$Condicion[is.na(datos$Condicion)]
+pruebA
+
+sum(is.na(pruebA))
+
+datos %>% select(is.na(Condicion))
+
+datos %>% filter(Condicion == NA)
+
+
+
+datos %>% filter(Condicion == NA)
+
+
+
+
+datos[426:444, c("Condicion")]
+
 
 ```
 
@@ -1092,7 +1115,13 @@ datos %>% filter(disposicion == is.na(disposicion))
 ```{r}
 
 
+install.packages("writexl")
 
+# Cargar el paquete
+library(writexl)
+
+# Guardar el dataframe como un archivo Excel
+write_xlsx(datos, "datos.xlsx")
 
 ```
 
