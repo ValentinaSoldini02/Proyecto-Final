@@ -23,30 +23,53 @@ Los datos utilizados en este análisis se han extraidos de una pagina web llamad
 
 ## Análisis exploratorio de los datos
 
-Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza profunda de los datos. Esta limpieza incluyó la eliminación de los datos duplicaods,valores atípicos, valores nulos, Además, se decidió eliminar las columnas "Furnished...32", "Furnished...42", y "Flors". Las dos primeras columnas fueron eliminadas porque existía una tercer columna que contenía la misma información. La columna "Flors" fue eliminada devido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables. Otra modificacion que se realizo fue que en vez de trabajar todas las zonas de Montevideo, las separamos en municipios de la sigiente manera:
+Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza de los datos. Esta limpieza incluyó la eliminación de  datos duplicados,valores atípocos y valores nulos. Además, se decició eliminar las columnas "Furnished...32", "Furnished...42", y "Floors". 
+Las dos primeras columnas fueron eliminadas porque exixtía una tercera columna que contenía la misma información. La columna "Floors" fue eliminada debido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.
+
+Otra modificación que se realizó fue la agrupación de las zonas de Montevideo en municipios. Cada municipio, con sus respectivas zonas se puede observar en la "Tabla 1". También se convirtió la columna precio por precio por metros cuadrados, para tener un mejor análisis de los datos.
+
+En ciertas columnas habían valores nulos, para evitar esto se realizo lo siguiente:
+
+ - A la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad.
+ - A la columna "precio_m2"  se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato.
+ - A la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
+ 
+
 
 ```{r}
-#| eval: false
 tabla_municipio <- data.frame(
   Municipio = c("Municipio A","Municipio B", "Municipio C", "Municipio CH", "Municipio D", "Municipio E", "Municipio F", "Municipio G"),
-  Zonas = list(
-    c("Cerro, La Teja, Paso de la Arena, Belvedere, Nuevo París, Prado"),
-    c("Cordón, Parque Rodó, Palermo, Barrio Sur, Ciudad Vieja, Centro, Aguada, La Comercial"),
-    c("Aguada, Arroyo Seco, Atahualpa, Bella Vista, Brazo Oriental, Capurro, Goes, Jacinto Vera, La Comercial, Mercado Modelo, Reducto, Villa Muñoz"),
-    c("Tres Cruces, La Blanqueada, Parque Batlle, Villa Dolores, Buceo, Pocitos, Punta Carretas"),
-    c("Piedras Blancas, Villa Española, Unión, Bolivar, Cerrito"),
-    c("Malvín Norte, Malvín, Carrasco Norte, Carrasco, Punta Gorda, Buceo, La Blanqueada"),
-    c("Maroñas, Flor de Maroñas, Villa Española, Ituzaingó, Jardines del Hipódromo, Piedras Blancas"),
-    c("Lezica, Peñarol, Nuevo París, Sayago, Conciliación, Colón")
-  ))
+  Columna2 = c("Cerro, La Teja, Paso de la Arena, Belvedere, Nuevo París, Prado",
+  "Cordón, Parque Rodó, Palermo, Barrio Sur, Ciudad Vieja, Centro, Aguada, La Comercial", 
+  "Aguada, Arroyo Seco, Atahualpa, Bella Vista, Brazo Oriental, Capurro, Goes, Jacinto Vera, La Comercial, Mercado Modelo, Reducto, Villa Muñoz", 
+  "Tres Cruces, La Blanqueada, Parque Batlle, Villa Dolores, Buceo, Pocitos, Punta Carretas",
+  "Piedras Blancas, Villa Española, Unión, Bolivar, Cerrito",
+  "Malvín Norte, Malvín, Carrasco Norte, Carrasco, Punta Gorda, Buceo, La Blanqueada",
+  "Maroñas, Flor de Maroñas, Villa Española, Ituzaingó, Jardines del Hipódromo, Piedras Blancas",
+  "Lezica, Peñarol, Nuevo París, Sayago, Conciliación, Colón"))
 
-print(tabla_municipio)
-
+tabla_municipio 
 ```
 
-Lectura de los datos:
 
 ```{r}
+#| echo: false
+library(tidyverse)
+library(GGally)
+library(car)
+library(skedastic)
+library(robustbase)
+library(tseries)
+library(here)
+library(readxl)
+library(ggplot2)
+```
+
+
+
+```{r}
+#| echo: false
+# Lectura de los datos:
 # Datos sobre precio de casas
 datos <- read_csv(here("houses.csv"))
 datos
@@ -55,11 +78,17 @@ datos
 datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
 datos_delitos
 ```
-
-Reenombramos las variables:
-
 ```{r}
-datos <- datos|>
+#| echo: false
+
+# ORDENANDO LOS DATOS:
+
+#Eliminando los datos atipicos
+
+datos_2 <- datos %>% filter(Price <= 150000 & Common_Expenses <= 10000)
+
+#Reenombramos las variables:
+datos_2 <- datos_2|>
   rename(precio = Price,
          nro_de_piso = Floor,
          cant_de_piso = Number_of_Floors,
@@ -87,27 +116,89 @@ datos <- datos|>
          balcon = Balcony
          )
 
-```
 
-Oredenando los datos:
 
-```{r}
+
 # Precio por metro cuadrado
 
-datos <- datos|>
+datos_2 <- datos_2|>
   mutate(precio_m2 = precio/m2_const)
 
-# Quitando las columnas Furnished...32, Furnished...42, y Flors
+# Quitando las columnas Furnished...32, Furnished...42, y Floors
 
-datos <- 
-  datos|>
+datos_2 <- 
+  datos_2|>
   select(-Furnished...32, -Furnished...42, -Floors, -precio, -m2_const)
 
-# Valores Nulos:
-data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
-data_nulos %>% filter(cantidad_nulos > 0)
-
 # Datos sin duplicados
-datos <- datos[!duplicated(datos), ]
-datos
+datos_2 <- datos_2[!duplicated(datos_2), ]
+
+# Cambiando la zona por municipios
+
+datos_2 <- datos_2 %>% # Datos
+  mutate(Municipio = case_when( # Casos donde a cada barrio le vamos a asociar un municipio
+    
+    zona %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo París","Prado")  ~ "Municipio_A",
+
+    zona %in% c("Cordón","Parque Rodó","Palermo","Barrio Sur","Ciudad Vieja","Centro","Aguada","La Comercial") ~ "Municipio_B",
+
+    zona %in% c("Aguada", "Arroyo Seco", "Atahualpa", "Bella Vista", "Brazo Oriental", "Capurro", "Goes", "Jacinto Vera", "La Comercial", "Mercado Modelo", "Reducto", "Villa Muñoz") ~ "Municipio_C",
+
+    zona %in% c("Tres Cruces", "La Blanqueada", "Parque Batlle", "Villa Dolores", "Buceo", "Pocitos", "Punta Carretas") ~ "Municipio_CH",
+
+    zona %in% c("Piedras Blancas", "Villa Española", "Unión","Bolivar","Cerrito") ~ "Municipio_D",
+
+    zona %in% c("Malvín Norte","Malvín", "Carrasco Norte", "Carrasco", "Punta Gorda", "Buceo", "La Blanqueada") ~ "Municipio_E",
+
+    zona %in% c("Maroñas", "Flor de Maroñas", "Villa Española", "Ituzaingó", "Jardines del Hipódromo", "Piedras Blancas") ~ "Municipio_F",
+
+    zona %in% c("Lezica", "Peñarol", "Nuevo París", "Sayago", "Conciliación", "Colón") ~ "Municipio_G",
+
+    TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
+  ))
+
+
 ```
+
+```{r}
+# Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+
+
+# Elegimos los colores manualmente
+colores_personalizados <- c(
+  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   "Municipio_CH" = "purple",  "Municipio_D" = "orange",   "Municipio_E" = "pink",
+  "Municipio_F" = "brown",  "Municipio_G" = "cyan")
+
+
+# Gráfico
+ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  # Ancho y posición de las barras
+
+  facet_grid(. ~ Municipio, scales = "free_x") +
+  # Usar facet_grid para crear una grilla por Municipio
+
+  labs(x = "Zona", y = "Precio por m^2", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Precio por Zona y Municipio") + # Título
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Centrar el título y modificar el texto de los elementos del eje X
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
