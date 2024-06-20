@@ -372,6 +372,10 @@ data_nulos %>% filter(cantidad_nulos > 0)
 sum(duplicated(datos))
 
 
+# Eliminamos los duplicados
+datos <- datos[!duplicated(datos), ]
+datos
+
 
 
 # IMPORTANTE: Casi la mitad del dataframe estaba duplicada, paso de tener 2361 filas a tener 1078 !!
@@ -865,7 +869,7 @@ Código reestructurado con los nombres de las variables en el español
 
 
 ```{r}
-
+# Importar librerías
 
 library(readr)
 library(readxl)
@@ -880,6 +884,7 @@ library(gridExtra)
 ```
 
 
+Datos
 ```{r}
 
 # Datos sobre precio de casas
@@ -889,80 +894,17 @@ datos
 
 ```
 
-Descripcion de las variables:
-
-```{r}
-#datos
-
-# DUDA: Podríamos cambiar también los elementos de las columnas que esten en ingles a español con case_match
-
-
-
-
-datos_2 <- datos_2|>
-  rename(precio = Price,
-         nro_de_piso = Floor,
-         Gastos_Comunes = Common_Expenses,
-         cant_de_piso = Number_of_Floors,
-         zona = Zone,
-         Condicion = Condition,
-         disposicion = Disposition,
-         cant_cuartos = Bedrooms...18,
-         cant_habitaciones = Bedrooms...13,
-         m2_terraza = Terrace_Square_Meters,
-         año_de_const = Year_of_Construction,
-         vista_al_mar = Sea_View,
-         deposito = Storage,
-         jardin = Garden,
-         losa_radiante = Radiant_Floor_Heating,
-         amueblado = Furnished...45,
-         direccion = Address,
-         tipo_prop = Property_Type,
-         baños = Bathrooms,
-         m2_const = Built_Square_Meters,
-         m2_totales = Land_Square_Meters,
-         vivienda_social = Social_Housing,
-         cant_de_est = Garages,
-         coneccion_cas = Gas_Pipeline,
-         calefaccion = Heating,
-         zona_barbacoa = Grill,
-         balcon = Balcony
-         )
-
-#names(datos)
-#eliminar Furnished...32, Furnished...42, y Flors?
-
-
-# Pasar el precio a precio por metro cuadrado
-datos <- datos|>
-  mutate(precio_m2 = precio/m2_const)
-
-
-
-
-# Eliminamos columnas innecesarias
- datos <- 
-   datos|>
-   select(-Furnished...32, -Furnished...42, -Floors)#
-
- 
- 
-
- 
-```
-
-
-
 
 Tabla con las diferentes variables, tipo de variable y una descripcion
 
 ```{r}
+# Creamos variables del tipo character
 nombre_variable <- character()
 tipo_variable <- character()
 descripcion <- character()
-```
 
-```{r}
+
+# Creamos un dataframe donde vamos a almacenar la información de cada columna basandonos es: Nombre, Tipo de Dato, Descripción
 tabla_variables <- data.frame(
   "Nombre de la variable" = nombre_variable,
   "Tipo de variable" = tipo_variable,
@@ -971,10 +913,8 @@ tabla_variables <- data.frame(
 )
 
 
-datos
-```
 
-```{r}
+# Creamos la tabla
 tabla_variables[1,] <- c("direccion", "Numérica", "Ubicación donde se encuentra la propiedad")
 tabla_variables[2,] <- c("nro_de_piso", "Character", "Número de piso de la propiedad")
 tabla_variables[3,] <- c("tipo_prop", "Character", "Tipo de poropiedad, como apartamento, oficina, casa")
@@ -1018,18 +958,46 @@ tabla_variables[40,] <- c("Gym", "Numérica", "Propiedad con gym")
 tabla_variables[41,] <- c("Air_Conditioning", "Numérica", "Propiedad con aire acondicionado")
 tabla_variables[42,] <- c("Solarium", "Numérica", "Propiedad con solarium")
 
+
+
+# Resultado
+tabla_variables
 ```
 
 ```{r}
-print(tabla_variables)
+
+
+
+
 ```
-
-
-
 
 ```{r}
 
-datos <- datos |>
+```
+
+# Limpieza
+1) Renombrar columnas de ingles a español 
+2) Poner columna de precio por metro cuadrado
+3) Eliminar columnas inecesarias
+4) Eliminar duplicados
+5) Eliminar y rellenar valores nulos
+6) Eliminar outliers
+
+
+
+
+
+1) Renombrar columnas de ingles a español
+```{r}
+
+#datos
+
+# IDEA: Podríamos cambiar también los elementos de las columnas que esten en ingles a español con case_match
+
+
+
+# Renombrabos las columnas de ingles a español
+datos <- datos|>
   rename(precio = Price,
          nro_de_piso = Floor,
          Gastos_Comunes = Common_Expenses,
@@ -1058,24 +1026,119 @@ datos <- datos |>
          zona_barbacoa = Grill,
          balcon = Balcony
          )
-#names(datos)
-#eliminar Furnished...32, Furnished...42, y Flors?
-
-
-
-
-
-
-
-# Ver el resultado
-datos <- datos|>
-  mutate(precio_m2 = precio/m2_const)
 
 
 datos
 
+```
+
+
+2) Poner columna de precio por metro cuadrado
+```{r}
+# Pasar el precio a precio por metro cuadrado
+datos <- datos|>
+  mutate(precio_m2 = precio/m2_const)
+
+datos
 
 ```
+
+
+3) Eliminar columnas inecesarias
+```{r}
+# Eliminamos columnas innecesarias
+ datos <- 
+   datos|>
+   select(-Furnished...32, -Furnished...42, -Floors)#
+
+datos
+ 
+
+```
+
+
+4) Eliminar duplicados
+```{r}
+
+# Contamos la cantidad de duplicados en el DataFrame
+sum(duplicated(datos))
+
+
+# Eliminamos los duplicados
+datos <- datos[!duplicated(datos), ]
+datos
+
+# IMPORTANTE: Casi la mitad del dataframe estaba duplicada, paso de tener 2361 filas a tener 1078 !!
+
+
+
+```
+
+
+
+5) Eliminar o rellenar valores nulos
+
+```{r}
+
+
+
+data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
+# Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+
+data_nulos %>% filter(cantidad_nulos > 0)
+# De este DataFrame filtramos solo las columnas que tengan una cantidad total de valores nulos mayor a 0
+
+
+# Hay cuatro columnas que tienen valores nulos
+# Que son Address, Condition, Disposition, Floors
+
+
+
+# Las columnas con valores nulos son:
+# direccion (209)   categorica
+# Condicion (18)    categorica
+# disposicion (13)  categorica
+# precio_m2 (1)     númerica
+
+# Vamos a usar el método de inputar los valores nulos con sus valores más comunes en el caso de variables categoricas y con su media en el caso de variables númericas.
+
+
+
+
+
+
+```
+
+
+
+
+
+5)
+```{r}
+
+
+
+
+```
+
+
+
+
+6)
+```{r}
+
+
+
+
+```
+
+
+
+
+
+
+
+
 
 
 
@@ -1122,6 +1185,17 @@ datos_2
 ``` 
 
 
+
+
+
+
+
+
+
+
+
+
+# Visualización
 ```{r}
 
 
