@@ -1139,6 +1139,47 @@ data_nulos %>% filter(cantidad_nulos > 0)
 ```
 
 
+```{r}
+
+# Filtrar los valores de Inf en la columnad de precio_m2
+mean_filtrada <- datos %>%
+  filter(is.finite(precio_m2)) %>%
+  summarise(media = mean(precio_m2)) %>%
+  pull(media)
+mean_filtrada
+  
+
+datos$precio_m2[datos$precio_m2 %in% "Inf"] <- mean_filtrada
+
+
+datos$precio_m2[datos$precio_m2 %in% "Inf"]
+
+
+sum(datos$precio_m2 %in% "Inf")
+
+```
+
+```{r}
+
+datos_sin_na <- datos[!is.na(datos$precio_m2), ]
+datos_sin_na
+
+
+
+
+data_nulos <- data.frame(cantidad_nulos = sapply(datos_sin_na, function(x) sum(is.na(x))))
+# Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+
+data_nulos %>% filter(cantidad_nulos > 0)
+
+
+
+```
+
+
+
+
+
 
 
 5)  
