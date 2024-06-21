@@ -59,6 +59,7 @@ library(tseries)
 library(here)
 library(readxl)
 library(ggplot2)
+library(forcats)
 ```
 
 ```{r}
@@ -116,8 +117,8 @@ datos_2 <- datos_2|>
 
 # Precio por metro cuadrado
 
-datos_2 <- datos_2|>
-  mutate(precio_m2 = precio/m2_const)
+datos_2 <- datos_2 |>
+  mutate(precio_m2 = ifelse(m2_const == 0, 0, precio / m2_const))
 
 # Quitando las columnas Furnished...32, Furnished...42, y Floors
 
@@ -181,3 +182,51 @@ ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 # Centrar el título y modificar el texto de los elementos del eje X
 ```
+<<<<<<< HEAD
+=======
+En este gráfico se puede observar que los municipios B, CH y E tienen los precios por metro cuadrado más altos. Dentro del municipio B, la zona con el precio por metro cuadrado más elevado es Centro. En el municipio CH, la zona más costosa es Pocitos, mientras que en el municipio E, la zona con el mayor precio por metro cuadrado es Carrasco. 
+
+```{r}
+# Pregunta 3) Qué tipo de inmuebles para alquilar hay?
+
+
+grupo_tipo <- datos_2 %>% # Datos
+  group_by(tipo_prop) %>% # Agrupar por tipo de propiedad
+  summarise(Cantidad = n()) # Resumir por cantidad 
+grupo_tipo
+
+
+# Gráfico
+ggplot(grupo_tipo, aes(x=fct_reorder(tipo_prop, Cantidad), y=Cantidad)) + # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  labs(x="Municipio") + # Nombres de los ejes
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+```
+```{r}
+grupo_estado <- datos_2 %>% # Datos
+  group_by(Condition) %>%   # Agrupar por condición de la vivienda
+  summarise(Cantidad = n()) # Resumir por la cantidad
+grupo_estado
+
+
+# Gráfico
+ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) + # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  labs(x="Municipio", y="Precio") + # Nombre de los ejes
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+```
+En relación a los dos gráficos anteriores, se puede observar que las propiedades más alquiladas son los apartamentos. Esto puede deberse a la gran cantidad de apartamentos dispobles en Montevideo, lo que proporciona a los inversionistas una oportuidad lucrativa. Al relacionar esto con el gráficosiguiente, se puede ver la mayoría de las propiedades se encuentranen buenas o exelentes condiciones, por lo que los inquilinos tendrían una ventaja significativa ya que no se tendrian que realizar modificaciones en dicha propiedad.
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> a00730a012f1e94d8e5c4951d89f815d7062cd4d
