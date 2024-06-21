@@ -1074,32 +1074,6 @@ data_nulos %>% filter(cantidad_nulos > 0)
 
 
 
-  
-  
-mas_comun_1 <- names(sort(table(datos$Condicion), decreasing=TRUE)[1])
-
-mas_comun_2 <- names(sort(table(datos$disposicion), decreasing=TRUE)[1])
-
-
-
-# Reemplazo
-pruebA <- datos$Condicion[is.na(datos$Condicion)]
-pruebA
-
-sum(is.na(pruebA))
-
-datos %>% select(is.na(Condicion))
-
-datos %>% filter(Condicion == NA)
-
-
-
-datos %>% filter(Condicion == NA)
-
-
-
-
-datos[426:444, c("Condicion")]
 
 
 ```
@@ -1207,14 +1181,14 @@ data_nulos_2 %>% filter(data_nulos_2 > 0)
 
 ```{r}
 
-
-install.packages("writexl")
-
-# Cargar el paquete
-library(writexl)
-
-# Guardar el dataframe como un archivo Excel
-write_xlsx(datos, "datos.xlsx")
+# 
+# install.packages("writexl")
+# 
+# # Cargar el paquete
+# library(writexl)
+# 
+# # Guardar el dataframe como un archivo Excel
+# write_xlsx(datos, "datos.xlsx")
 
 ```
 
