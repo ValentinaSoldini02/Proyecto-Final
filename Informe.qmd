@@ -60,6 +60,7 @@ library(here)
 library(readxl)
 library(ggplot2)
 library(forcats)
+
 ```
 
 ```{r}
@@ -157,6 +158,7 @@ datos_2 <- datos_2 %>% # Datos
 ```
 
 ```{r}
+#| echo: false
 # Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
 
 
@@ -187,6 +189,7 @@ ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes
 En este gráfico se puede observar que los municipios B, CH y E tienen los precios por metro cuadrado más altos. Dentro del municipio B, la zona con el precio por metro cuadrado más elevado es Centro. En el municipio CH, la zona más costosa es Pocitos, mientras que en el municipio E, la zona con el mayor precio por metro cuadrado es Carrasco. 
 
 ```{r}
+#| echo: false
 # Pregunta 3) Qué tipo de inmuebles para alquilar hay?
 
 
@@ -204,6 +207,7 @@ ggplot(grupo_tipo, aes(x=fct_reorder(tipo_prop, Cantidad), y=Cantidad)) + # Dato
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 ```
 ```{r}
+#| echo: false
 grupo_estado <- datos_2 %>% # Datos
   group_by(Condition) %>%   # Agrupar por condición de la vivienda
   summarise(Cantidad = n()) # Resumir por la cantidad
@@ -220,13 +224,63 @@ ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) + # Da
 En relación a los dos gráficos anteriores, se puede observar que las propiedades más alquiladas son los apartamentos. Esto puede deberse a la gran cantidad de apartamentos dispobles en Montevideo, lo que proporciona a los inversionistas una oportuidad lucrativa. Al relacionar esto con el gráficosiguiente, se puede ver la mayoría de las propiedades se encuentranen buenas o exelentes condiciones, por lo que los inquilinos tendrían una ventaja significativa ya que no se tendrian que realizar modificaciones en dicha propiedad.
 
 
+Comendando la limpieza para la regrecion lineal multiple:
+Como los datos que obtuvimos tenian datos nulos, esto no es lo mejor para hacer una regrecion lineal multiple ya que puede causar problemas en el ajuste del modelo, por esta razon en las diferentes columnas que tenian datos nulos se opto rellenar esos datos con distintos metodos. Como ya se Menciono anteriormente la columna de "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato.A la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad.A la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
+
+Dado que la presencia de los valores nulos en los datos pueden afectar negativamente el ajuste y la precisión lineal múltiple, se realizaron varios pasos de limpieza de datos para manejar estos valores faltantes de manera mas adecuada. A continuación, se decriben los métodos utilizados para las diferentes columnas que contiene valores nulos en nuestro conjunto de datos, en la columna de "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato, en la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad y por último la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
+
+```{r}
+# Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
+reemplazar_direccion <- function(datos_2) {
+  if (!"direccion" %in% colnames(datos_2) || !"zona" %in% colnames(datos_2)) {
+    stop("Las columnas 'direccion' y 'zona' deben estar presentes en los datos.")
+  }
+  datos_2$direccion <- ifelse(is.na(datos_2$direccion), datos_2$zona, datos_2$direccion)
+  return(datos_2)
+}
+datos_2 <- reemplazar_direccion(datos_2)
 
 
+# Función para rellenar valores NA en 'precio_m2' con la media de los valores existentes
+rellenar_na_precio_m2 <- function(datos_2) {
+  # Verificar si la columna 'precio_m2' existe
+  if (!"precio_m2" %in% colnames(datos_2)) {
+    stop("La columna 'precio_m2' no está presente en los datos.")
+  }
+media_precio_m2 <- mean(datos_2$precio_m2, na.rm = TRUE)
+  datos_2$precio_m2[is.na(datos_2$precio_m2)] <- media_precio_m2
+  return(datos_2)
+}
+
+datos_2 <- rellenar_na_precio_m2(datos_2)
+
+# Función para reemplazar valores NA en 'Condicion' con 'Good condition'
+reemplazar_na_condicion <- function(datos_2) {
+  if (!"Condition" %in% colnames(datos_2)) {
+    stop("La columna 'Condicion' no está presente en los datos.")
+  }
+  datos_2$Condition[is.na(datos_2$Condition)] <- "Good condition"
+  return(datos_2)
+}
+
+datos_2 <- reemplazar_na_condicion(datos_2)
+
+# Función para reemplazar valores NA en 'disposicion' con 'Front'
+reemplazar_na_disposicion <- function(datos_2) {
+  if (!"disposicion" %in% colnames(datos_2)) {
+    stop("La columna 'disposicion' no está presente en los datos.")
+  }
+  datos_2$disposicion[is.na(datos_2$disposicion)] <- "Front"
+  return(datos_2)
+}
+
+datos_2 <- reemplazar_na_disposicion(datos_2)
+
+print(colSums(is.na(datos_2)))
 
 
-
-
-
+names(datos_2)
+```
 
 
 >>>>>>> a00730a012f1e94d8e5c4951d89f815d7062cd4d
