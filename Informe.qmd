@@ -23,18 +23,15 @@ Los datos utilizados en este análisis se han extraidos de una pagina web llamad
 
 ## Análisis exploratorio de los datos
 
-Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza de los datos. Esta limpieza incluyó la eliminación de  datos duplicados,valores atípocos y valores nulos. Además, se decició eliminar las columnas "Furnished...32", "Furnished...42", y "Floors". 
-Las dos primeras columnas fueron eliminadas porque exixtía una tercera columna que contenía la misma información. La columna "Floors" fue eliminada debido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.
+Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados,valores atípocos y valores nulos. Además, se decició eliminar las columnas "Furnished...32", "Furnished...42", y "Floors". Las dos primeras columnas fueron eliminadas porque exixtía una tercera columna que contenía la misma información. La columna "Floors" fue eliminada debido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.
 
 Otra modificación que se realizó fue la agrupación de las zonas de Montevideo en municipios. Cada municipio, con sus respectivas zonas se puede observar en la "Tabla 1". También se convirtió la columna precio por precio por metros cuadrados, para tener un mejor análisis de los datos.
 
 En ciertas columnas habían valores nulos, para evitar esto se realizo lo siguiente:
 
- - A la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad.
- - A la columna "precio_m2"  se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato.
- - A la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
- 
-
+-   A la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad.
+-   A la columna "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato.
+-   A la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
 
 ```{r}
 tabla_municipio <- data.frame(
@@ -51,7 +48,6 @@ tabla_municipio <- data.frame(
 tabla_municipio 
 ```
 
-
 ```{r}
 #| echo: false
 library(tidyverse)
@@ -65,8 +61,6 @@ library(readxl)
 library(ggplot2)
 ```
 
-
-
 ```{r}
 #| echo: false
 # Lectura de los datos:
@@ -78,6 +72,7 @@ datos
 datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
 datos_delitos
 ```
+
 ```{r}
 #| echo: false
 
@@ -186,19 +181,3 @@ ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 # Centrar el título y modificar el texto de los elementos del eje X
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

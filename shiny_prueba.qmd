@@ -288,6 +288,7 @@ shinyApp(ui = ui, server = server)
 
 ```{r}
 #
+#
 ui <- fluidPage(
   titlePanel("Análisis de Alquileres"),
   sidebarLayout(
