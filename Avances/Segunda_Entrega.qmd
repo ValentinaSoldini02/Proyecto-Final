@@ -1869,14 +1869,162 @@ colnames(datos)
 
 
 ```{r}
-
-datos %>%
+# PRECIO SEGÚN BAÑOS
+Prueba13 <- datos %>%
    group_by(Bathrooms) %>%
    summarise(media_precio = mean(Price))
+Prueba13
+
 
 
 ggplot(datos, aes(x=Bathrooms)) +
-        geom_bar()
+        geom_bar() +
+     scale_x_continuous(breaks =  Prueba13$Bathrooms)
+
+
+
+
+ggplot(Prueba13, aes(x=Bathrooms, y=media_precio)) +    geom_bar(stat="identity") + 
+   scale_x_continuous(breaks =  Prueba13$Bathrooms)
+
+```
+
+
+
+
+
+
+
+```{r}
+#colnames(datos)
+# PRECIO SEGÚN CAMAS
+
+
+Prueba15 <- datos %>%
+   group_by(Bedrooms...13) %>%
+   summarise(media_precio = mean(Price))
+Prueba15
+
+
+
+ggplot(datos, aes(x=Bedrooms...13)) +
+     geom_bar() + 
+     scale_x_continuous(breaks =  Prueba15$Bedrooms...13)
+
+
+
+
+ggplot(Prueba15, aes(x=Bedrooms...13, y=media_precio)) +    geom_bar(stat="identity") + 
+   scale_x_continuous(breaks =  Prueba15$Bedrooms...13)
+
+
+
+
+
+```
+
+```{r}
+
+# PRECIO SEGÚN GARAGE
+
+Prueba16 <- datos %>%
+   group_by(Garages) %>%
+   summarise(media_precio = mean(Price))
+Prueba16
+
+
+
+ggplot(datos, aes(x=Garages)) +
+     geom_bar() + 
+     scale_x_continuous(breaks =  Prueba16$Garages)
+
+
+
+
+ggplot(Prueba16, aes(x=Garages, y=media_precio)) +    geom_bar(stat="identity") + 
+   scale_x_continuous(breaks =  Prueba16$Garages)
+
+
+
+
+
+
+```
+
+```{r}
+# Built_Square_Meters
+# Terrace_Square_Met
+# Land_Square_Metersers
+```
+
+
+```{r}
+
+#Built_Square_Meters
+
+datos_2 <- datos_2 %>% filter(Built_Square_Meters < 3000 & Price < 15000)
+
+
+# METROS CUADRADOS POR CONSTRUCCIÓN
+ggplot(datos_2, aes(x=Built_Square_Meters, y=Price)) +    geom_point()
+
+# METROS POR TERRAZA
+ggplot(datos_2, aes(x=Terrace_Square_Meters, y=Price)) +     geom_point()
+
+# METROS CUADRADOS POR TIERRA
+ggplot(datos_2, aes(x=Land_Square_Meters, y=Price)) +  geom_point()
+
+
+```
+No parece haber una relación clara sobre la relación entre metros cuadrados y precio, no se cumple lo que uno puede intuitivamente pensar que es que el precio va a ser mayor conforme sean mayores los metros cuadrados.
+
+
+```{r}
+datos_2$Terrace_Square_Met
+
+datos_2
+
+```
+
+
+
+```{r}
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+colnames(datos)
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+
+
+
+```{r}
+
+
 
 ```
 
@@ -1885,27 +2033,17 @@ ggplot(datos, aes(x=Bathrooms)) +
 
 ```{r}
 
-#git add Informe.qmd shiny_prueba.qmd
 
 
 ```
 
 
 
+```{r}
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+```
 
 
 
