@@ -110,3 +110,241 @@ server <- function(input, output){  # Activamos el server
 # Resultados
 shinyApp(ui, server)
 ```
+
+
+
+```{r}
+
+ui <- fluidPage(
+  titlePanel("Datos de Precios de Viviendas"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput('varcolor', 'Variables influyentes en el precio',
+                  c("municipio", "condicion", "tipo vivienda", "a")),
+      conditionalPanel(
+        condition = "input.tabselected == 1",
+        selectInput('digitos', 'otro',
+                    choices = c(0, 1, 2), selected = 2),
+        selectInput('x_axis', 'Seleccione el eje X:',
+                    choices = c("Municipio" = "Municipio",
+                                "Tipo de Propiedad" = "tipo_prop",
+                                "Condición" = "Condicion")),
+        actionButton('update', 'Actualizar Gráficos')
+      )
+    ),
+    mainPanel(
+      tabsetPanel(
+        id = "tabselected",
+        tabPanel("Municipio",
+                 value = 1,
+                 h2("Gráfico 1", align = "center"),
+                 plotOutput("barPlot"),
+                 DTOutput("tabla")),
+        tabPanel("Ceros y Unos",
+                 h2("Diagrama Univariado", align = "center"),
+                 plotOutput("Barras_Univariado")),
+        tabPanel("Mapa",
+                 h2("Diagrama Univariado", align = "center"),
+                 plotOutput("Barras_Univariado"))
+      )
+    )
+  )
+)
+
+# Define el servidor (server)
+server <- function(input, output, session) {
+  datos_2 <- data.frame(
+    Municipio = sample(c("Municipio1", "Municipio2", "Municipio3"), 100, replace = TRUE),
+    tipo_prop = sample(c("Casa", "Apartamento", "Condominio"), 100, replace = TRUE),
+    Condicion = sample(c("Nueva", "Usada", "Renovada"), 100, replace = TRUE)
+  )
+
+  observeEvent(input$update, {
+    output$barPlot <- renderPlot({
+      x_axis <- switch(input$x_axis,
+                       "Municipio" = "Municipio",
+                       "Tipo de Propiedad" = "tipo_prop",
+                       "Condición" = "Condicion")
+
+      grupo_datos <- datos_2 %>%
+        group_by(across(all_of(x_axis))) %>%
+        summarise(Cantidad = n(), .groups = 'drop')
+
+      ggplot(grupo_datos, aes_string(x = x_axis, y = "Cantidad")) +
+        geom_bar(stat = "identity") +
+        labs(x = input$x_axis, y = "Cantidad") +
+        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
+    })
+  })
+
+  output$scat <- renderPlot({
+    ggplot(data = datos_2,
+           aes(x = total, y = propina, colour = .data[[input$varcolor]])) +
+      geom_point() + theme(aspect.ratio = 1) +
+      scale_x_continuous(name = "Total de la cuenta") +
+      scale_y_continuous(name = "Propina")
+  })
+
+  output$tabla <- renderDT({
+    summary_data <- datos_2 %>%
+      group_by(.data[[input$varcolor]]) %>%
+      summarise(
+        mean_propina = mean(propina, na.rm = TRUE),
+        sd_propina = sd(propina, na.rm = TRUE),
+        mean_total = mean(total, na.rm = TRUE),
+        sd_total = sd(total, na.rm = TRUE)
+      ) %>%
+      summarise(across(where(is.numeric), round, as.integer(input$digitos)))
+
+    datatable(summary_data)
+  })
+
+  output$Barras_Univariado <- renderPlot({
+    ggplot(data = datos_2,
+           aes(x = .data[[input$varcolor]])) +
+      geom_bar() +
+      theme(aspect.ratio = 1) +
+      scale_x_discrete(name = input$varcolor) +
+      scale_y_continuous(name = "Frecuencia")
+  })
+}
+
+# Ejecuta la aplicación Shiny
+shinyApp(ui = ui, server = server)
+
+
+```
+
+
+
+
+
+```{r}
+# Poner el gráfico de barras básicos que grafique 
+
+
+
+```
+
+
+
+```{r}
+ui <- fluidPage(
+  titlePanel("Análisis de Alquileres"),
+  sidebarLayout(
+    sidebarPanel(
+      actionButton("update", "Actualizar Gráficos"),
+      selectInput("x_axis", "Seleccione el eje X:", 
+                  choices = list("Municipio" = "Municipio", 
+                                 "Tipo de Propiedad" = "tipo_prop", 
+                                 "Condición" = "Condicion"))
+    ),
+    mainPanel(
+      plotOutput("barPlot")
+    )
+  )
+)
+
+# Define el servidor (server)
+server <- function(input, output, session) {
+  
+  observeEvent(input$update, {
+    output$barPlot <- renderPlot({
+      datos_2 <- data.frame(
+        Municipio = sample(c("Municipio1", "Municipio2", "Municipio3"), 100, replace = TRUE),
+        tipo_prop = sample(c("Casa", "Apartamento", "Condominio"), 100, replace = TRUE),
+        Condicion = sample(c("Nueva", "Usada", "Renovada"), 100, replace = TRUE)
+      )
+      
+      x_axis <- switch(input$x_axis,
+                       "Municipio" = "Municipio",
+                       "tipo_prop" = "tipo_prop",
+                       "Condicion" = "Condicion")
+      
+      grupo_datos <- datos_2 %>%
+        group_by(across(all_of(x_axis))) %>%
+        summarise(Cantidad = n(), .groups = 'drop')
+      
+      ggplot(grupo_datos, aes_string(x = x_axis, y = "Cantidad")) +
+        geom_bar(stat = "identity") +
+        labs(x = input$x_axis, y = "Cantidad") +
+        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
+    })
+  })
+}
+
+
+shinyApp(ui = ui, server = server)
+
+
+
+
+```
+
+
+
+
+
+
+```{r}
+
+ui <- fluidPage(
+  titlePanel("Análisis de Alquileres"),
+  sidebarLayout(
+    sidebarPanel(
+      actionButton("update", "Actualizar Gráficos"),
+      selectInput("x_axis", "Seleccione el eje X:", 
+                  choices = list("Municipio" = "Municipio", 
+                                 "Tipo de Propiedad" = "tipo_prop", 
+                                 "Condición" = "Condicion"))
+    ),
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Datos1",
+                 plotOutput("barPlot")
+        ),
+        tabPanel("Datos2",
+                 h2("Contenido de Datos2")
+        ),
+        tabPanel("Mapa",
+                 h2("Contenido de Mapa")
+        )
+      )
+    )
+  )
+)
+
+# Define el servidor (server)
+server <- function(input, output, session) {
+  
+  observeEvent(input$update, {
+    output$barPlot <- renderPlot({
+      datos_2 <- data.frame(
+        Municipio = sample(c("Municipio1", "Municipio2", "Municipio3"), 100, replace = TRUE),
+        tipo_prop = sample(c("Casa", "Apartamento", "Condominio"), 100, replace = TRUE),
+        Condicion = sample(c("Nueva", "Usada", "Renovada"), 100, replace = TRUE)
+      )
+      
+      x_axis <- switch(input$x_axis,
+                       "Municipio" = "Municipio",
+                       "tipo_prop" = "tipo_prop",
+                       "Condicion" = "Condicion")
+      
+      grupo_datos <- datos_2 %>%
+        group_by(across(all_of(x_axis))) %>%
+        summarise(Cantidad = n(), .groups = 'drop')
+      
+      ggplot(grupo_datos, aes_string(x = x_axis, y = "Cantidad")) +
+        geom_bar(stat = "identity") +
+        labs(x = input$x_axis, y = "Cantidad") +
+        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
+    })
+  })
+}
+
+# Ejecuta la aplicación Shiny
+shinyApp(ui = ui, server = server)
+
+
+
+```
