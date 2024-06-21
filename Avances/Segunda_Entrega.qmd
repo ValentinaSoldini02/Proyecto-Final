@@ -1876,10 +1876,19 @@ datos %>%
 
 
 ggplot(datos, aes(x=Bathrooms)) +
-      geom_bar()
+        geom_bar()
 
 ```
 
+
+
+
+```{r}
+
+#git add Informe.qmd shiny_prueba.qmd
+
+
+```
 
 
 
