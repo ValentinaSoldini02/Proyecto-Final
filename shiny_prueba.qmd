@@ -1,0 +1,112 @@
+```{r}
+install.packages("shiny")
+install.packages("DT")
+ 
+
+
+```
+
+```{r}
+library(shiny)
+library(DT)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(here)
+
+
+
+```
+
+
+
+
+```{r}
+ui <- fluidPage(    # Definimos una página en blanco
+  
+  titlePanel("Datos de Precios de Viviendas"),   # Título
+  sidebarLayout(    # Definimos la estructura
+    sidebarPanel(   # Lo usamos para colocar los selectInput
+      
+      selectInput('varcolor', 'Variables influyentes en el precio',   # Definimos un input llamado varcolor que permitira la selección de las columnas del dataframe 
+                  
+                  c("municipio", "condicion", "tipo vivienda", "a")), # Ponemos las categorías de la lista desplegable del sidebarPanel
+      
+      conditionalPanel( # Definimos un input llamado digitos para seleccionar la cantidad de decimales en el panel
+        condition = "input.tabselected == 1", # Que el input de cantidad de decimales aparezca solo en la página de Bivariado y no en la de Univariado
+        
+        selectInput('digitos', 'otro',  
+                    choices = c(0, 1, 2), selected = 2) # Ponemos los valores posibles para los decimales, y cargamos por defecto el valor de 2
+      
+      )
+    ),
+    mainPanel(  # Panel para las pestañas donde se veran los gráficos
+      tabsetPanel( # Pestañas posibles que vamos a mostrar, en este caso dos
+        id = "tabselected",  # Identificar el panel
+        tabPanel("Municipio",   # Primera pestaña llada Bivariado
+                 value = 1,     # Valor de 1
+                 h2("Gráfico 1", align = "center"), # Título del gráfico que estara dentro de esta pestaña
+                 plotOutput("scat"), # Asociamos el gráfico a un elemento llamado scat
+                 DTOutput("tabla")), # Asociamos la tabla a un elemento llamado tabla
+        
+        tabPanel("Ceros y Unos",  # Creamos otra pestaña llamada Univariado
+
+                 h2("Diagrama Univariado", align = "center"), # Título del gráfico que estara dentro de esta pestaña
+                 plotOutput("Barras_Univariado")),
+                 
+                 
+        tabPanel("Mapa",  # Creamos otra pestaña llamada Univariado
+
+                 h2("Diagrama Univariado", align = "center"), # Título del gráfico que estara dentro de esta pestaña
+                 plotOutput("Barras_Univariado"))   # Asociamos este gráfico a un elemento llamdo Barras_Univariado# Asociamos este gráfico a un elemento llamdo Barras_Univariado
+      )
+    )
+  )
+)
+
+server <- function(input, output){  # Activamos el server
+  output$scat <- renderPlot({  # Creamos el gráfico en base al input asociado llamado scat
+    ggplot(data = propinas,   # Datos
+           
+           aes(x = total, y = propina, colour = .data[[input$varcolor]] )) +
+       # Ejes y color (donde para el color usamos el argumento de .data[[input$varcolor]] que permitira la selección de columnas para dar color al gráfico, dando así reactividad)
+    
+      geom_point() + theme(aspect.ratio = 1) + # Gráfico de puntos
+      scale_x_continuous(name ="Total de la cuenta") + # Nombre del eje X
+      scale_y_continuous(name = "Propina")             # Nombre del eje Y
+  })
+  
+  output$tabla <- renderDT({ # Creamos la tabla en base al input asociado llamado tabla
+
+    summary_data <- propinas %>%  # Datos
+      
+      group_by(.data[[input$varcolor]]) %>% # Agrupamos por columnas, en este caso variaremos las columnas con el argumento .data[[input$varcolor]] para dar reactividad  y agrupar con la columna que seleccione el usuario
+
+      summarise(  # Resumen (sin nulos)
+        mean_propina = mean(propina, na.rm = TRUE), # Media de  propina 
+        sd_propina = sd(propina, na.rm = TRUE),     # Desvio de propina
+        mean_total = mean(total, na.rm = TRUE),     # Media total
+        sd_total = sd(total, na.rm = TRUE)          # Desvio total
+      ) %>%
+      summarise(across(where(is.numeric), round, as.integer(input$digitos)))
+    # Resumimos seleccionando con across solo las columnas cuando sean numericas usando una combinación de where y is.numeric, usamos la función de round. Finalmente convertimos a enteros el input de digitos que habiamos definido para que al cambiar los valores de decimales en el panel, se cambie de forma reactiva en la tabla
+  
+    
+    
+  })
+
+  output$Barras_Univariado <- renderPlot({ # Creamos el gráfico en base al input asociado llamado Barras_Univariado
+
+    ggplot(data = propinas,  # Datos
+           aes(x = .data[[input$varcolor]])) + # Eje X que depende del argumento .data[[input$varcolor]] que permitira la selección de columnas para gráficar en el eje X y haciendo su frecuencia en el eje Y, dando así reactividad)
+    
+      geom_bar() +  # Gráfico de barras, que tiene por defecto la frecuencia en el eje Y
+      theme(aspect.ratio = 1) + # Aspecto del gráfico
+      scale_x_discrete(name = input$varcolor) + # Nombre del eje X que depende de varcolor, que son las posibles columnas de sexo, fuma, dia y momento.
+      scale_y_continuous(name = "Frecuencia") # Nombre del eje Y
+  })
+}
+
+# Resultados
+shinyApp(ui, server)
+```
