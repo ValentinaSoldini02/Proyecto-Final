@@ -1572,6 +1572,12 @@ funcion_dum <- function(datos){
 funcion_dum(resultado_final)
 ```
 
+
+
+
+
+
+
 Modelo de regrecion lineal multiple:
 
 ```{r}
@@ -1688,3 +1694,356 @@ table(datos_2$disposicion)
 
 
 ```
+
+
+
+
+```{r}
+datos_2
+
+
+
+grupo_piso_1 <- datos_2 %>%
+  group_by(Floor) %>%
+  summarise(Cantidad = n())
+grupo_piso_1
+
+
+# Gastos comunes por Municipio
+ggplot(grupo_piso_1, aes(x = Floor, y=Cantidad)) +  # Datos y ejes
+   geom_histogram(stat="identity") +
+#  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+
+
+
+
+grupo_piso_1 <- datos_2 %>%
+  group_by(Apartments_per_Floor) %>%
+  summarise(Cantidad = n())
+grupo_piso_1
+
+
+# Gastos comunes por Municipio
+ggplot(grupo_piso_1, aes(x = Apartments_per_Floor, y=Cantidad)) +  # Datos y ejes
+   geom_histogram(stat="identity") +
+#  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+
+
+grupo_piso_1 <- datos_2 %>%
+  group_by(Number_of_Floors) %>%
+  summarise(Cantidad = n())
+grupo_piso_1
+
+
+# Gastos comunes por Municipio
+ggplot(grupo_piso_1, aes(x = Number_of_Floors, y=Cantidad)) +  # Datos y ejes
+   geom_histogram(stat="identity") +
+#  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+
+
+
+
+```
+```{r}
+
+
+
+```
+
+```{r}
+
+
+# P1) Cuánto más alto el piso, más caro? Como afecta el piso en el que estoy al precio?
+# P2) Cuántos más pisos tiene el inmueble (edificio), más caro es?
+# P3) Cuánto más apartamentos hay en un piso, mas caro es o menos?
+
+
+```
+
+```{r}
+
+
+# # P1) Cuánto más alto el piso, más caro? Como afecta el piso en el que estoy al precio?
+
+
+Prueba11 <- datos %>%
+   group_by(Floor) %>%
+   summarise(media_precio = mean(Price))
+Prueba11
+
+#Prueba11[!c(102, 408, 506, 774, 802), ]
+Prueba12 <- Prueba11 %>% filter(Floor < 43)
+
+ggplot(Prueba12, aes(x=Floor, y=media_precio)) +
+      geom_bar(stat="identity")
+
+
+# Parece que en los pisos mas altos el precio es
+```
+
+```{r}
+# P2) Number_of_Floors
+# Cuántos más pisos tiene el inmueble (edificio), más caro es?
+#
+
+
+
+Prueba12 <- datos %>%
+   group_by(Number_of_Floors) %>%
+   summarise(media_precio = mean(Price))
+Prueba12
+
+#Prueba11[!c(102, 408, 506, 774, 802), ]
+#Prueba13 <- Prueba11 %>% filter(Floor < 43)
+
+ggplot(Prueba12, aes(x=Number_of_Floors, y=media_precio)) +
+      geom_bar(stat="identity")
+
+
+
+ # Vemos que los apartamentos que tienen pocos pisos (exactamente 2) son los más caros
+# Aunque también algunos apartamentos con más pisos, aproximadamente 24 pisos, tiene un precio elevado
+
+```
+
+```{r}
+Prueba12 <- datos %>%
+   group_by(Number_of_Floors) %>%
+   summarise(media_precio = mean(Price))
+Prueba12
+
+#Prueba11[!c(102, 408, 506, 774, 802), ]
+#Prueba13 <- Prueba11 %>% filter(Floor < 43)
+
+ggplot(Prueba12, aes(x=Number_of_Floors, y=media_precio)) +
+      geom_bar(stat="identity")
+
+
+
+
+```
+
+```{r}
+
+
+
+```
+
+```{r}
+# P3) Cuánto más apartamentos hay en un piso, es mas caro es o menos?
+
+Prueba14 <- datos %>%
+   group_by(Apartments_per_Floor) %>%
+   summarise(media_precio = mean(Price))
+Prueba14
+
+#Prueba11[!c(102, 408, 506, 774, 802), ]
+#Prueba13 <- Prueba11 %>% filter(Floor < 43)
+
+ggplot(Prueba14, aes(x=Apartments_per_Floor, y=media_precio)) +
+      geom_bar(stat="identity")
+
+# Los pisos con 1 apartamento son los más caros, luego si aumentamos el número de apartamentos por piso, el precio va disminuyendo
+
+
+```
+
+
+
+```{r}
+colnames(datos)
+
+
+
+```
+
+
+
+```{r}
+# PRECIO SEGÚN BAÑOS
+Prueba13 <- datos %>%
+   group_by(Bathrooms) %>%
+   summarise(media_precio = mean(Price))
+Prueba13
+
+
+
+ggplot(datos, aes(x=Bathrooms)) +
+        geom_bar() +
+     scale_x_continuous(breaks =  Prueba13$Bathrooms)
+
+
+
+
+ggplot(Prueba13, aes(x=Bathrooms, y=media_precio)) +    geom_bar(stat="identity") + 
+   scale_x_continuous(breaks =  Prueba13$Bathrooms)
+
+```
+
+
+
+
+
+
+
+```{r}
+#colnames(datos)
+# PRECIO SEGÚN CAMAS
+
+
+Prueba15 <- datos %>%
+   group_by(Bedrooms...13) %>%
+   summarise(media_precio = mean(Price))
+Prueba15
+
+
+
+ggplot(datos, aes(x=Bedrooms...13)) +
+     geom_bar() + 
+     scale_x_continuous(breaks =  Prueba15$Bedrooms...13)
+
+
+
+
+ggplot(Prueba15, aes(x=Bedrooms...13, y=media_precio)) +    geom_bar(stat="identity") + 
+   scale_x_continuous(breaks =  Prueba15$Bedrooms...13)
+
+
+
+
+
+```
+
+```{r}
+
+# PRECIO SEGÚN GARAGE
+
+Prueba16 <- datos %>%
+   group_by(Garages) %>%
+   summarise(media_precio = mean(Price))
+Prueba16
+
+
+
+ggplot(datos, aes(x=Garages)) +
+     geom_bar() + 
+     scale_x_continuous(breaks =  Prueba16$Garages)
+
+
+
+
+ggplot(Prueba16, aes(x=Garages, y=media_precio)) +    geom_bar(stat="identity") + 
+   scale_x_continuous(breaks =  Prueba16$Garages)
+
+
+
+
+
+
+```
+
+```{r}
+# Built_Square_Meters
+# Terrace_Square_Met
+# Land_Square_Metersers
+```
+
+
+```{r}
+
+#Built_Square_Meters
+
+datos_2 <- datos_2 %>% filter(Built_Square_Meters < 3000 & Price < 15000)
+
+
+# METROS CUADRADOS POR CONSTRUCCIÓN
+ggplot(datos_2, aes(x=Built_Square_Meters, y=Price)) +    geom_point()
+
+# METROS POR TERRAZA
+ggplot(datos_2, aes(x=Terrace_Square_Meters, y=Price)) +     geom_point()
+
+# METROS CUADRADOS POR TIERRA
+ggplot(datos_2, aes(x=Land_Square_Meters, y=Price)) +  geom_point()
+
+
+```
+No parece haber una relación clara sobre la relación entre metros cuadrados y precio, no se cumple lo que uno puede intuitivamente pensar que es que el precio va a ser mayor conforme sean mayores los metros cuadrados.
+
+
+```{r}
+datos_2$Terrace_Square_Met
+
+datos_2
+
+```
+
+
+
+```{r}
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+colnames(datos)
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+
+
+
+```{r}
+
+
+
+```
+
+
+
+
+```{r}
+
+
+
+```
+
+
+
+```{r}
+
+
+
+```
+
+
+
