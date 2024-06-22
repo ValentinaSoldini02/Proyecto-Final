@@ -794,7 +794,8 @@ funcion_dum(resultado_final)
 
 ```{r}
 # P13) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
-grupo_piso_1 <- datos_2 %>%
+
+grupo_piso_1 <- datos_2 %>% # 
   group_by(cant_de_piso) %>%
   summarise(Cantidad = n())
 grupo_piso_1
@@ -910,6 +911,7 @@ ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ej
 
 # PRECIO SEGÚN BAÑOS
 
+# P16) ¿Cómo influye la cantidad de baños en el precio?
 Prueba13 <- datos %>%
    group_by(baños) %>%
    summarise(media_precio = mean(precio))
@@ -936,11 +938,13 @@ ggplot(Prueba13, aes(x=baños, y=media_precio)) +    geom_bar(stat="identity") +
 # PRECIO SEGÚN CANTIDAD DE CUARTOS Y CANTIDAD DE HABITACIONES
 
 
-# cant_cuartos = Bedrooms...18,
+
 # cant_habitaciones = Bedrooms...13,
+# cant_cuartos = Bedrooms...18,
 
 
 
+# P17) ¿Cómo influye la cantidad de habitaciones en el precio?
 Prueba15 <- datos %>%
    group_by(cant_habitaciones) %>%
    summarise(media_precio = mean(precio))
@@ -963,7 +967,7 @@ ggplot(Prueba15, aes(x=cant_habitaciones, y=media_precio)) +  geom_bar(stat="ide
 
 
 
-# Otro:
+# P18) ¿Cómo influye la cantidad de cuartos en el precio?
 Prueba25 <- datos %>%
    group_by(cant_cuartos) %>%
    summarise(media_precio = mean(precio))
@@ -990,8 +994,8 @@ ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +  geom_bar(stat="identity
 ```{r}
 
 # PRECIO SEGÚN CANTIDAD DE GARAGES 
-#
-# Garages = cant_de_est
+
+# P19) ¿Cómo influye la cantidad de garages en el precio?
 Prueba16 <- datos %>%
    group_by(cant_de_est) %>%
    summarise(media_precio = mean(precio))
@@ -1040,12 +1044,17 @@ datos
 
 
 # METROS CUADRADOS POR CONSTRUCCIÓN
+# P20) ¿Cómo influyen los metros cuadrados por construcción en el precio?
 ggplot(datos_2, aes(x=m2_const, y=precio)) +    geom_point()
 
+
 # METROS POR TERRAZA
+# P21) ¿Cómo influyen los metros cuadrados por terraza en el precio?
 ggplot(datos_2, aes(x=m2_terraza, y=precio)) +     geom_point()
 
+
 # METROS CUADRADOS POR TIERRA
+# P22) ¿Cómo influyen los metros cuadrados por tierra en el precio?
 ggplot(datos_2, aes(x=m2_totales, y=precio)) +  geom_point()
 
 
