@@ -5,7 +5,6 @@ format: pdf
 editor: visual
 ---
 
-
 # INTRODUCCIÓN:
 
 El mercado inmobiliario ha sido, durante muchos años de gran importancia tanto para inversores como para personas que buscan un alquiler. La variabilidad de los precios puede depender de diferentes factores como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros.Este proyecto se basa en analizar como estas variables afectan en los precios de las propiedades en los diferentes municipios.
@@ -137,7 +136,6 @@ tabla_variables
 
 6)  Eliminar outliers
 
-
 ```{r}
 
 #datos
@@ -264,11 +262,10 @@ detector_nulos(datos)
 
 ```
 
-
 ```{r}
 
 
-
+datos
 # Seleccionar el elemento que más se repite, para esto hacemos un table de la columna en el dataframe, ordenamos esa tabla de mayor a menor y seleccionamos el primer elemento en formato texto
 nombre_1 <- names(sort(table(datos$Condicion), decreasing = TRUE)[1])
 
@@ -285,19 +282,19 @@ datos$disposicion[datos$disposicion %in% NA] <- nombre_2
 
 ```
 
-
 ```{r}
 
 
 # Revisamos de nuevo la cantidad de nulos
-data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
-# Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+# data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
+# # Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+# 
+# data_nulos %>% filter(cantidad_nulos > 0)
 
-data_nulos %>% filter(cantidad_nulos > 0)
 
+detector_nulos(datos)
 
 ```
-
 
 ```{r}
 
@@ -325,28 +322,22 @@ datos
 
 
 
-# Verificamos de nuevo la cantidad de nulos
-data_nulos <- data.frame(cantidad_nulos = sapply(datos, function(x) sum(is.na(x))))
-# Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
-
-data_nulos %>% filter(data_nulos > 0)
-# Hacer esto en formad de función
-
+detector_nulos(datos)
 
 
 ```
-
 
 ```{r}
 # Para tratar los datos nulos en la columna de direccion vamos a reemplazarlos con datos de zona asociados
 
-
 datos <- datos %>% # Datos
-  mutate(direccion = if_else(is.na(direccion), zona)) 
+  mutate(direccion = if_else(is.na(direccion), zona, direccion)) 
 # La columna dirección va a reemplazar a su valor nulo que esta en una fila X por el valor que esta en la columna de zona en esa misma fila X
 
 
-datos
+
+
+detector_nulos(datos)
 
 
 ```
@@ -355,10 +346,7 @@ datos
 
 ```
 
-
-
-
-6) Detectar y eliminar valores nulos:
+6)  Detectar y eliminar valores nulos:
 
 ```{r}
 # Criterio de rango intercuartilico
@@ -397,15 +385,8 @@ detectar_outliers_iqr(datos$Pool)
 
 ```
 
-
-
-
-
-
-
-
-
 Agrupar los barrios por municipios
+
 ```{r}
 
 datos_2 <- datos %>% # Datos
@@ -777,7 +758,6 @@ funcion_dum <- function(datos){
 funcion_dum(resultado_final)
 ```
 
-
 ```{r}
 
 # Floors (Piso)    Español: nro_de_piso
@@ -790,7 +770,6 @@ funcion_dum(resultado_final)
 
 
 ```
-
 
 ```{r}
 # P13) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
@@ -818,10 +797,6 @@ ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
 
 
 ```
-
-
-
-
 
 ```{r}
 
@@ -871,10 +846,7 @@ ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ej
 # Elementos del eje X
 
 
-``` 
-
-
-
+```
 
 ```{r}
 # P2) Number_of_Floors
@@ -890,9 +862,6 @@ ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ej
 # Aunque también algunos apartamentos con más pisos, aproximadamente 24 pisos, tiene un precio elevado
 
 ```
-
-
-
 
 ```{r}
 
@@ -917,8 +886,6 @@ ggplot(Prueba13, aes(x=baños, y=media_precio)) + # Datos
    scale_x_continuous(breaks =  Prueba13$baños) # Elementos del eje X
 
 ```
-
-
 
 ```{r}
 #colnames(datos)
@@ -1020,7 +987,6 @@ ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +  # Datos y ejes
 # Land_Square_Metersers
 ```
 
-
 ```{r}
 
 # PRECIO SEGÚN METROS CUADRADOS EN DISTINTOS ELEMENTOS
@@ -1057,26 +1023,13 @@ ggplot(datos_2, aes(x=m2_totales, y=precio)) +   # Datos y ejes
 
 
 ```
-No parece haber una relación clara sobre la relación entre metros cuadrados y precio, no se cumple lo que uno puede intuitivamente pensar que es que el precio va a ser mayor conforme sean mayores los metros cuadrados.
 
+No parece haber una relación clara sobre la relación entre metros cuadrados y precio, no se cumple lo que uno puede intuitivamente pensar que es que el precio va a ser mayor conforme sean mayores los metros cuadrados.
 
 ```{r}
 
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # Modelo de regresión lineal multiple:
 
@@ -1195,32 +1148,18 @@ table(datos_2$disposicion)
 
 ```
 
-
-
 ```{r}
 colnames(datos_2)
 datos_2
 
 ```
 
-
-
 ```{r}
 
 
 
 
 ```
-
-
-
-
-
-
-
-
-
-
 
 ```{r}
 colnames(datos)
@@ -1228,6 +1167,11 @@ colnames(datos)
 
 ```
 
+```{r}
+
+
+
+```
 
 ```{r}
 
@@ -1235,32 +1179,14 @@ colnames(datos)
 
 ```
 
-
-
-
-
 ```{r}
 
 
 
 ```
 
-
-
-
 ```{r}
 
 
 
 ```
-
-
-
-```{r}
-
-
-
-```
-
-
-
