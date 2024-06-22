@@ -789,40 +789,24 @@ funcion_dum(resultado_final)
 # Apartments_per_Floor (Cantidad de apartamentos en ese piso)   Español: apartamentos_por_piso
 
 
-
-datos_2
-
-# # Floor = nro_de_piso
-# grupo_piso_1 <- datos_2 %>% # Datos
-#   group_by(nro_de_piso) %>% #Agrupamos por número de piso
-#   summarise(Cantidad = n()) # Resumimos por cantidad
-# grupo_piso_1
-# 
-# 
-# # Gastos comunes por Municipio
-# ggplot(grupo_piso_1, aes(x = nro_de_piso, y=Cantidad)) +  # Datos y ejes
-#    geom_histogram(stat="identity") +
-#   theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# 
+```
 
 
-
-
-
-
-
-
+```{r}
+# P13) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
 grupo_piso_1 <- datos_2 %>%
   group_by(cant_de_piso) %>%
   summarise(Cantidad = n())
 grupo_piso_1
 
 
+grupo_piso_1 <-grupo_piso_1 %>% filter(cant_de_piso < 16)
+
+
 # Gastos comunes por Municipio
 ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
    geom_histogram(stat="identity") +
-#  geom_bar(stat="identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    scale_x_continuous(breaks =  grupo_piso_1$cant_de_piso)
 
 
 
@@ -851,7 +835,7 @@ ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
 ```{r}
 
 
-# P13) ¿Cómo influye el piso en el precio? Los pisos más altos o más bajos influyen en el precio?
+# P14) ¿Cómo influye el piso en el precio? Los pisos más altos o más bajos influyen en el precio?
 
 
 Prueba11 <- datos %>%
@@ -876,7 +860,7 @@ ggplot(Prueba12, aes(x=nro_de_piso, y=media_precio)) +
 ```
 
 ```{r}
-# P14) ¿Cómo influye la cantidad de apartamentos por piso en el precio?
+# P15) ¿Cómo influye la cantidad de apartamentos por piso en el precio?
 
 
 grupo_piso_1 <- datos_2 %>%
@@ -916,16 +900,6 @@ ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ej
 ```
 
 ```{r}
-Prueba12 <- datos %>%
-   group_by(cant_de_piso) %>%
-   summarise(media_precio = mean(precio))
-Prueba12
-
-#Prueba11[!c(102, 408, 506, 774, 802), ]
-#Prueba13 <- Prueba11 %>% filter(Floor < 43)
-
-ggplot(Prueba12, aes(x=cant_de_piso, y=media_precio)) +
-      geom_bar(stat="identity")
 
 
 
@@ -933,45 +907,9 @@ ggplot(Prueba12, aes(x=cant_de_piso, y=media_precio)) +
 ```
 
 ```{r}
-
-
-
-```
-
-```{r}
-# P3) Cuánto más apartamentos hay en un piso, es mas caro es o menos?
-
-Prueba14 <- datos %>%
-   group_by(apartamentos_por_piso) %>%
-   summarise(media_precio = mean(precio))
-Prueba14
-
-#Prueba11[!c(102, 408, 506, 774, 802), ]
-#Prueba13 <- Prueba11 %>% filter(Floor < 43)
-
-ggplot(Prueba14, aes(x=apartamentos_por_piso, y=media_precio)) +
-      geom_bar(stat="identity")
-
-# Los pisos con 1 apartamento son los más caros, luego si aumentamos el número de apartamentos por piso, el precio va disminuyendo
-
-
-```
-
-
-
-```{r}
-colnames(datos)
-
-
-
-```
-
-
-
-```{r}
-
 
 # PRECIO SEGÚN BAÑOS
+
 Prueba13 <- datos %>%
    group_by(baños) %>%
    summarise(media_precio = mean(precio))
@@ -993,15 +931,10 @@ ggplot(Prueba13, aes(x=baños, y=media_precio)) +    geom_bar(stat="identity") +
 
 
 
-
-
-
-
 ```{r}
 #colnames(datos)
-# PRECIO SEGÚN CAMAS
+# PRECIO SEGÚN CANTIDAD DE CUARTOS Y CANTIDAD DE HABITACIONES
 
-#colnames(datos)
 
 # cant_cuartos = Bedrooms...18,
 # cant_habitaciones = Bedrooms...13,
@@ -1056,7 +989,7 @@ ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +  geom_bar(stat="identity
 
 ```{r}
 
-# PRECIO SEGÚN GARAGE
+# PRECIO SEGÚN CANTIDAD DE GARAGES 
 #
 # Garages = cant_de_est
 Prueba16 <- datos %>%
@@ -1092,12 +1025,11 @@ ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +    geom_bar(stat="identit
 
 ```{r}
 
-#Built_Square_Meters
+# PRECIO SEGÚN METROS CUADRADOS EN DISTINTOS ELEMENTOS
 
-datos_2 <- datos_2 %>% filter(Built_Square_Meters < 3000 & Price < 15000)
+datos_2 <- datos_2 %>% filter(m2_const < 3000 &  m2_totales < 5000 & precio < 15000)
 
-
-colnames(datos)
+datos
 
 # m2_const = Built_Square_Meters,
 # m2_totales = Land_Square_Meters,
@@ -1122,9 +1054,7 @@ No parece haber una relación clara sobre la relación entre metros cuadrados y 
 
 
 ```{r}
-datos_2$Terrace_Square_Met
 
-datos_2
 
 ```
 
