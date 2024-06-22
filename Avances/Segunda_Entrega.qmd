@@ -795,19 +795,22 @@ funcion_dum(resultado_final)
 ```{r}
 # P13) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
 
-grupo_piso_1 <- datos_2 %>% # 
-  group_by(cant_de_piso) %>%
-  summarise(Cantidad = n())
+grupo_piso_1 <- datos_2 %>% # Datos
+  group_by(cant_de_piso) %>% # Agrupados por cantidad de pisos
+  summarise(Cantidad = n()) # Resumidos por cantidad
 grupo_piso_1
 
 
+
+# Filtrar atipicos
 grupo_piso_1 <-grupo_piso_1 %>% filter(cant_de_piso < 16)
 
 
-# Gastos comunes por Municipio
+
+# Gráfico
 ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
-   geom_histogram(stat="identity") +
-    scale_x_continuous(breaks =  grupo_piso_1$cant_de_piso)
+   geom_bar(stat="identity") + # Gráfico de barras
+    scale_x_continuous(breaks =   grupo_piso_1$cant_de_piso) #  Elementos del eje X
 
 
 
@@ -816,22 +819,9 @@ ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
 
 ```
 
-```{r}
 
 
 
-```
-
-```{r}
-
-
-
-# P1) Cuánto más alto el piso, más caro? Como afecta el piso en el que estoy al precio?
-# P2) Cuántos más pisos tiene el inmueble (edificio), más caro es?
-# P3) Cuánto más apartamentos hay en un piso, mas caro es o menos?
-
-
-```
 
 ```{r}
 
@@ -839,21 +829,21 @@ ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
 # P14) ¿Cómo influye el piso en el precio? Los pisos más altos o más bajos influyen en el precio?
 
 
-Prueba11 <- datos %>%
-   group_by(nro_de_piso) %>%
-   summarise(media_precio = mean(precio))
+Prueba11 <- datos %>% # Datos
+   group_by(nro_de_piso) %>% #Agrupados por número de piso
+   summarise(media_precio = mean(precio)) # Resumidos por media con respecto al precio
 Prueba11
 
 
 
-#Prueba11[!c(102, 408, 506, 774, 802), ]
+# Filtrar nulos
 Prueba12 <- Prueba11 %>% filter(nro_de_piso < 43)
 
 
-
-ggplot(Prueba12, aes(x=nro_de_piso, y=media_precio)) +
-      geom_bar(stat="identity") +
-      scale_x_continuous(breaks =  Prueba12$nro_de_piso)
+# Gráfico
+ggplot(Prueba12, aes(x=nro_de_piso, y=media_precio)) + # Datos y ejes
+      geom_bar(stat="identity") + # Gráfico de barras
+      scale_x_continuous(breaks =  Prueba12$nro_de_piso) # Elementos del eje X Escala del eje X
 
 
 
@@ -864,20 +854,21 @@ ggplot(Prueba12, aes(x=nro_de_piso, y=media_precio)) +
 # P15) ¿Cómo influye la cantidad de apartamentos por piso en el precio?
 
 
-grupo_piso_1 <- datos_2 %>%
-  group_by(apartamentos_por_piso) %>%
-  summarise(Cantidad = n())
+grupo_piso_1 <- datos_2 %>%   # Datos
+  group_by(apartamentos_por_piso) %>% # Agrupados por pisos por apartamentos
+  summarise(Cantidad = n()) # Resumido por cantidad
 grupo_piso_1
 
 
+# Filtrar nulos
 grupo_piso_1 <- grupo_piso_1 %>% filter(apartamentos_por_piso < 11)
 
 
-# Gastos comunes por Municipio
+# Gráfico
 ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ejes
-   geom_histogram(stat="identity") +
+   geom_bar(stat="identity") + # Gráfico de barras
    scale_x_continuous(breaks =  grupo_piso_1$apartamentos_por_piso)
-
+# Elementos del eje X
 
 
 ``` 
@@ -900,34 +891,30 @@ ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ej
 
 ```
 
-```{r}
 
 
-
-
-```
 
 ```{r}
 
 # PRECIO SEGÚN BAÑOS
 
 # P16) ¿Cómo influye la cantidad de baños en el precio?
-Prueba13 <- datos %>%
-   group_by(baños) %>%
-   summarise(media_precio = mean(precio))
+Prueba13 <- datos %>%  # Datos
+   group_by(baños) %>% # Agrupado por baños
+   summarise(media_precio = mean(precio)) # Resumido por la media del precio
 Prueba13
 
 
-
-ggplot(datos, aes(x=baños)) +
-        geom_bar() +
-        scale_x_continuous(breaks =  Prueba13$baños)
-
-
+# Gráfico de conteo por cantidad de baños
+ggplot(datos, aes(x=baños)) + # Datos y eje
+        geom_bar() +          # Gráfico de barras
+        scale_x_continuous(breaks =  Prueba13$baños) # Elementos del eje X
 
 
-ggplot(Prueba13, aes(x=baños, y=media_precio)) +    geom_bar(stat="identity") + 
-   scale_x_continuous(breaks =  Prueba13$baños)
+# Gráfico de precio en relación a la cantidad de baños 
+ggplot(Prueba13, aes(x=baños, y=media_precio)) + # Datos
+   geom_bar(stat="identity") +  # Gráfico de barras
+   scale_x_continuous(breaks =  Prueba13$baños) # Elementos del eje X
 
 ```
 
@@ -945,22 +932,26 @@ ggplot(Prueba13, aes(x=baños, y=media_precio)) +    geom_bar(stat="identity") +
 
 
 # P17) ¿Cómo influye la cantidad de habitaciones en el precio?
-Prueba15 <- datos %>%
-   group_by(cant_habitaciones) %>%
-   summarise(media_precio = mean(precio))
+Prueba15 <- datos %>%      # Datos
+   group_by(cant_habitaciones) %>% #Agrupados por cantidad de habitaciones
+   summarise(media_precio = mean(precio)) # Resumido por la media del precio
 Prueba15
 
 
 
-ggplot(datos, aes(x=cant_habitaciones)) +
- geom_bar() + 
- scale_x_continuous(breaks =  Prueba15$cant_habitaciones)
+
+
+# Gráfico de conteo por cantidad de habitaciones
+ggplot(datos, aes(x=cant_habitaciones)) + # Datos y ejes
+ geom_bar() +  # Gráfico de barras
+ scale_x_continuous(breaks =  Prueba15$cant_habitaciones) # Elementos del eje X
 
 
 
-
-ggplot(Prueba15, aes(x=cant_habitaciones, y=media_precio)) +  geom_bar(stat="identity") + 
- scale_x_continuous(breaks =  Prueba15$cant_habitaciones)
+# Gráfico de precio en relación a la cantidad de habitaciones 
+ggplot(Prueba15, aes(x=cant_habitaciones, y=media_precio)) +  # Datos y ejes
+ geom_bar(stat="identity") +  # Gráfico de barras
+ scale_x_continuous(breaks =  Prueba15$cant_habitaciones) # Elementos del eje X
 
 
 
@@ -968,22 +959,23 @@ ggplot(Prueba15, aes(x=cant_habitaciones, y=media_precio)) +  geom_bar(stat="ide
 
 
 # P18) ¿Cómo influye la cantidad de cuartos en el precio?
-Prueba25 <- datos %>%
-   group_by(cant_cuartos) %>%
-   summarise(media_precio = mean(precio))
+Prueba25 <- datos %>%  # Datos 
+   group_by(cant_cuartos) %>% # Agrupado por cantidad de cuartos
+   summarise(media_precio = mean(precio)) # Resumido por la media del precio
 Prueba25
 
 
-
-ggplot(datos, aes(x=cant_cuartos)) +
- geom_bar() + 
- scale_x_continuous(breaks =  Prueba25$cant_cuartos)
-
-
+# Gráfico de conteo por cantidad de cuartos
+ggplot(datos, aes(x=cant_cuartos)) + # Datos
+ geom_bar() +   # Gráfico de barras
+ scale_x_continuous(breaks =  Prueba25$cant_cuartos) # Elementos del eje X
 
 
-ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +  geom_bar(stat="identity") + 
- scale_x_continuous(breaks =  Prueba25$cant_cuartos)
+
+# Gráfico de precio en relación a la cantidad de cuartos 
+ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +  # Datos
+  geom_bar(stat="identity") +   # Gráfico de barras
+  scale_x_continuous(breaks =  Prueba25$cant_cuartos) # Elementos del eje X
 
 
 
@@ -996,22 +988,24 @@ ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +  geom_bar(stat="identity
 # PRECIO SEGÚN CANTIDAD DE GARAGES 
 
 # P19) ¿Cómo influye la cantidad de garages en el precio?
-Prueba16 <- datos %>%
-   group_by(cant_de_est) %>%
-   summarise(media_precio = mean(precio))
+Prueba16 <- datos %>%         # Datos
+   group_by(cant_de_est) %>%  # Agrupado por cantidad de garages
+   summarise(media_precio = mean(precio)) # Resumido por media del precio
 Prueba16
 
 
 
-ggplot(datos, aes(x=cant_de_est)) +
-     geom_bar() + 
-     scale_x_continuous(breaks =  Prueba16$cant_de_est)
+# Gráfico de conteo por cantidad de garages
+ggplot(datos, aes(x=cant_de_est)) + # Datos y ejes
+     geom_bar() +  # Gráfico de barras
+     scale_x_continuous(breaks =  Prueba16$cant_de_est) # Elementos del eje X
 
 
 
-
-ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +    geom_bar(stat="identity") + 
-   scale_x_continuous(breaks =  Prueba16$cant_de_est)
+# Gráfico de precio en relación a la cantidad de garages 
+ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +  # Datos y ejes
+   geom_bar(stat="identity") +   # Gráfico de barras
+   scale_x_continuous(breaks =  Prueba16$cant_de_est) # Elementos del eje X
 
 
 
@@ -1031,9 +1025,10 @@ ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +    geom_bar(stat="identit
 
 # PRECIO SEGÚN METROS CUADRADOS EN DISTINTOS ELEMENTOS
 
+# Filtramos para eliminar los nulos
 datos_2 <- datos_2 %>% filter(m2_const < 3000 &  m2_totales < 5000 & precio < 15000)
 
-datos
+
 
 # m2_const = Built_Square_Meters,
 # m2_totales = Land_Square_Meters,
@@ -1045,17 +1040,20 @@ datos
 
 # METROS CUADRADOS POR CONSTRUCCIÓN
 # P20) ¿Cómo influyen los metros cuadrados por construcción en el precio?
-ggplot(datos_2, aes(x=m2_const, y=precio)) +    geom_point()
-
+ggplot(datos_2, aes(x=m2_const, y=precio)) +  # Datos y ejes
+  geom_point()  # Gráfico de barras
+ 
 
 # METROS POR TERRAZA
 # P21) ¿Cómo influyen los metros cuadrados por terraza en el precio?
-ggplot(datos_2, aes(x=m2_terraza, y=precio)) +     geom_point()
+ggplot(datos_2, aes(x=m2_terraza, y=precio)) +   # Datos y ejes   
+  geom_point()  # Gráfico de barras
 
 
 # METROS CUADRADOS POR TIERRA
 # P22) ¿Cómo influyen los metros cuadrados por tierra en el precio?
-ggplot(datos_2, aes(x=m2_totales, y=precio)) +  geom_point()
+ggplot(datos_2, aes(x=m2_totales, y=precio)) +   # Datos y ejes
+  geom_point()  # Gráfico de barras
 
 
 ```
