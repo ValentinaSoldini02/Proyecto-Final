@@ -764,6 +764,12 @@ funcion_dum(resultado_final)
 # Apartments_per_Floor (Cantidad de apartamentos en ese piso)   Español: apartamentos_por_piso
 
 
+# Filtro:
+datos <- datos %>% filter( (cant_de_piso < 20) & (apartamentos_por_piso < 14) & (nro_de_piso < 44) )
+
+
+
+
 ```
 
 ```{r}
@@ -882,7 +888,7 @@ ggplot(Prueba13, aes(x=baños, y=media_precio)) + # Datos
 
 ```
 
-# Baños
+
 
 ```{r}
 #colnames(datos)

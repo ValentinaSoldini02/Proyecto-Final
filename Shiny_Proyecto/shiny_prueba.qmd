@@ -3,8 +3,8 @@
 
 ```{r}
 # INSTALAR LIBRERÍAS
-install.packages("shiny")
-install.packages("DT")
+#install.packages("shiny")
+#install.packages("DT")
  
 
 
@@ -19,7 +19,8 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(here)
-
+library(readxl)
+#
 
 ```
 
@@ -47,6 +48,130 @@ datos
 
 Posiblmente correcto
 ```{r}
+# 
+# ui <- fluidPage(
+#   titlePanel("Análisis de Alquileres"),
+#   sidebarLayout(
+#     sidebarPanel(
+#       conditionalPanel(
+#         condition = "input.tabselected == 1",
+#         selectInput("x_axis_datos1", "Seleccione el eje X:", 
+#                     choices = list("Baños" = "baños", 
+#                                    "Habitaciones" = "cant_habitaciones", 
+#                                    "Cuartos" = "cant_cuartos",
+#                                    "Garages" = "cant_de_est")),
+#         actionButton("update_datos1", "Actualizar Gráficos")
+#       ),
+#       conditionalPanel(
+#         condition = "input.tabselected == 2",
+#         selectInput("x_axis_datos2", "Seleccione el eje X:", 
+#                     choices = list("Metros Cuadrados por Construcción" = "m2_const", 
+#                                    "Metros por Terraza" = "m2_terraza", 
+#                                    "Metros Cuadrados por Tierra" = "m2_totales")),
+#         actionButton("update_datos2", "Actualizar Gráficos")
+#       )
+#     ),
+#     mainPanel(
+#       tabsetPanel(id = "tabselected",
+#         tabPanel("Datos1",
+#                  h2("Gráfico de Datos1"),
+#                  plotOutput("barPlot"),
+#                  value = 1
+#         ),
+#         tabPanel("Datos2",
+#                  h2("Gráfico de Datos2"),
+#                  plotOutput("scatterPlot"),
+#                  value = 2
+#         ),
+#         tabPanel("Mapa",
+#                  h2("Gráfico de Mapa"),
+#                  value = 3
+#         )
+#       )
+#     )
+#   )
+# )
+# 
+# # Define el servidor (server)
+# server <- function(input, output, session) {
+#   
+#   observeEvent(input$update_datos1, {
+#     # Actualizar gráfico en la pestaña Datos1
+#     output$barPlot <- renderPlot({
+#       # Datos simulados (reemplazar con tu dataframe original)
+#       # datos <- data.frame(
+#       #   baños = sample(1:4, 100, replace = TRUE),
+#       #   cant_habitaciones = sample(1:5, 100, replace = TRUE),
+#       #   cant_cuartos = sample(1:7, 100, replace = TRUE),
+#       #   cant_de_est = sample(0:3, 100, replace = TRUE),
+#       #   precio = runif(100, 100000, 500000)
+#       # )
+#       
+#       x_axis <- input$x_axis_datos1
+#       
+#       # Seleccionar las columnas relevantes
+#       datos <- datos %>% select(all_of(c(x_axis, "precio")))
+#       
+#       # Calcular la media de precios
+#       datos_resumidos <- datos %>%
+#         group_by(across(all_of(x_axis))) %>%
+#         summarise(media_precio = mean(precio), .groups = 'drop')
+#       
+#       # Gráfico de barras para cantidad de elementos
+#       p1 <- ggplot(datos, aes_string(x = x_axis)) + 
+#         geom_bar() +
+#         scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
+#         labs(x = x_axis, y = "Cantidad")
+#       
+#       # Gráfico de barras para media de precios
+#       p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
+#         geom_bar(stat = "identity") +
+#         scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
+#         labs(x = x_axis, y = "Media Precio")
+#       
+#       # Mostrar ambos gráficos juntos
+#       gridExtra::grid.arrange(p1, p2, nrow = 2)
+#     })
+#   })
+#   
+#   observeEvent(input$update_datos2, {
+#     # Actualizar gráfico en la pestaña Datos2
+#     output$scatterPlot <- renderPlot({
+#       # Datos simulados (reemplazar con tu dataframe original)
+#       datos_2 <- datos
+#       # datos_2 <- data.frame(
+#       #   m2_const = runif(100, 50, 200),
+#       #   m2_terraza = runif(100, 10, 50),
+#       #   m2_totales = runif(100, 100, 500),
+#       #   precio = runif(100, 100000, 500000)
+#       # )
+#       
+#       x_axis <- input$x_axis_datos2
+#       
+#       # Seleccionar las columnas relevantes
+#       datos_2 <- datos_2 %>% select(all_of(c(x_axis, "precio")))
+#       
+#       ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
+#         geom_point() +
+#         labs(x = x_axis, y = "Precio") +
+#         theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
+#     })
+#   })
+# }
+# 
+# # Ejecuta la aplicación Shiny
+# shinyApp(ui = ui, server = server)
+
+
+```
+```{r}
+# datos <- datos %>% filter( (cant_de_piso < 20) & (apartamentos_por_piso < 14) & (nro_de_piso < 44) )
+
+
+```
+
+
+```{r}
 
 ui <- fluidPage(
   titlePanel("Análisis de Alquileres"),
@@ -68,6 +193,14 @@ ui <- fluidPage(
                                    "Metros por Terraza" = "m2_terraza", 
                                    "Metros Cuadrados por Tierra" = "m2_totales")),
         actionButton("update_datos2", "Actualizar Gráficos")
+      ),
+      conditionalPanel(
+        condition = "input.tabselected == 3",
+        selectInput("x_axis_datos3", "Seleccione el eje X:", 
+                    choices = list("Cantidad de pisos en el inmueble" = "cant_de_piso", 
+                                   "Número de Piso" = "nro_de_piso", 
+                                   "Apartamentos por Piso" = "apartamentos_por_piso")),
+        actionButton("update_datos3", "Actualizar Gráficos")
       )
     ),
     mainPanel(
@@ -82,9 +215,14 @@ ui <- fluidPage(
                  plotOutput("scatterPlot"),
                  value = 2
         ),
+        tabPanel("Piso",
+                 h2("Gráfico de Piso"),
+                 plotOutput("pisoPlot"),
+                 value = 3
+        ),
         tabPanel("Mapa",
                  h2("Gráfico de Mapa"),
-                 value = 3
+                 value = 4
         )
       )
     )
@@ -156,10 +294,60 @@ server <- function(input, output, session) {
         theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
     })
   })
+  
+  observeEvent(input$update_datos3, {
+    # Actualizar gráfico en la pestaña Piso
+    output$pisoPlot <- renderPlot({
+      # Datos simulados (reemplazar con tu dataframe original)
+      # datos <- data.frame(
+      #   cant_de_piso = sample(1:15, 100, replace = TRUE),
+      #   nro_de_piso = sample(1:42, 100, replace = TRUE),
+      #   apartamentos_por_piso = sample(1:10, 100, replace = TRUE),
+      #   precio = runif(100, 100000, 500000)
+      # )
+      
+      x_axis <- input$x_axis_datos3
+      
+      # Seleccionar las columnas relevantes
+      datos <- datos %>% select(all_of(c(x_axis, "precio")))
+      
+      # Gráfico dependiendo del eje X seleccionado
+      if (x_axis == "cant_de_piso") {
+        datos_resumidos <- datos %>%
+          group_by(across(all_of(x_axis))) %>%
+          summarise(Cantidad = n(), .groups = 'drop')
+        
+        ggplot(datos_resumidos, aes_string(x = x_axis, y = "Cantidad")) + 
+          geom_bar(stat = "identity") +
+          scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
+          labs(x = x_axis, y = "Cantidad")
+        
+      } else if (x_axis == "nro_de_piso") {
+        datos_resumidos <- datos %>%
+          group_by(across(all_of(x_axis))) %>%
+          summarise(media_precio = mean(precio), .groups = 'drop')
+        
+        ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
+          geom_bar(stat = "identity") +
+          scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
+          labs(x = x_axis, y = "Media Precio")
+        
+      } else if (x_axis == "apartamentos_por_piso") {
+        datos_resumidos <- datos %>%
+          group_by(across(all_of(x_axis))) %>%
+          summarise(Cantidad = n(), .groups = 'drop')
+        
+        ggplot(datos_resumidos, aes_string(x = x_axis, y = "Cantidad")) + 
+          geom_bar(stat = "identity") +
+          scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
+          labs(x = x_axis, y = "Cantidad")
+      }
+    })
+  })
 }
 
 # Ejecuta la aplicación Shiny
 shinyApp(ui = ui, server = server)
 
 
-```
+``` 
