@@ -390,7 +390,7 @@ Agrupar los barrios por municipios
 
 ```{r}
 
-datos_2 <- datos %>% # Datos
+datos <- datos %>% # Datos
   mutate(Municipio = case_when( # Casos donde a cada barrio le vamos a asociar un municipio
     
     zona %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo París","Prado")  ~ "Municipio_A",
@@ -414,17 +414,17 @@ datos_2 <- datos %>% # Datos
 
 
 
-datos_2
+datos
 ```
 
 ```{r}
 
 # Vamos a eliminar los valores atípicos que estan en el dataframe
-datos_2 <- datos_2 %>% filter(precio <= 150000 & Gastos_Comunes <= 10000)
+datos <- datos %>% filter(precio <= 150000 & Gastos_Comunes <= 10000)
 
 
 
-datos_2
+datos
 
 ```
 
@@ -446,7 +446,7 @@ colores_personalizados <- c(
 
 
 # Gráfico
-ggplot(datos_2, aes(x = zona, y = precio, fill = Municipio)) +  # Datos, ejes y color
+ggplot(datos, aes(x = zona, y = precio, fill = Municipio)) +  # Datos, ejes y color
   geom_bar(stat = "identity", position = "dodge", width = 0.7) +
   # Ancho y posición de las barras
 
@@ -472,7 +472,7 @@ Vemos que si, los barrios ubicados en el municipio A y E son los que tienen un p
 # P2) ¿En que municipio hay más alquileres?
 
 # Cantidad de alquileres por municipio
-grupo_municipio <- datos_2 %>%  # Datos
+grupo_municipio <- datos %>%  # Datos
   group_by(Municipio) %>%       # Agrupamos por municipio
   summarise(Cantidad = n())     # Resumimos con la cantidad
 grupo_municipio
@@ -493,7 +493,7 @@ Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de a
 # Pregunta 3) Qué tipo de inmuebles para alquilar hay?
 
 
-grupo_tipo <- datos_2 %>% # Datos
+grupo_tipo <- datos %>% # Datos
   group_by(tipo_prop) %>% # Agrupar por tipo de propiedad
   summarise(Cantidad = n()) # Resumir por cantidad 
 grupo_tipo
@@ -520,7 +520,7 @@ La mayoría de alquileres son de Apartamentos, muy pocos son de Tierra, de Negoc
 
 
 # Gráfico
-ggplot(datos_2, aes(x = tipo_prop, y = precio, fill = Municipio)) + # Datos, ejes y color
+ggplot(datos, aes(x = tipo_prop, y = precio, fill = Municipio)) + # Datos, ejes y color
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
   labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
@@ -541,14 +541,14 @@ ggplot(datos_2, aes(x = tipo_prop, y = precio, fill = Municipio)) + # Datos, eje
 ```
 
 ```{r}
-datos_2
+datos
 
 # P5) ¿En qué condición se encuentran los alquileres? (Subpregunta de esta: subdividiendo por tipo de alquiler)
 
-datos_2
+datos
 
 
-grupo_estado <- datos_2 %>% # Datos
+grupo_estado <- datos %>% # Datos
   group_by(Condicion) %>% # Agrupar por condición de la vivienda
   summarise(Cantidad = n()) # Resumir por la cantidad
 grupo_estado
@@ -575,7 +575,7 @@ La mayoría de los inmuebles estan en buena condición o excelente condición. P
 # P6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
 
 # Gráfico
-ggplot(datos_2, aes(x = Condicion, y = precio, fill = Municipio)) + # Datos, ejes y color
+ggplot(datos, aes(x = Condicion, y = precio, fill = Municipio)) + # Datos, ejes y color
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
   labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
@@ -597,7 +597,7 @@ ggplot(datos_2, aes(x = Condicion, y = precio, fill = Municipio)) + # Datos, eje
 
 
 # P7) ¿Como se distribuyen los gastos comúnes por Municipio?
-ggplot(datos_2, aes(x = Municipio , y = Gastos_Comunes)) +  # Datos y ejes
+ggplot(datos, aes(x = Municipio , y = Gastos_Comunes)) +  # Datos y ejes
   geom_bar(stat="identity") + # Gráfico de barras
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
@@ -608,7 +608,7 @@ ggplot(datos_2, aes(x = Municipio , y = Gastos_Comunes)) +  # Datos y ejes
 ```{r}
 # P8) ¿Cómo influye el tipo de alquiler en el nivel de gastos comunes?
 
-ggplot(datos_2, aes(x = tipo_prop, y = Gastos_Comunes)) +  # Datos y ejes
+ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes)) +  # Datos y ejes
   geom_bar(stat="identity") + # Gráfico de barras
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
@@ -626,7 +626,7 @@ ggplot(datos_2, aes(x = tipo_prop, y = Gastos_Comunes)) +  # Datos y ejes
 # P9) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
 
 
-ggplot(datos_2, aes(x = Condicion , y = Gastos_Comunes)) +  # Datos y ejes
+ggplot(datos, aes(x = Condicion , y = Gastos_Comunes)) +  # Datos y ejes
   geom_bar(stat="identity") + # Gráfico de barras
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
@@ -638,10 +638,10 @@ ggplot(datos_2, aes(x = Condicion , y = Gastos_Comunes)) +  # Datos y ejes
 
 # P10) ¿Cómo se distribuyen los Gastos Comunes en relación al tipo de alquiler por Municipio?
 
-datos_2
+datos
 
 
-ggplot(datos_2, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Datos, ejes y municipio
+ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Datos, ejes y municipio
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
   labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
@@ -661,7 +661,7 @@ ggplot(datos_2, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Da
 # P11) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
 
 
-ggplot(datos_2, aes(x = Condicion, y = Gastos_Comunes, fill = Municipio)) + # Datos, ejes y color
+ggplot(datos, aes(x = Condicion, y = Gastos_Comunes, fill = Municipio)) + # Datos, ejes y color
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
   labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
@@ -680,21 +680,15 @@ ggplot(datos_2, aes(x = Condicion, y = Gastos_Comunes, fill = Municipio)) + # Da
 
 # quitar variables: Furnished...32, Furnished...42, y Flors
 
-#names(datos_2)
+
 
 
 # # Obtenemos las columnas que tienen valores entre 0 y 1
-# dum <- datos_2 %>% select('Sea_View','Social_Housing','Barbecue','Living_Room','Closet','Patio','Pool','Garage','Pet','Gas_Pipeline','Playroom','Duplex','Heating','WiFi','Grill','Gym','Balcony','Storage','Air_Conditioning','Garden','Radiant_Floor_Heating','Solarium')
-# 
-# dum
 
-
-dum <- datos_2 %>%
+dum <- datos %>%
 select("vista_al_mar","vivienda_social","Barbecue","Living_Room","Closet","Patio","Pool","Garage","Pet","coneccion_cas","Playroom","Duplex","calefaccion","WiFi","zona_barbacoa","Gym","balcon","deposito","Air_Conditioning","jardin","losa_radiante","Solarium","amueblado")
 
 
-
-datos_2
 
 
 # Función para crear el dataframe que tiene 0 y 1 en sus filas, las variables en sus columnas y el promedio de precio en cada celda.
@@ -723,7 +717,7 @@ columnas <- colnames(dum)
 
 # Aplicar la función creada a cada columna
 for (col in columnas) { # Para cada columna
-  resultado_final <- calcular_y_unir(datos_2, col, resultado_final)
+  resultado_final <- calcular_y_unir(datos, col, resultado_final)
 } # Aplicamos la función
 
 
@@ -775,7 +769,7 @@ funcion_dum(resultado_final)
 ```{r}
 # P13) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
 
-grupo_piso_1 <- datos_2 %>% # Datos
+grupo_piso_1 <- datos %>% # Datos
   group_by(cant_de_piso) %>% # Agrupados por cantidad de pisos
   summarise(Cantidad = n()) # Resumidos por cantidad
 grupo_piso_1
@@ -830,7 +824,7 @@ ggplot(Prueba12, aes(x=nro_de_piso, y=media_precio)) + # Datos y ejes
 # P15) ¿Cómo influye la cantidad de apartamentos por piso en el precio?
 
 
-grupo_piso_1 <- datos_2 %>%   # Datos
+grupo_piso_1 <- datos %>%   # Datos
   group_by(apartamentos_por_piso) %>% # Agrupados por pisos por apartamentos
   summarise(Cantidad = n()) # Resumido por cantidad
 grupo_piso_1
@@ -887,6 +881,8 @@ ggplot(Prueba13, aes(x=baños, y=media_precio)) + # Datos
    scale_x_continuous(breaks =  Prueba13$baños) # Elementos del eje X
 
 ```
+
+# Baños
 
 ```{r}
 #colnames(datos)
@@ -993,7 +989,7 @@ ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +  # Datos y ejes
 # PRECIO SEGÚN METROS CUADRADOS EN DISTINTOS ELEMENTOS
 
 # Filtramos para eliminar los nulos
-datos_2 <- datos_2 %>% filter(m2_const < 3000 &  m2_totales < 5000 & precio < 15000)
+datos <- datos %>% filter( (m2_const < 3000 & m2_const > 0) & (m2_totales < 5000 & m2_const > 0) & (m2_terraza > 0) & (precio < 30000) )
 
 
 
@@ -1007,35 +1003,53 @@ datos_2 <- datos_2 %>% filter(m2_const < 3000 &  m2_totales < 5000 & precio < 15
 
 # METROS CUADRADOS POR CONSTRUCCIÓN
 # P20) ¿Cómo influyen los metros cuadrados por construcción en el precio?
-ggplot(datos_2, aes(x=m2_const, y=precio)) +  # Datos y ejes
+ggplot(datos, aes(x=m2_const, y=precio)) +  # Datos y ejes
   geom_point()  # Gráfico de barras
  
 
 # METROS POR TERRAZA
 # P21) ¿Cómo influyen los metros cuadrados por terraza en el precio?
-ggplot(datos_2, aes(x=m2_terraza, y=precio)) +   # Datos y ejes   
+ggplot(datos, aes(x=m2_terraza, y=precio)) +   # Datos y ejes   
   geom_point()  # Gráfico de barras
 
 
 # METROS CUADRADOS POR TIERRA
 # P22) ¿Cómo influyen los metros cuadrados por tierra en el precio?
-ggplot(datos_2, aes(x=m2_totales, y=precio)) +   # Datos y ejes
+ggplot(datos, aes(x=m2_totales, y=precio)) +   # Datos y ejes
   geom_point()  # Gráfico de barras
 
 #
 ```
 
+```{r}
+
+# Built_Square_Meters
+# Terrace_Square_Met
+# Land_Square_Metersers
+max(datos$m2_const)
+max(datos$m2_terraza)
+max(datos$m2_totales)
+
+
+```
+
+
 No parece haber una relación clara sobre la relación entre metros cuadrados y precio, no se cumple lo que uno puede intuitivamente pensar que es que el precio va a ser mayor conforme sean mayores los metros cuadrados.
 
 ```{r}
-# Quitar los 0 metros cuadrados, es algo que no tiene mucho sentido.
+# Quitar los 0 metros cuadrados, es algo que no tiene mucho sentido. (hecho)
 
+# Exportar los datos limpios
+
+library(writexl)
+#()
+write_xlsx(datos, path = here("Shiny_Proyecto","app","datos_limpios.xlsx"))
 ```
 
 # Modelo de regresión lineal multiple:
 
 ```{r}
-datos_2
+datos
 names(datos)
 
 library(tidyverse)
@@ -1050,77 +1064,77 @@ library(tseries)
 
 ```{r}
 # Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
-reemplazar_direccion <- function(datos_2) {
-  if (!"direccion" %in% colnames(datos_2) || !"zona" %in% colnames(datos_2)) {
+reemplazar_direccion <- function(datos) {
+  if (!"direccion" %in% colnames(datos) || !"zona" %in% colnames(datos)) {
     stop("Las columnas 'direccion' y 'zona' deben estar presentes en los datos.")
   }
-  datos_2$direccion <- ifelse(is.na(datos_2$direccion), datos_2$zona, datos_2$direccion)
-  return(datos_2)
+  datos$direccion <- ifelse(is.na(datos$direccion), datos$zona, datos$direccion)
+  return(datos)
 }
 
-datos_2 <- reemplazar_direccion(datos_2)
+datos <- reemplazar_direccion(datos)
 
-datos_2 <- datos_2|>
+datos <- datos|>
   mutate(precio_m2 = precio/m2_const)
 
 
 # Función para rellenar valores NA en 'precio_m2' con la media de los valores existentes
-rellenar_na_precio_m2 <- function(datos_2) {
+rellenar_na_precio_m2 <- function(datos) {
   # Verificar si la columna 'precio_m2' existe
-  if (!"precio_m2" %in% colnames(datos_2)) {
+  if (!"precio_m2" %in% colnames(datos)) {
     stop("La columna 'precio_m2' no está presente en los datos.")
   }
-media_precio_m2 <- mean(datos_2$precio_m2, na.rm = TRUE)
+media_precio_m2 <- mean(datos$precio_m2, na.rm = TRUE)
   
   # Rellenar los valores NA con la media calculada
-  datos_2$precio_m2[is.na(datos_2$precio_m2)] <- media_precio_m2
+  datos$precio_m2[is.na(datos$precio_m2)] <- media_precio_m2
   
-  return(datos_2)
+  return(datos)
 }
 
-datos_2 <- rellenar_na_precio_m2(datos_2)
+datos <- rellenar_na_precio_m2(datos)
 
 # Función para reemplazar valores NA en 'Condicion' con 'Good condition'
-reemplazar_na_condicion <- function(datos_2) {
-  if (!"Condicion" %in% colnames(datos_2)) {
+reemplazar_na_condicion <- function(datos) {
+  if (!"Condicion" %in% colnames(datos)) {
     stop("La columna 'Condicion' no está presente en los datos.")
   }
   
-  datos_2$Condicion[is.na(datos_2$Condicion)] <- "Good condition"
+  datos$Condicion[is.na(datos$Condicion)] <- "Good condition"
   
-  return(datos_2)
+  return(datos)
 }
 
-datos_2 <- reemplazar_na_condicion(datos_2)
+datos <- reemplazar_na_condicion(datos)
 
 # Función para reemplazar valores NA en 'disposicion' con 'Front'
-reemplazar_na_disposicion <- function(datos_2) {
-  if (!"disposicion" %in% colnames(datos_2)) {
+reemplazar_na_disposicion <- function(datos) {
+  if (!"disposicion" %in% colnames(datos)) {
     stop("La columna 'disposicion' no está presente en los datos.")
   }
   
-  datos_2$disposicion[is.na(datos_2$disposicion)] <- "Front"
+  datos$disposicion[is.na(datos$disposicion)] <- "Front"
   
-  return(datos_2)
+  return(datos)
 }
 
-datos_2 <- reemplazar_na_disposicion(datos_2)
+datos <- reemplazar_na_disposicion(datos)
 
-print(colSums(is.na(datos_2)))
+print(colSums(is.na(datos)))
 ```
 
 ```{r}
 
 # Eliminamos columnas innecesarias
- datos_2 <- 
-   datos_2|>
+ datos <- 
+   datos|>
    select(-Furnished...32, -Furnished...42, -Floors, -precio, -zona)
 
-names(datos_2)
-modelo <- lm(precio_m2 ~ ., data = datos_2)
+names(datos)
+modelo <- lm(precio_m2 ~ ., data = datos)
 vif(modelo)
 summary(modelo)
-names(datos_2)
+names(datos)
 
 
 vif_values <- vif(modelo)
@@ -1133,16 +1147,16 @@ valores nulos
 
 ```{r}
 
-datos_2_nulos <- data.frame(cantidad_2_nulos = sapply(datos_2, function(x) sum(is.na(x))))
+datos_nulos <- data.frame(cantidad_2_nulos = sapply(datos, function(x) sum(is.na(x))))
 # Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
 
 data_2_nulos %>% filter(cantidad_2_nulos > 0)
 
-datos_2 <- datos_2[!duplicated(datos_2), ]
-datos_2
+datos <- datos[!duplicated(datos), ]
+datos
 
-table(datos_2$Condicion)
-table(datos_2$disposicion)
+table(datos$Condicion)
+table(datos$disposicion)
 
 
 
@@ -1150,8 +1164,8 @@ table(datos_2$disposicion)
 ```
 
 ```{r}
-colnames(datos_2)
-datos_2
+colnames(datos)
+datos
 
 ```
 
