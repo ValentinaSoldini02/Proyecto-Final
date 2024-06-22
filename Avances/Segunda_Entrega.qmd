@@ -1034,7 +1034,7 @@ max(datos$m2_totales)
 ```
 
 
-No parece haber una relación clara sobre la relación entre metros cuadrados y precio, no se cumple lo que uno puede intuitivamente pensar que es que el precio va a ser mayor conforme sean mayores los metros cuadrados.
+Parece haber una relación clara sobre la relación entre metros cuadrados y precio, el precio va a ser mayor conforme sean mayores los metros cuadrados.
 
 ```{r}
 # Quitar los 0 metros cuadrados, es algo que no tiene mucho sentido. (hecho)
