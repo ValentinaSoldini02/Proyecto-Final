@@ -1070,6 +1070,26 @@ shinyApp(ui = ui, server = server)
 ``` 
 
 
+
+
+
+
+
+
+
+```{r}
+
+datos <- datos %>% filter(m2_const < 3000 &  m2_totales < 5000 & precio < 15000)
+
+
+
+``` 
+
+
+
+
+
+Posiblmente correcto
 ```{r}
 
 ui <- fluidPage(
