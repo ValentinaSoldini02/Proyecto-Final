@@ -792,36 +792,22 @@ funcion_dum(resultado_final)
 
 datos_2
 
-# Floor = nro_de_piso
-
-grupo_piso_1 <- datos_2 %>%
-  group_by(nro_de_piso) %>%
-  summarise(Cantidad = n())
-grupo_piso_1
-
-
-# Gastos comunes por Municipio
-ggplot(grupo_piso_1, aes(x = nro_de_piso, y=Cantidad)) +  # Datos y ejes
-   geom_histogram(stat="identity") +
-#  geom_bar(stat="identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
+# # Floor = nro_de_piso
+# grupo_piso_1 <- datos_2 %>% # Datos
+#   group_by(nro_de_piso) %>% #Agrupamos por número de piso
+#   summarise(Cantidad = n()) # Resumimos por cantidad
+# grupo_piso_1
+# 
+# 
+# # Gastos comunes por Municipio
+# ggplot(grupo_piso_1, aes(x = nro_de_piso, y=Cantidad)) +  # Datos y ejes
+#    geom_histogram(stat="identity") +
+#   theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# 
 
 
 
 
-
-grupo_piso_1 <- datos_2 %>%
-  group_by(apartamentos_por_piso) %>%
-  summarise(Cantidad = n())
-grupo_piso_1
-
-
-# Gastos comunes por Municipio
-ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ejes
-   geom_histogram(stat="identity") +
-#  geom_bar(stat="identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 
 
@@ -865,7 +851,7 @@ ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
 ```{r}
 
 
-# # P1) Cuánto más alto el piso, más caro? Como afecta el piso en el que estoy al precio?
+# P13) ¿Cómo influye el piso en el precio? Los pisos más altos o más bajos influyen en el precio?
 
 
 Prueba11 <- datos %>%
@@ -873,15 +859,46 @@ Prueba11 <- datos %>%
    summarise(media_precio = mean(precio))
 Prueba11
 
+
+
 #Prueba11[!c(102, 408, 506, 774, 802), ]
 Prueba12 <- Prueba11 %>% filter(nro_de_piso < 43)
 
+
+
 ggplot(Prueba12, aes(x=nro_de_piso, y=media_precio)) +
-      geom_bar(stat="identity")
+      geom_bar(stat="identity") +
+      scale_x_continuous(breaks =  Prueba12$nro_de_piso)
+
 
 
 # Parece que en los pisos mas altos el precio es
 ```
+
+```{r}
+# P14) ¿Cómo influye la cantidad de apartamentos por piso en el precio?
+
+
+grupo_piso_1 <- datos_2 %>%
+  group_by(apartamentos_por_piso) %>%
+  summarise(Cantidad = n())
+grupo_piso_1
+
+
+grupo_piso_1 <- grupo_piso_1 %>% filter(apartamentos_por_piso < 11)
+
+
+# Gastos comunes por Municipio
+ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ejes
+   geom_histogram(stat="identity") +
+   scale_x_continuous(breaks =  grupo_piso_1$apartamentos_por_piso)
+
+
+
+``` 
+
+
+
 
 ```{r}
 # P2) Number_of_Floors
@@ -1124,7 +1141,7 @@ datos_2
 
 
 
-# Modelo de regrecion lineal multiple:
+# Modelo de regresión lineal multiple:
 
 ```{r}
 datos_2
