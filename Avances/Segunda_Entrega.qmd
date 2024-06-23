@@ -603,7 +603,6 @@ ggplot(datos, aes(x = Municipio , y = Gastos_Comunes)) +  # Datos y ejes
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
-
 ```
 
 ```{r}
