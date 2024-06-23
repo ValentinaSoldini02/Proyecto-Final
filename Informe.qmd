@@ -225,7 +225,6 @@ En relación a los dos gráficos anteriores, se puede observar que las propiedad
 
 
 Comendando la limpieza para la regrecion lineal multiple:
-Como los datos que obtuvimos tenian datos nulos, esto no es lo mejor para hacer una regrecion lineal multiple ya que puede causar problemas en el ajuste del modelo, por esta razon en las diferentes columnas que tenian datos nulos se opto rellenar esos datos con distintos metodos. Como ya se Menciono anteriormente la columna de "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato.A la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad.A la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
 
 Dado que la presencia de los valores nulos en los datos pueden afectar negativamente el ajuste y la precisión lineal múltiple, se realizaron varios pasos de limpieza de datos para manejar estos valores faltantes de manera mas adecuada. A continuación, se decriben los métodos utilizados para las diferentes columnas que contiene valores nulos en nuestro conjunto de datos, en la columna de "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato, en la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad y por último la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
 
@@ -278,9 +277,49 @@ datos_2 <- reemplazar_na_disposicion(datos_2)
 
 print(colSums(is.na(datos_2)))
 
-
 names(datos_2)
+
+
+# Convertir columnas categóricas a factores si es necesario
+datos_2$tipo_prop <- as.factor(datos_2$tipo_prop)
+datos_2$zona <- as.factor(datos_2$zona)
+datos_2$Condition <- as.factor(datos_2$Condition)
+datos_2$disposicion <- as.factor(datos_2$disposicion)
+
+datos_2 <- datos_2 %>% na.omit()
+
+
+modelo <- lm(precio_m2 ~., data = datos_2)
+
+# Resumen del modelo
+summary(modelo)
+vif(modelo)
+
+
+
+
+#correlacion:
+  
+numerical_vars <- datos_2 %>%
+  select_if(is.numeric)
+
+# Calcular la matriz de correlación
+cor_matrix <- cor(numerical_vars, use = "complete.obs")
+
+install.packages("corrplot")
+library(corrplot)
+# Visualizar la matriz de correlación
+corrplot(cor_matrix, method = "circle", type = "upper", tl.cex = 0.6, tl.col = "black")
+
+#columnas que me gustaria sacar
+#año_de_cont, cantidad de habitaciones y cantidad de estacionamientos estan muy correlacionadas. Cantidad de estacionamientos a lo mejor la puedo sacar y que me deje de complicar la vida. Lacolumna banios tambien me esta complicando aunque entiendo que es importane para la prediccion del precio.
+#Otra columna que me gustraia sacar es la de loza radiante porque hay otra columna que es calefaccion y asumo que la loza radiante es un tipo de calefaccion.
+
+
+
+modelo <- lm(precio_m2 ~. -losa_radiante - año_de_const - cant_de_est - baños -Apartments_per_Floor -cant_cuartos - cant_de_piso, data = datos_2)
+summary(modelo)
+vif(modelo)
 ```
 
 
->>>>>>> a00730a012f1e94d8e5c4951d89f815d7062cd4d
