@@ -356,7 +356,7 @@ shinyApp(ui = ui, server = server)
 
 
 ```{r}
-
+# PRUEBA 2
 ui <- fluidPage(
   titlePanel("Análisis de Alquileres"),
   sidebarLayout(
@@ -562,3 +562,151 @@ shinyApp(ui = ui, server = server)
 
 
 ```
+
+
+
+
+
+
+```{r}
+# EMI CORRECTO
+ui <- fluidPage(
+  titlePanel("Análisis de Alquileres"),
+  sidebarLayout(
+    sidebarPanel(
+      conditionalPanel(
+        condition = "input.tabselected == 1",
+        selectInput("x_axis_datos1", "Seleccione el eje X:", 
+                    choices = list("Baños" = "baños", 
+                                   "Habitaciones" = "cant_habitaciones", 
+                                   "Cuartos" = "cant_cuartos",
+                                   "Garages" = "cant_de_est")),
+        actionButton("update_datos1", "Actualizar Gráficos")
+      ),
+      conditionalPanel(
+        condition = "input.tabselected == 2",
+        selectInput("x_axis_datos2", "Seleccione el eje X:", 
+                    choices = list("Metros Cuadrados por Construcción" = "m2_const", 
+                                   "Metros por Terraza" = "m2_terraza", 
+                                   "Metros Cuadrados por Tierra" = "m2_totales")),
+        actionButton("update_datos2", "Actualizar Gráficos")
+      ),
+      conditionalPanel(
+        condition = "input.tabselected == 4",
+        selectInput("x_axis_gastos", "Seleccione el eje X para los gráficos de Gastos Comunes:", 
+                    choices = list("Municipio" = "Municipio", 
+                                   "Tipo de Propiedad" = "tipo_prop", 
+                                   "Condición" = "Condicion")),
+        actionButton("update_gastos", "Actualizar Gráficos")
+      )
+    ),
+    mainPanel(
+      tabsetPanel(id = "tabselected",
+        tabPanel("Datos1",
+                 h2("Gráfico de Datos1"),
+                 plotOutput("barPlot"),
+                 value = 1
+        ),
+        tabPanel("Datos2",
+                 h2("Gráfico de Datos2"),
+                 plotOutput("scatterPlot"),
+                 value = 2
+        ),
+        tabPanel("Mapa",
+                 h2("Gráfico de Mapa"),
+                 value = 3
+        ),
+        tabPanel("Gastos Comunes",
+                 h2("Gráfico de Gastos Comunes"),
+                 plotOutput("gastosPlot1"),
+                 plotOutput("gastosPlot2"),
+                 plotOutput("gastosPlot3"),
+                 value = 4
+        ),
+        tabPanel("Bernoulli",
+                 h2("Gráfico de Bernoulli"),
+                 plotOutput("bernoulliPlot"),
+                 value = 5
+        )
+      )
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  
+  observeEvent(input$update_datos1, {
+    output$barPlot <- renderPlot({
+      x_axis <- input$x_axis_datos1
+      datos <- datos %>% select(all_of(c(x_axis, "precio")))
+      datos_resumidos <- datos %>%
+        group_by(across(all_of(x_axis))) %>%
+        summarise(media_precio = mean(precio), .groups = 'drop')
+      p1 <- ggplot(datos, aes_string(x = x_axis)) + 
+        geom_bar() +
+        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
+        labs(x = x_axis, y = "Cantidad")
+      p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
+        geom_bar(stat = "identity") +
+        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
+        labs(x = x_axis, y = "Media Precio")
+      gridExtra::grid.arrange(p1, p2, nrow = 2)
+    })
+  })
+  
+  observeEvent(input$update_datos2, {
+    output$scatterPlot <- renderPlot({
+      x_axis <- input$x_axis_datos2
+      datos_2 <- datos %>% select(all_of(c(x_axis, "precio")))
+      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
+        geom_point() +
+        labs(x = x_axis, y = "Precio") +
+        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
+    })
+  })
+  
+  observeEvent(input$update_gastos, {
+    x_axis <- input$x_axis_gastos
+    
+    output$gastosPlot1 <- renderPlot({
+      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
+        geom_bar(stat="identity") + 
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    })
+    
+    output$gastosPlot2 <- renderPlot({
+      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
+        geom_bar(stat="identity") + 
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    })
+    
+    output$gastosPlot3 <- renderPlot({
+      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
+        geom_bar(stat="identity") + 
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    })
+  })
+  
+  observe({
+    output$bernoulliPlot <- renderPlot({
+      dum <- datos %>%
+        select("vista_al_mar", "vivienda_social", "Barbecue", "Living_Room", "Closet", "Patio", "Pool", "Garage", "Pet", "coneccion_cas", "Playroom", "Duplex", "calefaccion", "WiFi", "zona_barbacoa", "Gym", "balcon", "deposito", "Air_Conditioning", "jardin", "losa_radiante", "Solarium", "amueblado")
+      resultado_final <- data.frame(valor = c(0, 1))
+      columnas <- colnames(dum)
+      for (col in columnas) {
+        resultado_final <- calcular_y_unir(datos, col, resultado_final)
+      }
+      data_long <- resultado_final %>%
+        pivot_longer(-valor, names_to = "variable", values_to = "value")
+      ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) + 
+        geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +  
+        labs(x = "Variable", y = "Value", fill = "Value") + 
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    })
+  })
+}
+
+shinyApp(ui = ui, server = server)
+
+
+```` 
