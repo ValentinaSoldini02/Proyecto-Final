@@ -1050,7 +1050,6 @@ library(writexl)
 write_xlsx(datos, path = here("Shiny_Proyecto","app","datos_limpios.xlsx"))
 ```
 
-
 ```{r}
 # "disposicion", "Character", "En que posición se encuentra la propiedad como, interior, frente, fondo"
 
@@ -1096,10 +1095,6 @@ table(datos$disposicion)
 
 
 ```
-
-
-
-
 
 # Modelo de regresión lineal multiple:
 
