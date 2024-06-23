@@ -42,1329 +42,15 @@ datos
 
 
 
-
-
-
-
-Posiblmente correcto
-```{r}
-# 
-# ui <- fluidPage(
-#   titlePanel("Análisis de Alquileres"),
-#   sidebarLayout(
-#     sidebarPanel(
-#       conditionalPanel(
-#         condition = "input.tabselected == 1",
-#         selectInput("x_axis_datos1", "Seleccione el eje X:", 
-#                     choices = list("Baños" = "baños", 
-#                                    "Habitaciones" = "cant_habitaciones", 
-#                                    "Cuartos" = "cant_cuartos",
-#                                    "Garages" = "cant_de_est")),
-#         actionButton("update_datos1", "Actualizar Gráficos")
-#       ),
-#       conditionalPanel(
-#         condition = "input.tabselected == 2",
-#         selectInput("x_axis_datos2", "Seleccione el eje X:", 
-#                     choices = list("Metros Cuadrados por Construcción" = "m2_const", 
-#                                    "Metros por Terraza" = "m2_terraza", 
-#                                    "Metros Cuadrados por Tierra" = "m2_totales")),
-#         actionButton("update_datos2", "Actualizar Gráficos")
-#       )
-#     ),
-#     mainPanel(
-#       tabsetPanel(id = "tabselected",
-#         tabPanel("Datos1",
-#                  h2("Gráfico de Datos1"),
-#                  plotOutput("barPlot"),
-#                  value = 1
-#         ),
-#         tabPanel("Datos2",
-#                  h2("Gráfico de Datos2"),
-#                  plotOutput("scatterPlot"),
-#                  value = 2
-#         ),
-#         tabPanel("Mapa",
-#                  h2("Gráfico de Mapa"),
-#                  value = 3
-#         )
-#       )
-#     )
-#   )
-# )
-# 
-# # Define el servidor (server)
-# server <- function(input, output, session) {
-#   
-#   observeEvent(input$update_datos1, {
-#     # Actualizar gráfico en la pestaña Datos1
-#     output$barPlot <- renderPlot({
-#       # Datos simulados (reemplazar con tu dataframe original)
-#       # datos <- data.frame(
-#       #   baños = sample(1:4, 100, replace = TRUE),
-#       #   cant_habitaciones = sample(1:5, 100, replace = TRUE),
-#       #   cant_cuartos = sample(1:7, 100, replace = TRUE),
-#       #   cant_de_est = sample(0:3, 100, replace = TRUE),
-#       #   precio = runif(100, 100000, 500000)
-#       # )
-#       
-#       x_axis <- input$x_axis_datos1
-#       
-#       # Seleccionar las columnas relevantes
-#       datos <- datos %>% select(all_of(c(x_axis, "precio")))
-#       
-#       # Calcular la media de precios
-#       datos_resumidos <- datos %>%
-#         group_by(across(all_of(x_axis))) %>%
-#         summarise(media_precio = mean(precio), .groups = 'drop')
-#       
-#       # Gráfico de barras para cantidad de elementos
-#       p1 <- ggplot(datos, aes_string(x = x_axis)) + 
-#         geom_bar() +
-#         scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-#         labs(x = x_axis, y = "Cantidad")
-#       
-#       # Gráfico de barras para media de precios
-#       p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
-#         geom_bar(stat = "identity") +
-#         scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-#         labs(x = x_axis, y = "Media Precio")
-#       
-#       # Mostrar ambos gráficos juntos
-#       gridExtra::grid.arrange(p1, p2, nrow = 2)
-#     })
-#   })
-#   
-#   observeEvent(input$update_datos2, {
-#     # Actualizar gráfico en la pestaña Datos2
-#     output$scatterPlot <- renderPlot({
-#       # Datos simulados (reemplazar con tu dataframe original)
-#       datos_2 <- datos
-#       # datos_2 <- data.frame(
-#       #   m2_const = runif(100, 50, 200),
-#       #   m2_terraza = runif(100, 10, 50),
-#       #   m2_totales = runif(100, 100, 500),
-#       #   precio = runif(100, 100000, 500000)
-#       # )
-#       
-#       x_axis <- input$x_axis_datos2
-#       
-#       # Seleccionar las columnas relevantes
-#       datos_2 <- datos_2 %>% select(all_of(c(x_axis, "precio")))
-#       
-#       ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
-#         geom_point() +
-#         labs(x = x_axis, y = "Precio") +
-#         theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
-#     })
-#   })
-# }
-# 
-# # Ejecuta la aplicación Shiny
-# shinyApp(ui = ui, server = server)
-
-
-```
-```{r}
-# datos <- datos %>% filter( (cant_de_piso < 20) & (apartamentos_por_piso < 14) & (nro_de_piso < 44) )
-
-
-```
-
-
 ```{r}
 
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
-      conditionalPanel(
-        condition = "input.tabselected == 1",
-        selectInput("x_axis_datos1", "Seleccione el eje X:", 
-                    choices = list("Baños" = "baños", 
-                                   "Habitaciones" = "cant_habitaciones", 
-                                   "Cuartos" = "cant_cuartos",
-                                   "Garages" = "cant_de_est")),
-        actionButton("update_datos1", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 2",
-        selectInput("x_axis_datos2", "Seleccione el eje X:", 
-                    choices = list("Metros Cuadrados por Construcción" = "m2_const", 
-                                   "Metros por Terraza" = "m2_terraza", 
-                                   "Metros Cuadrados por Tierra" = "m2_totales")),
-        actionButton("update_datos2", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 3",
-        selectInput("x_axis_datos3", "Seleccione el eje X:", 
-                    choices = list("Cantidad de pisos en el inmueble" = "cant_de_piso", 
-                                   "Número de Piso" = "nro_de_piso", 
-                                   "Apartamentos por Piso" = "apartamentos_por_piso")),
-        actionButton("update_datos3", "Actualizar Gráficos")
-      )
-    ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-        tabPanel("Datos1",
-                 h2("Gráfico de Datos1"),
-                 plotOutput("barPlot"),
-                 value = 1
-        ),
-        tabPanel("Datos2",
-                 h2("Gráfico de Datos2"),
-                 plotOutput("scatterPlot"),
-                 value = 2
-        ),
-        tabPanel("Piso",
-                 h2("Gráfico de Piso"),
-                 plotOutput("pisoPlot"),
-                 value = 3
-        ),
-        tabPanel("Mapa",
-                 h2("Gráfico de Mapa"),
-                 value = 4
-        )
-      )
-    )
-  )
-)
-
-# Define el servidor (server)
-server <- function(input, output, session) {
-  
-  observeEvent(input$update_datos1, {
-    # Actualizar gráfico en la pestaña Datos1
-    output$barPlot <- renderPlot({
-      # Datos simulados (reemplazar con tu dataframe original)
-      # datos <- data.frame(
-      #   baños = sample(1:4, 100, replace = TRUE),
-      #   cant_habitaciones = sample(1:5, 100, replace = TRUE),
-      #   cant_cuartos = sample(1:7, 100, replace = TRUE),
-      #   cant_de_est = sample(0:3, 100, replace = TRUE),
-      #   precio = runif(100, 100000, 500000)
-      # )
-      
-      x_axis <- input$x_axis_datos1
-      
-      # Seleccionar las columnas relevantes
-      datos <- datos %>% select(all_of(c(x_axis, "precio")))
-      
-      # Calcular la media de precios
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(media_precio = mean(precio), .groups = 'drop')
-      
-      # Gráfico de barras para cantidad de elementos
-      p1 <- ggplot(datos, aes_string(x = x_axis)) + 
-        geom_bar() +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Cantidad")
-      
-      # Gráfico de barras para media de precios
-      p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
-        geom_bar(stat = "identity") +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Media Precio")
-      
-      # Mostrar ambos gráficos juntos
-      gridExtra::grid.arrange(p1, p2, nrow = 2)
-    })
-  })
-  
-  observeEvent(input$update_datos2, {
-    # Actualizar gráfico en la pestaña Datos2
-    output$scatterPlot <- renderPlot({
-      # Datos simulados (reemplazar con tu dataframe original)
-      datos_2 <- datos
-      # datos_2 <- data.frame(
-      #   m2_const = runif(100, 50, 200),
-      #   m2_terraza = runif(100, 10, 50),
-      #   m2_totales = runif(100, 100, 500),
-      #   precio = runif(100, 100000, 500000)
-      # )
-      
-      x_axis <- input$x_axis_datos2
-      
-      # Seleccionar las columnas relevantes
-      datos_2 <- datos_2 %>% select(all_of(c(x_axis, "precio")))
-      
-      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
-        geom_point() +
-        labs(x = x_axis, y = "Precio") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
-    })
-  })
-  
-  observeEvent(input$update_datos3, {
-    # Actualizar gráfico en la pestaña Piso
-    output$pisoPlot <- renderPlot({
-      # Datos simulados (reemplazar con tu dataframe original)
-      # datos <- data.frame(
-      #   cant_de_piso = sample(1:15, 100, replace = TRUE),
-      #   nro_de_piso = sample(1:42, 100, replace = TRUE),
-      #   apartamentos_por_piso = sample(1:10, 100, replace = TRUE),
-      #   precio = runif(100, 100000, 500000)
-      # )
-      
-      x_axis <- input$x_axis_datos3
-      
-      # Seleccionar las columnas relevantes
-      datos <- datos %>% select(all_of(c(x_axis, "precio")))
-      
-      # Gráfico dependiendo del eje X seleccionado
-      if (x_axis == "cant_de_piso") {
-        datos_resumidos <- datos %>%
-          group_by(across(all_of(x_axis))) %>%
-          summarise(Cantidad = n(), .groups = 'drop')
-        
-        ggplot(datos_resumidos, aes_string(x = x_axis, y = "Cantidad")) + 
-          geom_bar(stat = "identity") +
-          scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-          labs(x = x_axis, y = "Cantidad")
-        
-      } else if (x_axis == "nro_de_piso") {
-        datos_resumidos <- datos %>%
-          group_by(across(all_of(x_axis))) %>%
-          summarise(media_precio = mean(precio), .groups = 'drop')
-        
-        ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
-          geom_bar(stat = "identity") +
-          scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-          labs(x = x_axis, y = "Media Precio")
-        
-      } else if (x_axis == "apartamentos_por_piso") {
-        datos_resumidos <- datos %>%
-          group_by(across(all_of(x_axis))) %>%
-          summarise(Cantidad = n(), .groups = 'drop')
-        
-        ggplot(datos_resumidos, aes_string(x = x_axis, y = "Cantidad")) + 
-          geom_bar(stat = "identity") +
-          scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-          labs(x = x_axis, y = "Cantidad")
-      }
-    })
-  })
-}
-
-# Ejecuta la aplicación Shiny
-shinyApp(ui = ui, server = server)
-
-
-``` 
 
 
 
-
-```{r}
-# PRUEBA 2
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
-      conditionalPanel(
-        condition = "input.tabselected == 1",
-        selectInput("x_axis_datos1", "Seleccione el eje X:", 
-                    choices = list("Baños" = "baños", 
-                                   "Habitaciones" = "cant_habitaciones", 
-                                   "Cuartos" = "cant_cuartos",
-                                   "Garages" = "cant_de_est")),
-        actionButton("update_datos1", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 2",
-        selectInput("x_axis_datos2", "Seleccione el eje X:", 
-                    choices = list("Metros Cuadrados por Construcción" = "m2_const", 
-                                   "Metros por Terraza" = "m2_terraza", 
-                                   "Metros Cuadrados por Tierra" = "m2_totales")),
-        actionButton("update_datos2", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 3",
-        selectInput("x_axis_piso", "Seleccione el eje X:", 
-                    choices = list("Cantidad de Pisos" = "cant_de_piso", 
-                                   "Número de Piso" = "nro_de_piso", 
-                                   "Apartamentos por Piso" = "apartamentos_por_piso")),
-        actionButton("update_piso", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 4",
-        actionButton("update_bernoulli", "Actualizar Gráfico Bernoulli")
-      )
-    ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-        tabPanel("Datos1",
-                 h2("Gráfico de Datos1"),
-                 plotOutput("barPlot"),
-                 value = 1
-        ),
-        tabPanel("Datos2",
-                 h2("Gráfico de Datos2"),
-                 plotOutput("scatterPlot"),
-                 value = 2
-        ),
-        tabPanel("Piso",
-                 h2("Gráfico de Piso"),
-                 plotOutput("pisoPlot"),
-                 value = 3
-        ),
-        tabPanel("Bernoulli",
-                 h2("Gráfico Bernoulli"),
-                 plotOutput("bernoulliPlot"),
-                 value = 4
-        ),
-        tabPanel("Mapa",
-                 h2("Gráfico de Mapa"),
-                 value = 5
-        )
-      )
-    )
-  )
-)
-
-# Define el servidor (server)
-server <- function(input, output, session) {
-  
-  observeEvent(input$update_datos1, {
-    # Actualizar gráfico en la pestaña Datos1
-    output$barPlot <- renderPlot({
-      # Datos simulados (reemplazar con tu dataframe original)
-      # datos <- data.frame(
-      #   baños = sample(1:4, 100, replace = TRUE),
-      #   cant_habitaciones = sample(1:5, 100, replace = TRUE),
-      #   cant_cuartos = sample(1:7, 100, replace = TRUE),
-      #   cant_de_est = sample(0:3, 100, replace = TRUE),
-      #   precio = runif(100, 100000, 500000)
-      # )
-      
-      x_axis <- input$x_axis_datos1
-      
-      # Seleccionar las columnas relevantes
-      datos <- datos %>% select(all_of(c(x_axis, "precio")))
-      
-      # Calcular la media de precios
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(media_precio = mean(precio), .groups = 'drop')
-      
-      # Gráfico de barras para cantidad de elementos
-      p1 <- ggplot(datos, aes_string(x = x_axis)) + 
-        geom_bar() +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Cantidad")
-      
-      # Gráfico de barras para media de precios
-      p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
-        geom_bar(stat = "identity") +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Media Precio")
-      
-      # Mostrar ambos gráficos juntos
-      gridExtra::grid.arrange(p1, p2, nrow = 2)
-    })
-  })
-  
-  observeEvent(input$update_datos2, {
-    # Actualizar gráfico en la pestaña Datos2
-    output$scatterPlot <- renderPlot({
-      # Datos simulados (reemplazar con tu dataframe original)
-      datos_2 <- datos
-      # datos_2 <- data.frame(
-      #   m2_const = runif(100, 50, 200),
-      #   m2_terraza = runif(100, 10, 50),
-      #   m2_totales = runif(100, 100, 500),
-      #   precio = runif(100, 100000, 500000)
-      # )
-      
-      x_axis <- input$x_axis_datos2
-      
-      # Seleccionar las columnas relevantes
-      datos_2 <- datos_2 %>% select(all_of(c(x_axis, "precio")))
-      
-      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
-        geom_point() +
-        labs(x = x_axis, y = "Precio") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
-    })
-  })
-  
-  observeEvent(input$update_piso, {
-    # Actualizar gráfico en la pestaña Piso
-    output$pisoPlot <- renderPlot({
-      x_axis <- input$x_axis_piso
-      
-      datos_piso <- datos %>% select(all_of(c(x_axis, "precio")))
-      
-      # Gráfico según la selección
-      if (x_axis == "cant_de_piso") {
-        grupo_piso <- datos_piso %>% group_by(cant_de_piso) %>% summarise(Cantidad = n())
-        grupo_piso <- grupo_piso %>% filter(cant_de_piso < 16)
-        
-        ggplot(grupo_piso, aes(x = cant_de_piso, y = Cantidad)) +
-          geom_bar(stat = "identity") +
-          scale_x_continuous(breaks = grupo_piso$cant_de_piso)
-        
-      } else if (x_axis == "nro_de_piso") {
-        Prueba <- datos_piso %>% group_by(nro_de_piso) %>% summarise(media_precio = mean(precio))
-        Prueba <- Prueba %>% filter(nro_de_piso < 43)
-        
-        ggplot(Prueba, aes(x = nro_de_piso, y = media_precio)) +
-          geom_bar(stat = "identity") +
-          scale_x_continuous(breaks = Prueba$nro_de_piso)
-        
-      } else if (x_axis == "apartamentos_por_piso") {
-        grupo_piso <- datos_piso %>% group_by(apartamentos_por_piso) %>% summarise(Cantidad = n())
-        grupo_piso <- grupo_piso %>% filter(apartamentos_por_piso < 11)
-        
-        ggplot(grupo_piso, aes(x = apartamentos_por_piso, y = Cantidad)) +
-          geom_bar(stat = "identity") +
-          scale_x_continuous(breaks = grupo_piso$apartamentos_por_piso)
-      }
-    })
-  })
-  
-  observeEvent(input$update_bernoulli, {
-    # Actualizar gráfico en la pestaña Bernoulli
-    output$bernoulliPlot <- renderPlot({
-      dum <- datos %>%
-        select("vista_al_mar","vivienda_social","Barbecue","Living_Room","Closet","Patio","Pool","Garage","Pet","coneccion_cas","Playroom","Duplex","calefaccion","WiFi","zona_barbacoa","Gym","balcon","deposito","Air_Conditioning","jardin","losa_radiante","Solarium","amueblado")
-      
-      calcular_y_unir <- function(df, col, resultado_final) { 
-        temp <- df %>%
-          group_by(valor = .data[[col]]) %>%
-          summarise(Mean = mean(precio, na.rm = TRUE), .groups = "drop")
-        colnames(temp)[2] <- paste0(col, "_Media")
-        resultado_final <- left_join(resultado_final, temp, by = "valor", relationship = "many-to-one")
-        return(resultado_final)
-      }
-      
-      resultado_final <- data.frame(valor = c(0, 1))
-      columnas <- colnames(dum)
-      
-      for (col in columnas) { 
-        resultado_final <- calcular_y_unir(datos, col, resultado_final)
-      }
-      
-      data_long <- resultado_final %>%
-        pivot_longer(-valor, names_to = "variable", values_to = "value")
-      
-      ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) + 
-        geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +
-        labs(x = "Variable", y = "Value", fill = "Value") +
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-  })
-}
-
-# Ejecutar la aplicación
-shinyApp(ui = ui, server = server)
-
-
-
-```
-
-
-
-
-
-
-```{r}
-# SEMI CORRECTO
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
-      conditionalPanel(
-        condition = "input.tabselected == 1",
-        selectInput("x_axis_datos1", "Seleccione el eje X:", 
-                    choices = list("Baños" = "baños", 
-                                  "Habitaciones" = "cant_habitaciones",                                    #"Disposición" = "disposicion",
-                                   "Cuartos" = "cant_cuartos",
-                                   "Garages" = "cant_de_est")),
-        actionButton("update_datos1", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 2",
-        selectInput("x_axis_datos2", "Seleccione el eje X:", 
-                    choices = list("Metros Cuadrados por Construcción" = "m2_const", 
-                                   "Metros por Terraza" = "m2_terraza", 
-                                   "Metros Cuadrados por Tierra" = "m2_totales")),
-        actionButton("update_datos2", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 4",
-        selectInput("x_axis_gastos", "Seleccione el eje X para los gráficos de Gastos Comunes:", 
-                    choices = list("Municipio" = "Municipio", 
-                                   "Tipo de Propiedad" = "tipo_prop", 
-                                   "Condición" = "Condicion")),
-        actionButton("update_gastos", "Actualizar Gráficos")
-      )
-    ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-        tabPanel("Datos1",
-                 h2("Gráfico de Datos1"),
-                 plotOutput("barPlot"),
-                 value = 1
-        ),
-        tabPanel("Datos2",
-                 h2("Gráfico de Datos2"),
-                 plotOutput("scatterPlot"),
-                 value = 2
-        ),
-        tabPanel("Mapa",
-                 h2("Gráfico de Mapa"),
-                 value = 3
-        ),
-        tabPanel("Gastos Comunes",
-                 h2("Gráfico de Gastos Comunes"),
-                 plotOutput("gastosPlot1"),
-                 plotOutput("gastosPlot2"),
-                 plotOutput("gastosPlot3"),
-                 value = 4
-        ),
-        tabPanel("Bernoulli",
-                 h2("Gráfico de Bernoulli"),
-                 plotOutput("bernoulliPlot"),
-                 value = 5
-        )
-      )
-    )
-  )
-)
-
-server <- function(input, output, session) {
-  
-  observeEvent(input$update_datos1, {
-    output$barPlot <- renderPlot({
-      x_axis <- input$x_axis_datos1
-      datos <- datos %>% select(all_of(c(x_axis, "precio")))
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(media_precio = mean(precio), .groups = 'drop')
-      p1 <- ggplot(datos, aes_string(x = x_axis)) + 
-        geom_bar() +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Cantidad")
-      p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
-        geom_bar(stat = "identity") +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Media Precio")
-      gridExtra::grid.arrange(p1, p2, nrow = 2)
-    })
-  })
-  
-  observeEvent(input$update_datos2, {
-    output$scatterPlot <- renderPlot({
-      x_axis <- input$x_axis_datos2
-      datos_2 <- datos %>% select(all_of(c(x_axis, "precio")))
-      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
-        geom_point() +
-        labs(x = x_axis, y = "Precio") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
-    })
-  })
-  
-  observeEvent(input$update_gastos, {
-    x_axis <- input$x_axis_gastos
-    
-    output$gastosPlot1 <- renderPlot({
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-    
-    output$gastosPlot2 <- renderPlot({
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-    
-    output$gastosPlot3 <- renderPlot({
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-  })
-  
-  observe({
-    output$bernoulliPlot <- renderPlot({
-      dum <- datos %>%
-        select("vista_al_mar", "vivienda_social", "Barbecue", "Living_Room", "Closet", "Patio", "Pool", "Garage", "Pet", "coneccion_cas", "Playroom", "Duplex", "calefaccion", "WiFi", "zona_barbacoa", "Gym", "balcon", "deposito", "Air_Conditioning", "jardin", "losa_radiante", "Solarium", "amueblado")
-      resultado_final <- data.frame(valor = c(0, 1))
-      columnas <- colnames(dum)
-      for (col in columnas) {
-        resultado_final <- calcular_y_unir(datos, col, resultado_final)
-      }
-      data_long <- resultado_final %>%
-        pivot_longer(-valor, names_to = "variable", values_to = "value")
-      ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) + 
-        geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +  
-        labs(x = "Variable", y = "Value", fill = "Value") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-  })
-}
-
-shinyApp(ui = ui, server = server)
-
-
-```
-
-# Muni
-```{r}
-# Por municipios
 colores_personalizados <- c(
-  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   
-  "Municipio_CH" = "purple",  "Municipio_D" = "orange",   "Municipio_E" = "pink",
-  "Municipio_F" = "brown",  "Municipio_G" = "cyan"
-)
-
-
-datos
-
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
-      conditionalPanel(
-        condition = "input.tabselected == 1",
-        selectInput("x_axis_datos1", "Seleccione el eje X:", 
-                    choices = list("Baños" = "baños", 
-                                  "Habitaciones" = "cant_habitaciones",
-                                   #"Disposicioó" = "disposicion",
-                                   "Cuartos" = "cant_cuartos",
-                                   "Garages" = "cant_de_est")),
-        actionButton("update_datos1", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 2",
-        selectInput("x_axis_datos2", "Seleccione el eje X:", 
-                    choices = list("Metros Cuadrados por Construcción" = "m2_const", 
-                                   "Metros por Terraza" = "m2_terraza", 
-                                   "Metros Cuadrados por Tierra" = "m2_totales")),
-        actionButton("update_datos2", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 4",
-        selectInput("x_axis_gastos", "Seleccione el eje X:", 
-                    choices = list("Municipio" = "Municipio", 
-                                   "Tipo de Propiedad" = "tipo_prop", 
-                                   "Condición" = "Condicion")),
-        actionButton("update_gastos", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 6",
-        selectInput("x_axis_municipio", "Seleccione el eje X:", 
-                    choices = list("Zona" = "zona", 
-                                   "Tipo de Propiedad" = "tipo_prop", 
-                                   "Condición" = "Condicion")),
-        actionButton("update_municipio", "Actualizar Gráficos")
-      )
-    ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-        tabPanel("Datos1",
-                 h2("Gráfico de Datos1"),
-                 plotOutput("barPlot"),
-                 value = 1
-        ),
-        tabPanel("Datos2",
-                 h2("Gráfico de Datos2"),
-                 plotOutput("scatterPlot"),
-                 value = 2
-        ),
-        tabPanel("Mapa",
-                 h2("Gráfico de Mapa"),
-                 value = 3
-        ),
-        tabPanel("Gastos Comunes",
-                 h2("Gráfico de Gastos Comunes"),
-                 plotOutput("gastosPlot1"),
-                 plotOutput("gastosPlot2"),
-                 plotOutput("gastosPlot3"),
-                 value = 4
-        ),
-        tabPanel("Bernoulli",
-                 h2("Gráfico de Bernoulli"),
-                 plotOutput("bernoulliPlot"),
-                 value = 5
-        ),
-        tabPanel("Municipio",
-                 h2("Gráficos por Municipio"),
-                 plotOutput("municipioPlot1"),
-                 value = 6
-        )
-      )
-    )
-  )
-)
-
-server <- function(input, output, session) {
-  
-  observeEvent(input$update_datos1, {
-    output$barPlot <- renderPlot({
-      x_axis <- input$x_axis_datos1
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(media_precio = mean(precio), .groups = 'drop')
-      p1 <- ggplot(datos, aes_string(x = x_axis)) + 
-        geom_bar() +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Cantidad")
-      p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
-        geom_bar(stat = "identity") +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Media Precio")
-      gridExtra::grid.arrange(p1, p2, nrow = 2)
-    })
-  })
-  
-  observeEvent(input$update_datos2, {
-    output$scatterPlot <- renderPlot({
-      x_axis <- input$x_axis_datos2
-      datos_2 <- datos %>% select(all_of(c(x_axis, "precio")))
-      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
-        geom_point() +
-        labs(x = x_axis, y = "Precio") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
-    })
-  })
-  
-  observeEvent(input$update_gastos, {
-    output$gastosPlot1 <- renderPlot({
-      ggplot(datos, aes(x = Municipio, y = Gastos_Comunes, fill = Municipio)) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-    
-    output$gastosPlot2 <- renderPlot({
-      ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-    
-    output$gastosPlot3 <- renderPlot({
-      ggplot(datos, aes(x = Condicion, y = Gastos_Comunes, fill = Municipio)) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-  })
-  
-  observeEvent(input$update_municipio, {
-    output$municipioPlot1 <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +  
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "Precio", fill = "Municipio") + 
-        ggtitle("Precio por Municipio") + 
-        scale_fill_manual(values = colores_personalizados) + 
-        theme(plot.title = element_text(hjust = 0.5), 
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-    
-   
-  })
-}
-
-shinyApp(ui = ui, server = server)
-
-```
-
-
-
-
-
-
-
-
-```{r}
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
-      conditionalPanel(
-        condition = "input.tabselected == 1",
-        selectInput("x_axis_datos1", "Seleccione el eje X:", 
-                    choices = list("Baños" = "baños", 
-                                   "Habitaciones" = "cant_habitaciones", 
-                                   "Disposición" = "disposicion",
-                                   "Cuartos" = "cant_cuartos",
-                                   "Garages" = "cant_de_est")),
-        actionButton("update_datos1", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 2",
-        selectInput("x_axis_datos2", "Seleccione el eje X:", 
-                    choices = list("Metros Cuadrados por Construcción" = "m2_const", 
-                                   "Metros por Terraza" = "m2_terraza", 
-                                   "Metros Cuadrados por Tierra" = "m2_totales")),
-        actionButton("update_datos2", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 4",
-        selectInput("x_axis_gastos", "Seleccione el eje X para los gráficos de Gastos Comunes:", 
-                    choices = list("Municipio" = "Municipio", 
-                                   "Tipo de Propiedad" = "tipo_prop", 
-                                   "Condición" = "Condicion")),
-        actionButton("update_gastos", "Actualizar Gráficos")
-      )
-    ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-        tabPanel("Datos1",
-                 h2("Gráfico de Datos1"),
-                 plotOutput("barPlot"),
-                 plotOutput("newPlot"),  # Nuevo gráfico
-                 value = 1
-        ),
-        tabPanel("Datos2",
-                 h2("Gráfico de Datos2"),
-                 plotOutput("scatterPlot"),
-                 value = 2
-        ),
-        tabPanel("Mapa",
-                 h2("Gráfico de Mapa"),
-                 value = 3
-        ),
-        tabPanel("Gastos Comunes",
-                 h2("Gráfico de Gastos Comunes"),
-                 plotOutput("gastosPlot1"),
-                 plotOutput("gastosPlot2"),
-                 plotOutput("gastosPlot3"),
-                 value = 4
-        ),
-        tabPanel("Bernoulli",
-                 h2("Gráfico de Bernoulli"),
-                 plotOutput("bernoulliPlot"),
-                 value = 5
-        )
-      )
-    )
-  )
-)
-
-
-
-server <- function(input, output, session) {
-  
-  observeEvent(input$update_datos1, {
-    output$barPlot <- renderPlot({
-      x_axis <- input$x_axis_datos1
-      datos <- datos %>% select(all_of(c(x_axis, "precio")))
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(media_precio = mean(precio), .groups = 'drop')
-      p1 <- ggplot(datos, aes_string(x = x_axis)) + 
-        geom_bar() +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Cantidad")
-      p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
-        geom_bar(stat = "identity") +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Media Precio")
-      gridExtra::grid.arrange(p1, p2, nrow = 2)
-    })
-
-    # Nuevo gráfico
-    output$newPlot <- renderPlot({
-      x_axis <- input$x_axis_datos1
-      datos <- datos %>% select(all_of(c(x_axis, "precio")))
-      ggplot(datos, aes_string(x = x_axis, y = "precio")) + 
-        geom_boxplot() +
-        labs(x = x_axis, y = "Precio") +
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-  })
-  
-  observeEvent(input$update_datos2, {
-    output$scatterPlot <- renderPlot({
-      x_axis <- input$x_axis_datos2
-      datos_2 <- datos %>% select(all_of(c(x_axis, "precio")))
-      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
-        geom_point() +
-        labs(x = x_axis, y = "Precio") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
-    })
-  })
-  
-  observeEvent(input$update_gastos, {
-    x_axis <- input$x_axis_gastos
-    
-    output$gastosPlot1 <- renderPlot({
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-    
-    output$gastosPlot2 <- renderPlot({
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-    
-    output$gastosPlot3 <- renderPlot({
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-  })
-  
-  observe({
-    output$bernoulliPlot <- renderPlot({
-      dum <- datos %>%
-        select("vista_al_mar", "vivienda_social", "Barbecue", "Living_Room", "Closet", "Patio", "Pool", "Garage", "Pet", "coneccion_cas", "Playroom", "Duplex", "calefaccion", "WiFi", "zona_barbacoa", "Gym", "balcon", "deposito", "Air_Conditioning", "jardin", "losa_radiante", "Solarium", "amueblado")
-      resultado_final <- data.frame(valor = c(0, 1))
-      columnas <- colnames(dum)
-      for (col in columnas) {
-        resultado_final <- calcular_y_unir(datos, col, resultado_final)
-      }
-      data_long <- resultado_final %>%
-        pivot_longer(-valor, names_to = "variable", values_to = "value")
-      ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) + 
-        geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +  
-        labs(x = "Variable", y = "Value", fill = "Value") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-  })
-}
-
-shinyApp(ui = ui, server = server)
-
-
-```
-
-
-```{r}
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
-      conditionalPanel(
-        condition = "input.tabselected == 1",
-        selectInput("x_axis_datos1", "Seleccione el eje X:", 
-                    choices = list("Baños" = "baños", 
-                                   "Habitaciones" = "cant_habitaciones", 
-                                   "Disposición" = "disposicion",
-                                   "Cuartos" = "cant_cuartos",
-                                   "Garages" = "cant_de_est")),
-        actionButton("update_datos1", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 2",
-        selectInput("x_axis_datos2", "Seleccione el eje X:", 
-                    choices = list("Metros Cuadrados por Construcción" = "m2_const", 
-                                   "Metros por Terraza" = "m2_terraza", 
-                                   "Metros Cuadrados por Tierra" = "m2_totales")),
-        actionButton("update_datos2", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 4",
-        selectInput("x_axis_gastos", "Seleccione el eje X para los gráficos de Gastos Comunes:", 
-                    choices = list("Municipio" = "Municipio", 
-                                   "Tipo de Propiedad" = "tipo_prop", 
-                                   "Condición" = "Condicion")),
-        actionButton("update_gastos", "Actualizar Gráficos")
-      )
-    ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-        tabPanel("Datos1",
-                 h2("Gráfico de Datos1"),
-                 plotOutput("barPlot"),
-                 plotOutput("newPlot"),  # Nuevo gráfico
-                 value = 1
-        ),
-        tabPanel("Datos2",
-                 h2("Gráfico de Datos2"),
-                 plotOutput("scatterPlot"),
-                 value = 2
-        ),
-        tabPanel("Mapa",
-                 h2("Gráfico de Mapa"),
-                 value = 3
-        ),
-        tabPanel("Gastos Comunes",
-                 h2("Gráfico de Gastos Comunes"),
-                 plotOutput("gastosPlot1"),
-                 plotOutput("gastosPlot2"),
-                 plotOutput("gastosPlot3"),
-                 value = 4
-        ),
-        tabPanel("Bernoulli",
-                 h2("Gráfico de Bernoulli"),
-                 plotOutput("bernoulliPlot"),
-                 value = 5
-        )
-      )
-    )
-  )
-)
-
-
-
-server <- function(input, output, session) {
-  
-  observeEvent(input$update_datos1, {
-    output$barPlot <- renderPlot({
-      x_axis <- input$x_axis_datos1
-      datos <- datos %>% select(all_of(c(x_axis, "precio")))
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(media_precio = mean(precio), .groups = 'drop')
-      p1 <- ggplot(datos, aes_string(x = x_axis)) + 
-        geom_bar() +
-        scale_x_discrete(breaks = datos_resumidos[[x_axis]]) +  # Cambiado a scale_x_discrete
-        labs(x = x_axis, y = "Cantidad")
-      p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
-        geom_bar(stat = "identity") +
-        scale_x_discrete(breaks = datos_resumidos[[x_axis]]) +  # Cambiado a scale_x_discrete
-        labs(x = x_axis, y = "Media Precio")
-      gridExtra::grid.arrange(p1, p2, nrow = 2)
-    })
-
-    # Nuevo gráfico
-    output$newPlot <- renderPlot({
-      x_axis <- input$x_axis_datos1
-      datos <- datos %>% select(all_of(c(x_axis, "precio")))
-      ggplot(datos, aes_string(x = x_axis, y = "precio")) + 
-        geom_boxplot() +
-        labs(x = x_axis, y = "Precio") +
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-  })
-  
-  observeEvent(input$update_datos2, {
-    output$scatterPlot <- renderPlot({
-      x_axis <- input$x_axis_datos2
-      datos_2 <- datos %>% select(all_of(c(x_axis, "precio")))
-      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
-        geom_point() +
-        labs(x = x_axis, y = "Precio") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
-    })
-  })
-  
-  observeEvent(input$update_gastos, {
-    x_axis <- input$x_axis_gastos
-    
-    output$gastosPlot1 <- renderPlot({
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-    
-    output$gastosPlot2 <- renderPlot({
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-    
-    output$gastosPlot3 <- renderPlot({
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-  })
-  
-  observe({
-    output$bernoulliPlot <- renderPlot({
-      dum <- datos %>%
-        select("vista_al_mar", "vivienda_social", "Barbecue", "Living_Room", "Closet", "Patio", "Pool", "Garage", "Pet", "coneccion_cas", "Playroom", "Duplex", "calefaccion", "WiFi", "zona_barbacoa", "Gym", "balcon", "deposito", "Air_Conditioning", "jardin", "losa_radiante", "Solarium", "amueblado")
-      resultado_final <- data.frame(valor = c(0, 1))
-      columnas <- colnames(dum)
-      for (col in columnas) {
-        resultado_final <- calcular_y_unir(datos, col, resultado_final)
-      }
-      data_long <- resultado_final %>%
-        pivot_longer(-valor, names_to = "variable", values_to = "value")
-      ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) + 
-        geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +  
-        labs(x = "Variable", y = "Value", fill = "Value") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-  })
-}
-
-shinyApp(ui = ui, server = server)
-
-
-
-```
-
-
-
-```{r}
-
-
-# Por municipios
-colores_personalizados <- c(
-  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   
-  "Municipio_CH" = "purple",  "Municipio_D" = "orange",   "Municipio_E" = "pink",
-  "Municipio_F" = "brown",  "Municipio_G" = "cyan"
-)
-
-
-datos
-
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
-      conditionalPanel(
-        condition = "input.tabselected == 1",
-        selectInput("x_axis_datos1", "Seleccione el eje X:", 
-                    choices = list("Baños" = "baños", 
-                                  "Habitaciones" = "cant_habitaciones",
-                                   #"Disposicioó" = "disposicion",
-                                   "Cuartos" = "cant_cuartos",
-                                   "Garages" = "cant_de_est")),
-        actionButton("update_datos1", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 2",
-        selectInput("x_axis_datos2", "Seleccione el eje X:", 
-                    choices = list("Metros Cuadrados por Construcción" = "m2_const", 
-                                   "Metros por Terraza" = "m2_terraza", 
-                                   "Metros Cuadrados por Tierra" = "m2_totales")),
-        actionButton("update_datos2", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 4",
-        selectInput("x_axis_gastos", "Seleccione el eje X:", 
-                    choices = list("Municipio" = "Municipio", 
-                                   "Tipo de Propiedad" = "tipo_prop", 
-                                   "Condición" = "Condicion")),
-        actionButton("update_gastos", "Actualizar Gráficos")
-      ),
-      conditionalPanel(
-        condition = "input.tabselected == 6",
-        selectInput("x_axis_municipio", "Seleccione el eje X:", 
-                    choices = list("Zona" = "zona", 
-                                   "Tipo de Propiedad" = "tipo_prop", 
-                                   "Condición" = "Condicion")),
-        actionButton("update_municipio", "Actualizar Gráficos")
-      )
-    ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-        tabPanel("Datos1",
-                 h2("Gráfico de Datos1"),
-                 plotOutput("barPlot"),
-                 value = 1
-        ),
-        tabPanel("Datos2",
-                 h2("Gráfico de Datos2"),
-                 plotOutput("scatterPlot"),
-                 value = 2
-        ),
-        tabPanel("Mapa",
-                 h2("Gráfico de Mapa"),
-                 value = 3
-        ),
-        tabPanel("Gastos Comunes",
-                 h2("Gráfico de Gastos Comunes"),
-                 plotOutput("gastosPlot1"),
-              #   plotOutput("gastosPlot2"),
-             #    plotOutput("gastosPlot3"),
-                 value = 4
-        ),
-        tabPanel("Bernoulli",
-                 h2("Gráfico de Bernoulli"),
-                 plotOutput("bernoulliPlot"),
-                 value = 5
-        ),
-        tabPanel("Municipio",
-                 h2("Gráficos por Municipio"),
-                 plotOutput("municipioPlot1"),
-                 value = 6
-        )
-      )
-    )
-  )
-)
-
-server <- function(input, output, session) {
-  
-  observeEvent(input$update_datos1, {
-    output$barPlot <- renderPlot({
-      x_axis <- input$x_axis_datos1
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(media_precio = mean(precio), .groups = 'drop')
-      p1 <- ggplot(datos, aes_string(x = x_axis)) + 
-        geom_bar() +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Cantidad")
-      p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
-        geom_bar(stat = "identity") +
-        scale_x_continuous(breaks = datos_resumidos[[x_axis]]) +
-        labs(x = x_axis, y = "Media Precio")
-      gridExtra::grid.arrange(p1, p2, nrow = 2)
-    })
-  })
-  
-  observeEvent(input$update_datos2, {
-    output$scatterPlot <- renderPlot({
-      x_axis <- input$x_axis_datos2
-      datos_2 <- datos %>% select(all_of(c(x_axis, "precio")))
-      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
-        geom_point() +
-        labs(x = x_axis, y = "Precio") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
-    })
-  })
-  
-  observeEvent(input$update_gastos, {
-    output$gastosPlot1 <- renderPlot({
-      ggplot(datos, aes(x = Municipio, y = Gastos_Comunes)) + 
-        geom_bar(stat="identity") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    })
-    
-    # output$gastosPlot2 <- renderPlot({
-    #   ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes)) + 
-    #     geom_bar(stat="identity") + 
-    #     theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    # })
-    
-    # output$gastosPlot3 <- renderPlot({
-    #   ggplot(datos, aes(x = Condicion, y = Gastos_Comunes)) + 
-    #     geom_bar(stat="identity") + 
-    #     theme(axis.text.x = element_text(angle = 90, hjust = 1))
-    # })
-  })
-  
-  observeEvent(input$update_municipio, {
-    output$municipioPlot1 <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +  
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "Precio", fill = "Municipio") + 
-        ggtitle("Precio por Municipio") + 
-        scale_fill_manual(values = colores_personalizados) + 
-        theme(plot.title = element_text(hjust = 0.5), 
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-    
-   
-  })
-}
-
-shinyApp(ui = ui, server = server)
-
-```
-
-
-```{r}
-
-
-# Colores personalizados para Municipios
-colores_personalizados <- c(
-  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   
-  "Municipio_D" = "orange"
+  "Municipio_A" = "red", "Municipio_B" = "blue", "Municipio_C" = "green",
+  "Municipio_CH" = "purple", "Municipio_D" = "orange", "Municipio_E" = "pink",
+  "Municipio_F" = "brown", "Municipio_G" = "cyan"
 )
 
 # UI
@@ -1374,70 +60,74 @@ ui <- fluidPage(
     sidebarPanel(
       conditionalPanel(
         condition = "input.tabselected == 1",
-        selectInput("x_axis_datos1", "Seleccione el eje X:", 
+        selectInput("x_axis_datos1", "Seleccione el eje X:",
                     choices = list(
-                    "Baños" = "baños", 
-                    "Habitaciones"="cant_habitaciones",
-                    "Cuartos" = "cant_cuartos",
-                    "Garages" = "cant_de_est")),
+                      "Baños" = "baños",
+                      "Habitaciones" = "cant_habitaciones",
+                      "Disposición" = "disposicion",
+                      "Cuartos" = "cant_cuartos",
+                      "Garages" = "cant_de_est")),
         actionButton("update_datos1", "Actualizar Gráficos")
       ),
       conditionalPanel(
         condition = "input.tabselected == 2",
-        selectInput("x_axis_datos2", "Seleccione el eje X:", 
-                    choices = list("Metros Cuadrados por Construcción" = "m2_const", 
-                                   "Metros por Terraza" = "m2_terraza", 
+        selectInput("x_axis_datos2", "Seleccione el eje X:",
+                    choices = list("Metros Cuadrados por Construcción" = "m2_const",
+                                   "Metros por Terraza" = "m2_terraza",
                                    "Metros Cuadrados por Tierra" = "m2_totales")),
         actionButton("update_datos2", "Actualizar Gráficos")
       ),
       conditionalPanel(
         condition = "input.tabselected == 4",
-        selectInput("x_axis_gastos", "Seleccione el eje X para los gráficos de Gastos Comunes:", 
-                    choices = list("Municipio" = "Municipio", 
-                                   "Tipo de Propiedad" = "tipo_prop", 
-                                   "Condición" = "Condicion")),
+        selectInput("x_axis_gastos", "Seleccione el eje X para los gráficos de Gastos Comunes:",
+                    choices = list(
+                      "Tipo de Propiedad" = "tipo_prop",
+                      "Disposición" = "disposicion",
+                      "Condición" = "Condicion")),
         actionButton("update_gastos", "Actualizar Gráficos")
       ),
       conditionalPanel(
         condition = "input.tabselected == 6",
-        selectInput("x_axis_municipio", "Seleccione el eje X:", 
-                    choices = list("Zona" = "zona", 
-                                   "Tipo de Propiedad" = "tipo_prop", 
+        selectInput("x_axis_municipio", "Seleccione el eje X:",
+                    choices = list("Zona" = "zona",
+                                   "Tipo de Propiedad" = "tipo_prop",
                                    "Condición" = "Condicion")),
         actionButton("update_municipio", "Actualizar Gráficos")
       )
     ),
     mainPanel(
       tabsetPanel(id = "tabselected",
-        tabPanel("Datos1",
-                 h2("Gráfico de Datos1"),
-                 plotOutput("barPlot"),
-                 value = 1
-        ),
-        tabPanel("Datos2",
-                 h2("Gráfico de Datos2"),
-                 plotOutput("scatterPlot"),
-                 value = 2
-        ),
-        tabPanel("Mapa",
-                 h2("Gráfico de Mapa"),
-                 value = 3
-        ),
-        tabPanel("Gastos Comunes",
-                 h2("Gráfico de Gastos Comunes"),
-                 plotOutput("gastosPlot1"),
-                 value = 4
-        ),
-        tabPanel("Bernoulli",
-                 h2("Gráfico de Bernoulli"),
-                 plotOutput("bernoulliPlot"),
-                 value = 5
-        ),
-        tabPanel("Municipio",
-                 h2("Gráficos por Municipio"),
-                 plotOutput("municipioPlot1"),
-                 value = 6
-        )
+                  tabPanel("Datos1",
+                           h2("Gráfico de Datos1"),
+                           plotOutput("barPlot"),
+                           value = 1
+                  ),
+                  tabPanel("Datos2",
+                           h2("Gráfico de Datos2"),
+                           plotOutput("scatterPlot"),
+                           value = 2
+                  ),
+                  tabPanel("Mapa",
+                           h2("Gráfico de Mapa"),
+                           value = 3
+                  ),
+                  tabPanel("Gastos Comunes",
+                           h2("Gráfico de Gastos Comunes"),
+                           plotOutput("gastosPlot1"),
+                           value = 4
+                  ),
+                  tabPanel("Bernoulli",
+                           h2("Gráfico de Bernoulli"),
+                           plotOutput("bernoulliPlot"),
+                           value = 5
+                  ),
+                  tabPanel("Municipio",
+                           h2("Gráficos por Municipio"),
+                           plotOutput("municipioPlot1"),
+                           plotOutput("municipioPlot2"),
+                           plotOutput("municipioPlot3"),
+                           value = 6
+                  )
       )
     )
   )
@@ -1445,64 +135,81 @@ ui <- fluidPage(
 
 # Server
 server <- function(input, output, session) {
-  
+
   observeEvent(input$update_datos1, {
     output$barPlot <- renderPlot({
       x_axis <- input$x_axis_datos1
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(media_precio = mean(precio), .groups = 'drop')
-      p1 <- ggplot(datos, aes_string(x = x_axis)) + 
-        geom_bar() +
-        scale_x_continuous(breaks = unique(datos[[x_axis]])) +
-        labs(x = x_axis, y = "Cantidad")
-      p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + 
-        geom_bar(stat = "identity") +
-        scale_x_discrete(breaks = unique(datos_resumidos[[x_axis]])) +
-        labs(x = x_axis, y = "Media Precio")
-      gridExtra::grid.arrange(p1, p2, nrow = 2)
+      if (x_axis == "disposicion") {
+        p1 <- ggplot(datos, aes(x = disposicion)) +
+          geom_bar() +
+          labs(x = "Disposición", y = "Cantidad")
+
+        
+         Prueba20 <- datos %>%     
+         group_by(disposicion) %>% 
+         summarise(media_precio = mean(precio)) 
+         Prueba20
+        
+        p2 <- ggplot(Prueba20, aes(x = disposicion, y = media_precio)) +
+          geom_bar(stat = "identity") +
+          labs(x = "Disposición", y = "Media Precio")
+
+        gridExtra::grid.arrange(p1, p2, nrow = 2)
+      } else {
+        datos_resumidos <- datos %>%
+          group_by(across(all_of(x_axis))) %>%
+          summarise(media_precio = mean(precio, na.rm = TRUE), .groups = 'drop')
+
+        p1 <- ggplot(datos, aes_string(x = x_axis)) +
+          geom_bar() +
+          scale_x_continuous(breaks = unique(datos[[x_axis]])) +
+          labs(x = x_axis, y = "Cantidad")
+
+        p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) +
+          geom_bar(stat = "identity") +
+          scale_x_discrete(breaks = unique(datos_resumidos[[x_axis]])) +
+          labs(x = x_axis, y = "Media Precio")
+
+        gridExtra::grid.arrange(p1, p2, nrow = 2)
+      }
     })
   })
-  
+
   observeEvent(input$update_datos2, {
     output$scatterPlot <- renderPlot({
       x_axis <- input$x_axis_datos2
       datos_2 <- datos %>% select(all_of(c(x_axis, "precio")))
-      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) + 
+      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) +
         geom_point() +
         labs(x = x_axis, y = "Precio") +
         theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
     })
   })
-  
+
   observeEvent(input$update_gastos, {
     output$gastosPlot1 <- renderPlot({
       x_axis <- input$x_axis_gastos
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + 
-        geom_bar(stat="identity") + 
+      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) +
+        geom_bar(stat="identity") +
         theme(axis.text.x = element_text(angle = 90, hjust = 1))
     })
   })
   
-  observeEvent(input$update_municipio, {
-    output$municipioPlot1 <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +  
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "Precio", fill = "Municipio") + 
-        ggtitle("Precio por Municipio") + 
-        scale_fill_manual(values = colores_personalizados) + 
-        theme(plot.title = element_text(hjust = 0.5), 
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-  })
   
-  
-    observe({
+  observe({
     output$bernoulliPlot <- renderPlot({
       dum <- datos %>%
-        select("vista_al_mar", "vivienda_social", "Barbecue", "Living_Room", "Closet", "Patio", "Pool", "Garage", "Pet", "coneccion_cas", "Playroom", "Duplex", "calefaccion", "WiFi", "zona_barbacoa", "Gym", "balcon", "deposito", "Air_Conditioning", "jardin", "losa_radiante", "Solarium", "amueblado")
+        select("vista_al_mar", "vivienda_social", "Barbecue",                           "Living_Room", "Closet", "Patio", "Pool", "Garage",                     "Pet", "coneccion_cas", "Playroom", "Duplex",                           "calefaccion", "WiFi", "zona_barbacoa", "Gym", "balcon",                  "deposito", "Air_Conditioning", "jardin",                                "losa_radiante", "Solarium", "amueblado")
+      
+      calcular_y_unir <- function(df, col, resultado_final) { # Función
+       temp <- df %>%       # Datos
+        group_by(valor = .data[[col]]) %>% #
+       summarise(Mean = mean(precio, na.rm = TRUE), .groups = "drop")
+       colnames(temp)[2] <- paste0(col, "_Media") 
+       resultado_final <- left_join(resultado_final, temp, by = "valor",        relationship = "many-to-one") 
+       return(resultado_final) # Resultado
+        }
+
       resultado_final <- data.frame(valor = c(0, 1))
       columnas <- colnames(dum)
       for (col in columnas) {
@@ -1518,10 +225,47 @@ server <- function(input, output, session) {
   })
   
   
+  
+
+  observeEvent(input$update_municipio, {
+    output$municipioPlot1 <- renderPlot({
+      x_axis <- input$x_axis_municipio
+      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+        facet_grid(. ~ Municipio, scales = "free_x") +
+        labs(x = x_axis, y = "Precio", fill = "Municipio") +
+        ggtitle("Precio por Municipio") +
+        scale_fill_manual(values = colores_personalizados) +
+        theme(plot.title = element_text(hjust = 0.5),
+              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    })
+
+    output$municipioPlot2 <- renderPlot({
+      ggplot(datos, aes(x = tipo_prop, y = precio, fill = Municipio)) +
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+        facet_grid(. ~ Municipio, scales = "free_x") +
+        labs(x = "Tipo de Propiedad", y = "Precio", fill = "Municipio") +
+        ggtitle("Tipo de alquiler por municipio") +
+        scale_fill_manual(values = colores_personalizados) +
+        theme(plot.title = element_text(hjust = 0.5),
+              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    })
+
+    output$municipioPlot3 <- renderPlot({
+      ggplot(datos, aes(x = Condicion, y = precio, fill = Municipio)) +
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+        facet_grid(. ~ Municipio, scales = "free_x") +
+        labs(x = "Condición", y = "Precio", fill = "Municipio") +
+        ggtitle("Condición de la vivienda por Municipio") +
+        scale_fill_manual(values = colores_personalizados) +
+        theme(plot.title = element_text(hjust = 0.5),
+              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    })
+  })
 }
 
 shinyApp(ui = ui, server = server)
 
 
 
-```
+``` 
