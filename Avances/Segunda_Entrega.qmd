@@ -889,8 +889,6 @@ ggplot(Prueba13, aes(x=baños, y=media_precio)) + # Datos
 
 ```
 
-
-
 ```{r}
 #colnames(datos)
 # PRECIO SEGÚN CANTIDAD DE CUARTOS Y CANTIDAD DE HABITACIONES
@@ -1040,7 +1038,6 @@ max(datos$m2_totales)
 
 ```
 
-
 Parece haber una relación clara sobre la relación entre metros cuadrados y precio, el precio va a ser mayor conforme sean mayores los metros cuadrados.
 
 ```{r, eval=FALSE}
@@ -1052,6 +1049,57 @@ library(writexl)
 #()
 write_xlsx(datos, path = here("Shiny_Proyecto","app","datos_limpios.xlsx"))
 ```
+
+
+```{r}
+# "disposicion", "Character", "En que posición se encuentra la propiedad como, interior, frente, fondo"
+
+# Back = Atras      
+# Front = Frente      
+# Interior = Interior    
+# side = Lado
+
+
+
+
+# PRECIO SEGÚN CANTIDAD DE GARAGES 
+
+
+Prueba20 <- datos %>%         # Datos
+   group_by(disposicion) %>%  # Agrupado por disposicion
+   summarise(media_precio = mean(precio)) # Resumido por media del precio
+Prueba20
+
+
+
+# Gráfico de conteo por cantidad de garages
+ggplot(datos, aes(x=disposicion)) + # Datos y ejes
+     geom_bar()# +  # Gráfico de barras
+    # scale_x_continuous(breaks =  Prueba16$cant_de_est) # Elementos del eje X
+
+
+
+# Gráfico de precio en relación a la cantidad de garages 
+ggplot(Prueba20, aes(x=disposicion, y=media_precio)) +  # Datos y ejes
+   geom_bar(stat="identity")# +   # Gráfico de barras
+ #  scale_x_continuous(breaks =  Prueba20$disposicion) # Elementos del eje X
+
+
+
+
+
+
+
+
+
+table(datos$disposicion)
+
+
+```
+
+
+
+
 
 # Modelo de regresión lineal multiple:
 
