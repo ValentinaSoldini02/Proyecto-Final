@@ -676,7 +676,7 @@ ggplot(datos, aes(x = Condicion, y = Gastos_Comunes, fill = Municipio)) + # Dato
 ```
 
 ```{r}
-
+#
 # P12) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
 
 # quitar variables: Furnished...32, Furnished...42, y Flors

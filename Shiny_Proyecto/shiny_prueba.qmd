@@ -124,8 +124,6 @@ ui <- fluidPage(
                   tabPanel("Municipio",
                            h2("Gráficos por Municipio"),
                            plotOutput("municipioPlot1"),
-                           plotOutput("municipioPlot2"),
-                           plotOutput("municipioPlot3"),
                            value = 6
                   )
       )
@@ -235,28 +233,6 @@ server <- function(input, output, session) {
         facet_grid(. ~ Municipio, scales = "free_x") +
         labs(x = x_axis, y = "Precio", fill = "Municipio") +
         ggtitle("Precio por Municipio") +
-        scale_fill_manual(values = colores_personalizados) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-
-    output$municipioPlot2 <- renderPlot({
-      ggplot(datos, aes(x = tipo_prop, y = precio, fill = Municipio)) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = "Tipo de Propiedad", y = "Precio", fill = "Municipio") +
-        ggtitle("Tipo de alquiler por municipio") +
-        scale_fill_manual(values = colores_personalizados) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-
-    output$municipioPlot3 <- renderPlot({
-      ggplot(datos, aes(x = Condicion, y = precio, fill = Municipio)) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = "Condición", y = "Precio", fill = "Municipio") +
-        ggtitle("Condición de la vivienda por Municipio") +
         scale_fill_manual(values = colores_personalizados) +
         theme(plot.title = element_text(hjust = 0.5),
               axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
