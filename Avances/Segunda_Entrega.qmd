@@ -23,6 +23,7 @@ Código reestructurado con los nombres de las variables en el español
 #install.packages("cowplot")
 #install.packages("gridExtra")
 
+# NOTA) Usar disposicion
 
 
 ```
@@ -78,7 +79,7 @@ tabla_variables[1,] <- c("direccion", "Numérica", "Ubicación donde se encuentr
 tabla_variables[2,] <- c("nro_de_piso", "Character", "Número de piso de la propiedad")
 tabla_variables[3,] <- c("tipo_prop", "Character", "Tipo de poropiedad, como apartamento, oficina, casa")
 tabla_variables[4,] <- c("Condicion", "Character", "Condición en la que esta la vivienda, como Excelente, Buena, Renovada")
-tabla_variables[5,] <- c("disposicion", "Character", "En que posición se encuentra la pripiedad como, interior, frente, fondo")
+tabla_variables[5,] <- c("disposicion", "Character", "En que posición se encuentra la propiedad como, interior, frente, fondo")
 tabla_variables[6,] <- c("m2_terraza", "Numérica", "Metros cuadrado de la terraza")
 tabla_variables[7,] <- c("cant_cuartos", "Numérica", "Cantidad de dormitoros de la propiedad")
 tabla_variables[8,] <- c("vivienda_social", "Numérica", "Si la propiedad esta destinada para vivienda social es 1 y sino 0")
@@ -1027,7 +1028,7 @@ ggplot(datos, aes(x=m2_totales, y=precio)) +   # Datos y ejes
 #
 ```
 
-```{r}
+```{r, eval=FALSE}
 
 # Built_Square_Meters
 # Terrace_Square_Met
@@ -1042,7 +1043,7 @@ max(datos$m2_totales)
 
 Parece haber una relación clara sobre la relación entre metros cuadrados y precio, el precio va a ser mayor conforme sean mayores los metros cuadrados.
 
-```{r}
+```{r, eval=FALSE}
 # Quitar los 0 metros cuadrados, es algo que no tiene mucho sentido. (hecho)
 
 # Exportar los datos limpios
@@ -1054,7 +1055,7 @@ write_xlsx(datos, path = here("Shiny_Proyecto","app","datos_limpios.xlsx"))
 
 # Modelo de regresión lineal multiple:
 
-```{r}
+```{r, eval=FALSE}
 datos
 names(datos)
 
@@ -1068,7 +1069,7 @@ library(tseries)
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 # Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
 reemplazar_direccion <- function(datos) {
   if (!"direccion" %in% colnames(datos) || !"zona" %in% colnames(datos)) {
@@ -1129,7 +1130,7 @@ datos <- reemplazar_na_disposicion(datos)
 print(colSums(is.na(datos)))
 ```
 
-```{r}
+```{r, eval=FALSE}
 
 # Eliminamos columnas innecesarias
  datos <- 
@@ -1151,7 +1152,7 @@ print(vif_values)
 
 valores nulos
 
-```{r}
+```{r, eval=FALSE}
 
 datos_nulos <- data.frame(cantidad_2_nulos = sapply(datos, function(x) sum(is.na(x))))
 # Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
@@ -1169,13 +1170,14 @@ table(datos$disposicion)
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 colnames(datos)
 datos
 
 ```
 
 ```{r}
+
 
 
 
