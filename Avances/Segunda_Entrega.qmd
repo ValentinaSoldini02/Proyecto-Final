@@ -839,7 +839,7 @@ Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Barbacoa, Ca
 
 
 # Filtro:
-datos <- datos %>% filter( (cant_de_piso < 20) & (apartamentos_por_piso < 14) & (nro_de_piso < 44) )
+datos <- datos %>% filter( (cant_de_piso < 20 & cant_de_piso > 0) & (apartamentos_por_piso < 14 & apartamentos_por_piso > 0) & (nro_de_piso < 44) )
 
 
 
@@ -851,17 +851,26 @@ datos <- datos %>% filter( (cant_de_piso < 20) & (apartamentos_por_piso < 14) & 
 
 grupo_piso_1 <- datos %>% # Datos
   group_by(cant_de_piso) %>% # Agrupados por cantidad de pisos
-  summarise(Cantidad = n()) # Resumidos por cantidad
+  summarise(Cantidad = mean(precio)) # Resumidos por cantidad
 grupo_piso_1
 
 
 
 # Filtrar atipicos
-grupo_piso_1 <-grupo_piso_1 %>% filter(cant_de_piso < 16)
+grupo_piso_1 <-grupo_piso_1 %>% filter(cant_de_piso > 0 & cant_de_piso < 16)
 
+
+datos <- datos  %>% filter(cant_de_piso > 0 & cant_de_piso < 16)
 
 
 # Gráfico
+ggplot(datos, aes(x = cant_de_piso)) +  # Datos y ejes
+   geom_bar() +
+    scale_x_continuous(breaks =   datos$cant_de_piso) 
+
+  
+
+
 ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
    geom_bar(stat="identity") + # Gráfico de barras
     scale_x_continuous(breaks =   grupo_piso_1$cant_de_piso) #  Elementos del eje X
@@ -872,6 +881,9 @@ ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
 
 
 ```
+
+Vemos que los inmuebles en general tienen una distribución similar según su cantidad de pisos, excepto en el caso de los inmuebles con 10 pisos que tienen una ocurrencia mucho más alta. En relación, vemos que en general la mayoría se mantiene en los 1000 dolares para cantidades de pisos variadas, y en algunas cantidades de pisos como son 2, 12, 13 la media del precio esta cerca de los 2000 dolares.
+
 
 ```{r}
 
@@ -890,6 +902,13 @@ Prueba11
 Prueba12 <- Prueba11 %>% filter(nro_de_piso < 43)
 
 
+
+# Cantidad
+ggplot(datos, aes(x = nro_de_piso)) +  # Datos y ejes
+  geom_bar() +
+    scale_x_continuous(breaks = datos$nro_de_piso) 
+
+
 # Gráfico
 ggplot(Prueba12, aes(x=nro_de_piso, y=media_precio)) + # Datos y ejes
       geom_bar(stat="identity") + # Gráfico de barras
@@ -899,6 +918,11 @@ ggplot(Prueba12, aes(x=nro_de_piso, y=media_precio)) + # Datos y ejes
 
 # Parece que en los pisos mas altos el precio es
 ```
+
+En la distribución los números de piso 0 y 1, luego cuando los pisos van subiendo de número la frecuencia va disminuyendo (con algunas excepciones como son el número 4 y el 9). En relación al precio vemos que casi todos los números de piso tiene un precio similar (casi 1000$) pero particularmente el piso con número 11 tiene un precio más elevado.
+
+
+
 
 ```{r}
 # P15) ¿Cómo influye la cantidad de apartamentos por piso en el precio?
@@ -913,6 +937,12 @@ grupo_piso_1
 # Filtrar nulos
 grupo_piso_1 <- grupo_piso_1 %>% filter(apartamentos_por_piso < 11)
 
+# Cantidad
+ggplot(datos, aes(x = apartamentos_por_piso)) +# Datos y ejes
+   geom_bar() +
+    scale_x_continuous(breaks =   datos$nro_de_piso) 
+
+
 
 # Gráfico
 ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ejes
@@ -922,6 +952,10 @@ ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ej
 
 
 ```
+La distribución de la cantidad muestra que en un piso en general es más común encontrarse con 2, 3 o 4 apartamentos. En relación al precio vemos que esos pisos que tienen 2, 3 o 4 apartamentos también son los que tienen el precio más alto.
+
+
+
 
 ```{r}
 # P2) Number_of_Floors
