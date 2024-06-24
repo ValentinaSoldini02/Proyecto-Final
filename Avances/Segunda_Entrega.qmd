@@ -995,6 +995,10 @@ ggplot(Prueba13, aes(x=baños, y=media_precio)) + # Datos
    scale_x_continuous(breaks =  Prueba13$baños) # Elementos del eje X
 
 ```
+Vemos que en general, lo más común es que los inmuebles tengan un baño, luego el tener 2 o 3 es menos común. Pero vemos que a más baños tenga un inmueble, más alto sera el precio. 
+
+
+
 
 ```{r}
 #colnames(datos)
@@ -1058,6 +1062,10 @@ ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +  # Datos
 
 
 ```
+Vemos que tanto para la cantidad de cuartos y de habitaciones, su distribución es muy parecida, tanto en cantidad como en precio. Donde la cantidad más común de cuartos/habitaciones en los inmuebles para alquilar es de 2 o 3. Y se cumple también que al tener más cantidad de cuartos/habitaciones el precio es más alto.
+
+
+
 
 ```{r}
 
@@ -1089,6 +1097,9 @@ ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +  # Datos y ejes
 
 
 ```
+
+Vemos que en general, lo más común es que los inmuebles no tengan garage o que tengan 1 solo, luego el tener 2 o 3 es menos común. De vuelta, se cumple que a más garages tenga un inmueble, más alto sera el precio. 
+
 
 ```{r}
 # Built_Square_Meters
@@ -1131,29 +1142,32 @@ ggplot(datos, aes(x=m2_totales, y=precio)) +   # Datos y ejes
 
 #
 ```
+Parece haber una relación clara sobre la relación entre metros cuadrados y precio, el precio va a ser mayor conforme sean mayores los metros cuadrados.
+
+
+
 
 ```{r, eval=FALSE}
 
 # Built_Square_Meters
 # Terrace_Square_Met
 # Land_Square_Metersers
-max(datos$m2_const)
-max(datos$m2_terraza)
-max(datos$m2_totales)
+# max(datos$m2_const)
+# max(datos$m2_terraza)
+# max(datos$m2_totales)
 
 
 ```
 
-Parece haber una relación clara sobre la relación entre metros cuadrados y precio, el precio va a ser mayor conforme sean mayores los metros cuadrados.
 
 ```{r, eval=FALSE}
-# Quitar los 0 metros cuadrados, es algo que no tiene mucho sentido. (hecho)
 
-# Exportar los datos limpios
 
-library(writexl)
-#()
-write_xlsx(datos, path = here("Shiny_Proyecto","app","datos_limpios.xlsx"))
+# # Exportar los datos limpios
+# 
+# library(writexl)
+# #()
+# write_xlsx(datos, path = here("Shiny_Proyecto","app","datos_limpios.xlsx"))
 ```
 
 ```{r}
@@ -1201,6 +1215,10 @@ table(datos$disposicion)
 
 
 ```
+Lo más común es tener inmuebles al frente, aunque cuando vamos al precio, vemos que si bien los que estan al frente tiene un precio un poco más alto, en general todos estan en niveles similares. (Cerca de los 1000$)
+
+
+
 
 # Modelo de regresión lineal multiple:
 
