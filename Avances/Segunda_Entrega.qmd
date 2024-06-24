@@ -126,6 +126,7 @@ tabla_variables
 
 # Limpieza
 
+Pasos: 
 1)  Renombrar columnas de ingles a español
 
 2)  Poner columna de precio por metro cuadrado
@@ -178,7 +179,7 @@ datos <- datos|>
          balcon = Balcony
          )
 
-
+# Resultado
 datos
 
 ```
@@ -186,7 +187,7 @@ datos
 2)  Poner columna de precio por metro cuadrado
 
 ```{r}
-# Pasar el precio a precio por metro cuadrado
+# Pasar el precio a precio por metro cuadrado (?)
 datos <- datos|>
   mutate(precio_m2 = precio/m2_const)
 
@@ -198,6 +199,8 @@ datos
 
 ```{r}
 # Eliminamos columnas innecesarias
+# Eliminamos Furnished...32 y Furnished...42 porque existe otra columna que tiene la misma información
+# Eliminamos -Floors porque tenia muchos datos nulos, inconsistentes y poco fiables.
  datos <- 
    datos|>
     select(-Furnished...32, -Furnished...42, -Floors)#
@@ -348,7 +351,7 @@ detector_nulos(datos)
 
 ```
 
-6)  Detectar y eliminar valores nulos:
+6)  Detectar y eliminar valores outliers:
 
 ```{r}
 # Criterio de rango intercuartilico
@@ -378,13 +381,27 @@ detectar_outliers_iqr <- function(x) { # Función
 
 
 # Pruebas
-detectar_outliers_iqr(datos$Price)
-detectar_outliers_iqr(datos$Common_Expenses)
-detectar_outliers_iqr(datos$Air_Conditioning)
-detectar_outliers_iqr(datos$Solarium)
-detectar_outliers_iqr(datos$Pool)
+detectar_outliers_iqr(datos$precio)
+detectar_outliers_iqr(datos$Gastos_Comunes)
+detectar_outliers_iqr(datos$m2_const)
+detectar_outliers_iqr(datos$m2_totales)
 
 
+
+# Vamos a eliminar los valores atípicos que estan en el dataframe
+datos <- datos %>% filter(
+  precio <= 150000 &
+  Gastos_Comunes <= 10000 &
+  cant_de_piso < 16 &
+  apartamentos_por_piso < 14 &
+  nro_de_piso < 43 &
+  apartamentos_por_piso < 11 &
+  m2_const < 3000 & m2_const > 0 &
+  m2_totales < 5000 & m2_const > 0 &
+  m2_terraza > 0 
+ )
+
+datos
 ```
 
 Agrupar los barrios por municipios
@@ -418,23 +435,23 @@ datos <- datos %>% # Datos
 datos
 ```
 
-```{r}
-
-# Vamos a eliminar los valores atípicos que estan en el dataframe
-datos <- datos %>% filter(precio <= 150000 & Gastos_Comunes <= 10000)
 
 
 
-datos
-
-```
 
 # Visualización
 
 ```{r}
 
+# Quitamos atípicos en el precio.
+datos <- datos %>% filter(
+  precio < 150000 &
+  Gastos_Comunes < 277777)
 
-# Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+datos
+
+
+# Pregunta 1) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad?
 
 
 # Elegimos los colores manualmente
@@ -461,7 +478,6 @@ ggplot(datos, aes(x = zona, y = precio, fill = Municipio)) +  # Datos, ejes y co
   theme(plot.title = element_text(hjust = 0.5), # Centrar el título
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 # Centrar el título y modificar el texto de los elementos del eje X
-
 
 
 
@@ -638,9 +654,9 @@ ggplot(datos, aes(x = Condicion , y = Gastos_Comunes)) +  # Datos y ejes
 
 # P10) ¿Cómo se distribuyen los Gastos Comunes en relación al tipo de alquiler por Municipio?
 
-datos
+datos <- datos %>% filter()
 
-
+max(datos$precio)
 ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Datos, ejes y municipio
   geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
   facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
@@ -653,6 +669,10 @@ ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Dato
 
 
 #
+
+
+
+#max(datos$Gastos_Comunes)
 
 ```
 
@@ -670,6 +690,8 @@ ggplot(datos, aes(x = Condicion, y = Gastos_Comunes, fill = Municipio)) + # Dato
   theme(plot.title = element_text(hjust = 0.5), # Centrar el título
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
 
 
 ```
@@ -994,7 +1016,6 @@ ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +  # Datos y ejes
 
 # Filtramos para eliminar los nulos
 datos <- datos %>% filter( (m2_const < 3000 & m2_const > 0) & (m2_totales < 5000 & m2_const > 0) & (m2_terraza > 0) & (precio < 30000) )
-
 
 
 # m2_const = Built_Square_Meters,
