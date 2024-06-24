@@ -47,6 +47,7 @@ datos
 
 # CORRECTO
 
+# Colores personalizados para el gráfico de municipios
 colores_personalizados <- c(
   "Municipio_A" = "red", "Municipio_B" = "blue", "Municipio_C" = "green",
   "Municipio_CH" = "purple", "Municipio_D" = "orange", "Municipio_E" = "pink",
@@ -54,38 +55,39 @@ colores_personalizados <- c(
 )
 
 # UI
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
-      conditionalPanel(
-        condition = "input.tabselected == 1",
-        selectInput("x_axis_datos1", "Seleccione el eje X:",
-                    choices = list(
+ui <- fluidPage(    # Página en blanco
+  titlePanel("Análisis de Alquileres"),   # Título 
+  sidebarLayout(             # Definimos la estructura
+    sidebarPanel(            # Lo usamos para colocar los selectInput
+      conditionalPanel(      # Panel condicional
+        condition = "input.tabselected == 1",  # Este panel estara en la pestaña 1, que es la "Datos1" , donde se mostrara con dos botones que son "Seleccione el eje X:" y "Actualizar Gráfico"
+        selectInput("x_axis_datos1", "Seleccione el eje X:", # Boton con opciones seleccionables (que seran distintos ejes X) y el nombre de este boton.
+                    choices = list(        # Opciones a elegir (todas en relación al eje X)
                       "Baños" = "baños",
                       "Habitaciones" = "cant_habitaciones",
                       "Disposición" = "disposicion",
                       "Cuartos" = "cant_cuartos",
                       "Garages" = "cant_de_est")),
-        actionButton("update_datos1", "Actualizar Gráficos")
+        actionButton("update_datos1", "Actualizar Gráficos") # Boton de acción para mostrar el gráfico
       ),
-      conditionalPanel(
-        condition = "input.tabselected == 2",
-        selectInput("x_axis_datos2", "Seleccione el eje X:",
-                    choices = list("Metros Cuadrados por Construcción" = "m2_const",
+      conditionalPanel(  # Panel Condicional
+        condition = "input.tabselected == 2", # Este panel estara en la pestaña 2, que es la "Datos2" , donde se mostrara con dos botones que son "Seleccione el eje X:" y "Actualizar Gráfico"
+        selectInput("x_axis_datos2", "Seleccione el eje X:", # Boton con opciones seleccionables (que seran distintos ejes X) y el nombre de este boton.
+                    choices = list( # Opciones a seleccionar
+                                   "Metros Cuadrados por Construcción" = "m2_const", 
                                    "Metros por Terraza" = "m2_terraza",
                                    "Metros Cuadrados por Tierra" = "m2_totales")),
-        actionButton("update_datos2", "Actualizar Gráficos")
+        actionButton("update_datos2", "Actualizar Gráficos") # Boton de acción para mostrar el gráfico
       ),
-      conditionalPanel(
-        condition = "input.tabselected == 4",
-        selectInput("x_axis_gastos", "Seleccione el eje X para los gráficos de Gastos Comunes:",
-                    choices = list(
+      conditionalPanel(  # Panel Condicional
+        condition = "input.tabselected == 4", # Este panel estara en la pestaña 4, que es la "Gastos Comúnes" , donde se mostrara con dos botones que son "Seleccione el eje X para los gráficos de Gastos Comunes" y "Actualizar Gráfico"
+        selectInput("x_axis_gastos", "Seleccione el eje X para los gráficos de Gastos Comunes:", # Boton con opciones seleccionables (que seran distintos ejes X) y el nombre de este boton.
+                    choices = list( # Opciones a seleccionar
                       "Tipo de Propiedad" = "tipo_prop",
                       "Disposición" = "disposicion",
                       "Condición" = "Condicion",
                       "Municipio" = "Municipio")),
-        actionButton("update_gastos", "Actualizar Gráficos")
+        actionButton("update_gastos", "Actualizar Gráficos") # Opciones a seleccionar
       ),
       conditionalPanel(
         condition = "input.tabselected == 6",
