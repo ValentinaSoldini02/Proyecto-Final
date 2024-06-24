@@ -87,62 +87,63 @@ ui <- fluidPage(    # Página en blanco
                       "Disposición" = "disposicion",
                       "Condición" = "Condicion",
                       "Municipio" = "Municipio")),
-        actionButton("update_gastos", "Actualizar Gráficos") # Opciones a seleccionar
+        actionButton("update_gastos", "Actualizar Gráficos") # Boton de acción para mostrar el gráfico
       ),
-      conditionalPanel(
-        condition = "input.tabselected == 6",
-        selectInput("x_axis_municipio", "Seleccione el eje X:",
-                    choices = list(
+      conditionalPanel( # Panel Condicional
+        condition = "input.tabselected == 6",  #  Este panel estara en la pestaña 6, que es la "Municipio" , donde se mostrara con dos botones que son "Seleccione el eje X:" y "Actualizar Gráfico"
+        selectInput("x_axis_municipio", "Seleccione el eje X:", #  Boton con opciones seleccionables (que seran distintos ejes X) y el nombre de este boton.
+                    choices = list( #  Opciones a seleccionar
                       "Zona" = "zona",
                       "Tipo de Propiedad" = "tipo_prop",
                       "Condición" = "Condicion")),
-        actionButton("update_municipio", "Actualizar Gráficos")
+        actionButton("update_municipio", "Actualizar Gráficos") # Boton de acción para mostrar el gráfico
       ),
-      conditionalPanel(
-        condition = "input.tabselected == 7",
-        selectInput("x_axis_basicos", "Seleccione el eje X:",
-                    choices = list(
+      conditionalPanel( # Panel Condicional
+        condition = "input.tabselected == 7",  #  Este panel estara en la pestaña 7, que es la "Básicos" , donde se mostrara con dos botones que son "Seleccione el eje X:" y "Actualizar Gráfico"
+        selectInput("x_axis_basicos", "Seleccione el eje X:", #  Boton con opciones seleccionables (que seran distintos ejes X) y el nombre de este boton.
+                    choices = list( #  Opciones a seleccionar
                       "Municipio" = "Municipio",
                       "Tipo de Propiedad" = "tipo_prop",
                       "Condición" = "Condicion")),
-        actionButton("update_basicos", "Actualizar Gráficos")
+        actionButton("update_basicos", "Actualizar Gráficos") # Boton de acción para mostrar el gráfico
       )
-    ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-                  tabPanel("Datos1",
-                           h2("Gráfico de Datos1"),
-                           plotOutput("barPlot"),
-                           value = 1
+    ), 
+    mainPanel( # Panel para las pestañas
+      tabsetPanel(id = "tabselected",               #  id para la selección de pestañas
+                  
+                  tabPanel("Datos1",                  # Nombre de la pestaña
+                           h2("Gráfico de Datos1"),   # Título de el gráfico dentro de esa pestaña
+                           plotOutput("barPlot"),     # Gráfico en esa pestaña
+                           value = 1                  # Le asociamos el valor de 1 para el gráfico y la reactividad
                   ),
-                  tabPanel("Datos2",
-                           h2("Gráfico de Datos2"),
-                           plotOutput("scatterPlot"),
-                           value = 2
+                  tabPanel("Datos2",                  # Nombre de la pestaña
+                           h2("Gráfico de Datos2"),   # Título de el gráfico dentro de esa pestaña
+                           plotOutput("scatterPlot"), # Gráfico en esa pestaña
+                           value = 2                  # Le asociamos el valor de 2 para el gráfico y la reactividad
                   ),
-                  tabPanel("Mapa",
-                           h2("Gráfico de Mapa"),
-                           value = 3
+                  tabPanel("Mapa",                    # Nombre de la pestaña
+                           h2("Gráfico de Mapa"),     # Título de el gráfico dentro de esa pestaña
+                           value = 3                  # Le asociamos el valor de 3 para el gráfico y la reactividad
+                  ), 
+                  tabPanel("Gastos Comunes",                # Nombre de la pestaña
+                           h2("Gráfico de Gastos Comunes"), # Título de el gráfico dentro de esa pestaña
+                           plotOutput("gastosPlot1"),       # Gráfico en esa pestaña
+                           value = 4                  # Le asociamos el valor de 4 para el gráfico y la reactividad
                   ),
-                  tabPanel("Gastos Comunes",
-                           h2("Gráfico de Gastos Comunes"),
-                           plotOutput("gastosPlot1"),
-                           value = 4
+                  tabPanel("Bernoulli",                     # Nombre de la pestaña
+                           h2("Gráfico de Bernoulli"),      # Título de el gráfico dentro de esa pestaña
+                           plotOutput("bernoulliPlot"),     # Gráfico en esa pestaña
+                           value = 5                 # Le asociamos el valor de 5 para el gráfico y la reactividad
                   ),
-                  tabPanel("Bernoulli",
-                           h2("Gráfico de Bernoulli"),
-                           plotOutput("bernoulliPlot"),
-                           value = 5
+                  tabPanel("Municipio",                     # Nombre de la pestaña
+                           h2("Gráficos por Municipio"),    # Título de el gráfico dentro de esa pestaña
+                           plotOutput("municipioPlot1"),    # Gráfico en esa pestaña
+                           value = 6                   # Le asociamos el valor de 6 para el gráfico y la reactividad
                   ),
-                  tabPanel("Municipio",
-                           h2("Gráficos por Municipio"),
-                           plotOutput("municipioPlot1"),
-                           value = 6
-                  ),
-                                    tabPanel("Basicos",
-                           h2("Gráficos Básicos"),
-                           plotOutput("BasicosPlot"),
-                           value = 7
+                                    tabPanel("Basicos",     # Nombre de la pestaña
+                           h2("Gráficos Básicos"),          # Título de el gráfico dentro de esa pestaña
+                           plotOutput("BasicosPlot"),       # Gráfico en esa pestaña
+                           value = 7                  # Le asociamos el valor de 7 para el gráfico y la reactividad
                   )
       )
     )
@@ -150,7 +151,7 @@ ui <- fluidPage(    # Página en blanco
 )
 
 # Server
-server <- function(input, output, session) {
+server <- function(input, output, session) {  # Definimos el server
 
   observeEvent(input$update_datos1, {
     output$barPlot <- renderPlot({
