@@ -44,7 +44,7 @@ datos
 
 ```{r}
 
-
+# NOTA) Ajustar los datos de los gráficos de puntos, tiene valores atípicos (anque puedo perder datos de otros gráficos)
 # CORRECTO
 
 # Colores personalizados para el gráfico de municipios
