@@ -153,131 +153,145 @@ ui <- fluidPage(    # Página en blanco
 # Server
 server <- function(input, output, session) {  # Definimos el server
 
-  observeEvent(input$update_datos1, {
-    output$barPlot <- renderPlot({
-      x_axis <- input$x_axis_datos1
-      if (x_axis == "disposicion") {
-        p1 <- ggplot(datos, aes(x = disposicion)) +
-          geom_bar() +
-          labs(x = "Disposición", y = "Cantidad")
-
+  observeEvent(input$update_datos1, { # Código que se activara cuando toquemos el boton de "update_datos1"
+    output$barPlot <- renderPlot({    # Gráfico en base al elemento llamado barPlot
+      x_axis <- input$x_axis_datos1   # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X
+      
+      # Acá separe en un if porque de los 5 ejes X que podemos variar, 4 son continuos y 1 es discreto, entonces si al tocar el boton de selección, la opción que elegimos es "Baños", "Habitaciones", "Cuartos", "Garages" entonces se usara un eje X continuo, en caso de que se seleccione  "Disposición" se usara un eje X discreto.
+      if (x_axis == "disposicion") { # Si en el boton seleccionamos la opción de " disposicion"
         
-         Prueba20 <- datos %>%     
-         group_by(disposicion) %>% 
-         summarise(media_precio = mean(precio)) 
-         Prueba20
+        # Gráfico sobre la cantidad asociada cada categoría de "Disposición"
+        p1 <- ggplot(datos, aes(x = disposicion)) + # Datos y ejes
+          geom_bar() +                              # Gráfico de barras
+          labs(x = "Disposición", y = "Cantidad")   # Nombre de los ejes
+
+        # Gráfico asociado a la media del precio de cada categoría de "Disposición"
+         Prueba20 <- datos %>%                      # Datos
+         group_by(disposicion) %>%                  # Agrupamos por disposición
+         summarise(media_precio = mean(precio))     # Resumimos con la media del precio
+         Prueba20                                   # Resultado
         
-        p2 <- ggplot(Prueba20, aes(x = disposicion, y = media_precio)) +
-          geom_bar(stat = "identity") +
-          labs(x = "Disposición", y = "Media Precio")
+        p2 <- ggplot(Prueba20, aes(x = disposicion, y = media_precio)) +  # Datos y ejes 
+          geom_bar(stat = "identity") +                                   # Gráfico de barras         
+          labs(x = "Disposición", y = "Media Precio")                     # Nombre de los ejes
 
-        gridExtra::grid.arrange(p1, p2, nrow = 2)
-      } else {
-        datos_resumidos <- datos %>%
-          group_by(across(all_of(x_axis))) %>%
-          summarise(media_precio = mean(precio, na.rm = TRUE), .groups = 'drop')
+        gridExtra::grid.arrange(p1, p2, nrow = 2)   # Hacemos una grilla para que se muestren los dos gráficos
+      } else { # Caso contrario (es decir, seleccionamos otra opción que no sea "disposicion")
+        datos_resumidos <- datos %>%    # Datos
+          group_by(across(all_of(x_axis))) %>% # Agrupación, para cada eje X se hara un grupo
+          summarise(media_precio = mean(precio, na.rm = TRUE), .groups = 'drop') # Resumido por la media del precio, para cada eje X se hara un resumen por precio
+        
+        
+         # Gráfico sobre la cantidad asociada cada categoría de los distintos ejes X
+        p1 <- ggplot(datos, aes_string(x = x_axis)) +   # Datos y ejes
+          geom_bar() +                                  # Gráfico de barras
+          scale_x_continuous(breaks = unique(datos[[x_axis]])) + # Escala x continua, los elementos del eje X seran los valores únicos en cada columna asociada a ese eje X
+          labs(x = x_axis, y = "Cantidad") # Nombres de los ejes
+        
+          # Gráfico asociado a la media del precio de cada categoría de los distintos ejes X
+        p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + # Datos y ejes
+          geom_bar(stat = "identity") + # Gráfico de barras
+          scale_x_discrete(breaks = unique(datos_resumidos[[x_axis]])) + # Escala x discreta, los elementos del eje X seran los valores únicos en cada columna asociada a ese eje X
+          labs(x = x_axis, y = "Media Precio") # Nombres de los ejes
 
-        p1 <- ggplot(datos, aes_string(x = x_axis)) +
-          geom_bar() +
-          scale_x_continuous(breaks = unique(datos[[x_axis]])) +
-          labs(x = x_axis, y = "Cantidad")
-
-        p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) +
-          geom_bar(stat = "identity") +
-          scale_x_discrete(breaks = unique(datos_resumidos[[x_axis]])) +
-          labs(x = x_axis, y = "Media Precio")
-
-        gridExtra::grid.arrange(p1, p2, nrow = 2)
+        gridExtra::grid.arrange(p1, p2, nrow = 2) #  Hacemos una grilla para que se muestren los dos gráficos
       }
     })
   })
 
-  observeEvent(input$update_datos2, {
-    output$scatterPlot <- renderPlot({
-      x_axis <- input$x_axis_datos2
-      datos_2 <- datos %>% select(all_of(c(x_axis, "precio")))
-      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) +
-        geom_point() +
-        labs(x = x_axis, y = "Precio") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
+  observeEvent(input$update_datos2, {  # Código que se activara cuando toquemos el boton de "update_datos2"
+    output$scatterPlot <- renderPlot({ # Gráfico en base al elemento llamado scatterPlot
+      x_axis <- input$x_axis_datos2 # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X 
+      datos_2 <- datos %>% select(all_of(c(x_axis, "precio"))) # Seleccionamos todos los elementos del eje X definidos en x_axis y también obtenemos el precio de los datos originales y lo guardamos en el dataframe datos
+      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) +  # Datos y ejes
+        geom_point() +                                         # Gráfico de puntos
+        labs(x = x_axis, y = "Precio") + # Nombres de los ejes
+        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8)) 
+      # Ajustamos el ángulo y el tamaño del texto de los elementos del eje X
     })
   })
 
-  observeEvent(input$update_gastos, {
-    output$gastosPlot1 <- renderPlot({
-      x_axis <- input$x_axis_gastos
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) +
-        geom_bar(stat="identity") +
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  observeEvent(input$update_gastos, {  # Código que se activara cuando toquemos el boton de "update_gastos"
+    output$gastosPlot1 <- renderPlot({ # Gráfico en base al elemento llamado gastosPlot1
+      x_axis <- input$x_axis_gastos    # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X 
+      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + # Datos y ejes
+        geom_bar(stat="identity") +                                 # Gráfico de barras
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+      # Ajustamos el ángulo y el tamaño del texto de los elementos del eje X
     })
   })
   
   
-  observe({
-    output$bernoulliPlot <- renderPlot({
-      dum <- datos %>%
+  observe({ # Inlcuimos un gráfico que sera solo para observar y no sera reactivo
+    output$bernoulliPlot <- renderPlot({ # Gráfico en base al elemento llamado bernoulliPlot
+      dum <- datos %>%                   # Datos donde solo seleccionamos las columnas que tienen de categorías 0 y 1
         select("vista_al_mar", "vivienda_social", "Barbecue",                           "Living_Room", "Closet", "Patio", "Pool", "Garage",                     "Pet", "coneccion_cas", "Playroom", "Duplex",                           "calefaccion", "WiFi", "zona_barbacoa", "Gym", "balcon",                  "deposito", "Air_Conditioning", "jardin",                                "losa_radiante", "Solarium", "amueblado")
       
       calcular_y_unir <- function(df, col, resultado_final) { # Función
-       temp <- df %>%       # Datos
-        group_by(valor = .data[[col]]) %>% #
-       summarise(Mean = mean(precio, na.rm = TRUE), .groups = "drop")
+       temp <- df %>%                                         # Datos
+        group_by(valor = .data[[col]]) %>%                    # Agrupamos por todas las columnas
+       summarise(Mean = mean(precio, na.rm = TRUE), .groups = "drop") # Resumimos con la media, ignorando los nulos
        colnames(temp)[2] <- paste0(col, "_Media") 
+       # A cada columna del dataframe resultante le vamos a pegar la palabra "_Mean"
        resultado_final <- left_join(resultado_final, temp, by = "valor",        relationship = "many-to-one") 
+# Hacemos un join con todos los resultados, teniendo la columna "valor" como columna común entre las tablas para unirlas
        return(resultado_final) # Resultado
         }
 
-      resultado_final <- data.frame(valor = c(0, 1))
-      columnas <- colnames(dum)
-      for (col in columnas) {
-        resultado_final <- calcular_y_unir(datos, col, resultado_final)
+      resultado_final <- data.frame(valor = c(0, 1)) #Dataframe inicial
+      columnas <- colnames(dum) # Nombres de las columnas
+      for (col in columnas) {  # Para cada elemento en las clolumnas
+        resultado_final <- calcular_y_unir(datos, col, resultado_final) # Aplicamos la función previamente definida
       }
-      data_long <- resultado_final %>%
-        pivot_longer(-valor, names_to = "variable", values_to = "value")
-      ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) + 
-        geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +  
-        labs(x = "Variable", y = "Value", fill = "Value") + 
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+      data_long <- resultado_final %>%  # Datos
+        pivot_longer(-valor, names_to = "variable", values_to = "value") # Pasamos los datos al formato largo con pivot_longer
+      ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) +  # Datos, ejes y color
+        geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +     # Gráfico de barras
+        labs(x = "Variable", y = "Value", fill = "Value") +                       # Nombres de los ejes
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))                  
+       # Ajustamos el ángulo y el tamaño del texto de los elementos del eje X
     })
   })
   
   
   
 
-  observeEvent(input$update_municipio, {
-    output$municipioPlot1 <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "Precio", fill = "Municipio") +
-        ggtitle("Precio por Municipio") +
-        scale_fill_manual(values = colores_personalizados) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  observeEvent(input$update_municipio, { # Código que se activara cuando toquemos el boton de "update_municipio"
+    output$municipioPlot1 <- renderPlot({ # Gráfico en base al elemento llamado municipioPlot1
+      x_axis <- input$x_axis_municipio # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X 
+      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) + # Datos, ejes y color 
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +          # Gráfico de barras
+        facet_grid(. ~ Municipio, scales = "free_x") +                          # Separamos en grillas con facet_grid
+        labs(x = x_axis, y = "Precio", fill = "Municipio") +                    # Nombres de los ejes
+        ggtitle("Precio por Municipio") +                                       # Título 
+        scale_fill_manual(values = colores_personalizados) +                    # Elegimos los Colores manualmente
+        theme(plot.title = element_text(hjust = 0.5),                           # Tamaño del título
+              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))   # Tamaño y ángulo de los elementos del eje X
     })
   })
   
   
   
   
-observeEvent(input$update_basicos, {
-    output$BasicosPlot <- renderPlot({
-      x_axis <- input$x_axis_basicos
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(Cantidad = n(), .groups = 'drop')
+observeEvent(input$update_basicos, {   # Código que se activara cuando toquemos el boton de "update_basicos"
+    output$BasicosPlot <- renderPlot({ # Gráfico en base al elemento llamado BasicosPlot
+      x_axis <- input$x_axis_basicos   # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X 
+      datos_resumidos <- datos %>%                   # Datos
+        group_by(across(all_of(x_axis))) %>%         # Agrupación, para cada eje X se hara un grupo
+        summarise(Cantidad = n(), .groups = 'drop')  # Resumido por la media del precio, para cada eje X se hara un resumen por precio 
 
-      ggplot(datos_resumidos, aes_string(x = x_axis, y = "Cantidad")) +
-        geom_bar(stat = "identity") +
-        labs(x = x_axis, y = "Cantidad") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
+      ggplot(datos_resumidos, aes_string(x = x_axis, y = "Cantidad")) + # Datos y ejes
+        geom_bar(stat = "identity") +  # Gráfico de barras
+        labs(x_axis, y = "Cantidad") + # Nombres de los ejes
+        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))  
+      # Tamaño y ángulo de los elementos del eje X
     })
   })
   
   
 }
 
+# Resultados
 shinyApp(ui = ui, server = server)
 
 
