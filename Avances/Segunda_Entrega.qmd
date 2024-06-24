@@ -799,7 +799,7 @@ resultado_final
 
 ```{r}
 
-
+#
 # Función para gráficar 
 funcion_dum <- function(datos){
 
