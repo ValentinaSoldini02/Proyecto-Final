@@ -46,6 +46,9 @@ tabla_municipio <- data.frame(
   "Lezica, Peñarol, Nuevo París, Sayago, Conciliación, Colón"))
 
 tabla_municipio 
+install.packages("gt")
+library(gt)
+gt(tabla_municipio)
 ```
 
 ```{r}
@@ -155,6 +158,7 @@ datos_2 <- datos_2 %>% # Datos
   ))
 
 
+
 ```
 
 ```{r}
@@ -184,8 +188,7 @@ ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 # Centrar el título y modificar el texto de los elementos del eje X
 ```
-<<<<<<< HEAD
-=======
+
 En este gráfico se puede observar que los municipios B, CH y E tienen los precios por metro cuadrado más altos. Dentro del municipio B, la zona con el precio por metro cuadrado más elevado es Centro. En el municipio CH, la zona más costosa es Pocitos, mientras que en el municipio E, la zona con el mayor precio por metro cuadrado es Carrasco. 
 
 ```{r}
@@ -302,6 +305,7 @@ vif(modelo)
   
 numerical_vars <- datos_2 %>%
   select_if(is.numeric)
+  
 
 # Calcular la matriz de correlación
 cor_matrix <- cor(numerical_vars, use = "complete.obs")
@@ -317,9 +321,47 @@ corrplot(cor_matrix, method = "circle", type = "upper", tl.cex = 0.6, tl.col = "
 
 
 
-modelo <- lm(precio_m2 ~. -losa_radiante - año_de_const - cant_de_est - baños -Apartments_per_Floor -cant_cuartos - cant_de_piso, data = datos_2)
+modelo <- lm(precio_m2 ~. -losa_radiante - año_de_const - cant_de_est - baños -Apartments_per_Floor -cant_cuartos - cant_de_piso -direccion -zona, data = datos_2)
 summary(modelo)
 vif(modelo)
 ```
+
+Bosques:
+
+```{r}
+library(tidyverse)
+library(randomForest)
+library(modelr)
+```
+
+```{r}
+names(datos_2)
+intrain <- sample(x = 1:nrow(datos_2), size =
+nrow(datos_2)*.7)
+training <- datos_2[intrain,]
+testing <- datos_2[-intrain,]
+# ajustamos modelo lineal simple
+rf <- randomForest(precio_m2 ~ . -direccion ,data= training)
+#raiz cuadrada del error cuadr´atico medio
+rmse(rf, testing)
+```
+
+
+
+```{r}
+library(rpart)
+library(rattle)
+# Separo la muestra en entrenamiento y testeo
+inTrain <- sample(1:nrow(datos_2), nrow(datos_2)*.7)
+train.set <- datos_2[inTrain,]
+test.set <- datos_2[-inTrain,]
+# Ajusto un ´arbol de clasificaci´on sin podar
+tree_ab <- rpart( precio_m2~ Municipio + WiFi,
+data = train.set)
+fancyRpartPlot(tree_ab)
+```
+
+
+
 
 
