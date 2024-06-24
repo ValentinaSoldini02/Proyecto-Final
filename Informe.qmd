@@ -34,6 +34,24 @@ En ciertas columnas habían valores nulos, para evitar esto se realizo lo siguie
 -   A la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
 
 ```{r}
+#| echo: false
+library(tidyverse)
+library(GGally)
+library(car)
+library(skedastic)
+library(robustbase)
+library(tseries)
+library(here)
+library(readxl)
+library(ggplot2)
+library(forcats)
+library(gt)
+library(dplyr)
+library(randomForest)
+library(modelr)
+```
+
+```{r}
 tabla_municipio <- data.frame(
   Municipio = c("Municipio A","Municipio B", "Municipio C", "Municipio CH", "Municipio D", "Municipio E", "Municipio F", "Municipio G"),
   Columna2 = c("Cerro, La Teja, Paso de la Arena, Belvedere, Nuevo París, Prado",
@@ -46,25 +64,11 @@ tabla_municipio <- data.frame(
   "Lezica, Peñarol, Nuevo París, Sayago, Conciliación, Colón"))
 
 tabla_municipio 
-install.packages("gt")
-library(gt)
+
 gt(tabla_municipio)
 ```
 
-```{r}
-#| echo: false
-library(tidyverse)
-library(GGally)
-library(car)
-library(skedastic)
-library(robustbase)
-library(tseries)
-library(here)
-library(readxl)
-library(ggplot2)
-library(forcats)
 
-```
 
 ```{r}
 #| echo: false
@@ -110,7 +114,7 @@ datos_2 <- datos_2|>
          m2_totales = Land_Square_Meters,
          vivienda_social = Social_Housing,
          cant_de_est = Garages,
-         coneccion_cas = Gas_Pipeline,
+         coneccion_gas = Gas_Pipeline,
          calefaccion = Heating,
          zona_barbacoa = Grill,
          balcon = Balcony
@@ -232,6 +236,40 @@ Comendando la limpieza para la regrecion lineal multiple:
 Dado que la presencia de los valores nulos en los datos pueden afectar negativamente el ajuste y la precisión lineal múltiple, se realizaron varios pasos de limpieza de datos para manejar estos valores faltantes de manera mas adecuada. A continuación, se decriben los métodos utilizados para las diferentes columnas que contiene valores nulos en nuestro conjunto de datos, en la columna de "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato, en la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad y por último la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
 
 ```{r}
+#| echo: false
+# Convertir columnas categóricas a factores si es necesario
+datos_2$tipo_prop <- as.factor(datos_2$tipo_prop)
+datos_2$zona <- as.factor(datos_2$zona)
+datos_2$Condition <- as.factor(datos_2$Condition)
+datos_2$disposicion <- as.factor(datos_2$disposicion)
+datos_2$vista_al_mar <- as.factor(datos_2$vista_al_mar)
+datos_2$vivienda_social <- as.factor(datos_2$vivienda_social)
+datos_2$Barbecue <- as.factor(datos_2$Barbecue)
+datos_2$Living_Room <- as.factor(datos_2$Living_Room)
+datos_2$Closet <- as.factor(datos_2$Closet)
+datos_2$Patio <- as.factor(datos_2$Patio)
+datos_2$Pool <- as.factor(datos_2$Pool)
+datos_2$Garage <- as.factor(datos_2$Garage)
+datos_2$Pet <- as.factor(datos_2$Pet)
+datos_2$coneccion_gas <- as.factor(datos_2$coneccion_gas)
+datos_2$Playroom <- as.factor(datos_2$Playroom)
+datos_2$Duplex <- as.factor(datos_2$Duplex)
+datos_2$calefaccion <- as.factor(datos_2$calefaccion)
+datos_2$WiFi <- as.factor(datos_2$WiFi)
+datos_2$Gym <- as.factor(datos_2$Gym)
+datos_2$balcon <- as.factor(datos_2$balcon)
+datos_2$Air_Conditioning <- as.factor(datos_2$Air_Conditioning)
+datos_2$jardin <- as.factor(datos_2$jardin)
+datos_2$losa_radiante <- as.factor(datos_2$losa_radiante)
+datos_2$Solarium <- as.factor(datos_2$Solarium)
+datos_2$amueblado <- as.factor(datos_2$amueblado)
+datos_2$zona_barbacoa <- as.factor(datos_2$zona_barbacoa)
+datos_2$deposito <- as.factor(datos_2$deposito)
+datos_2
+```
+
+```{r}
+#| echo: false
 # Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
 reemplazar_direccion <- function(datos_2) {
   if (!"direccion" %in% colnames(datos_2) || !"zona" %in% colnames(datos_2)) {
@@ -278,39 +316,36 @@ reemplazar_na_disposicion <- function(datos_2) {
 
 datos_2 <- reemplazar_na_disposicion(datos_2)
 
-print(colSums(is.na(datos_2)))
 
-names(datos_2)
+```
 
+```{r}
+#| echo: false
 
-# Convertir columnas categóricas a factores si es necesario
-datos_2$tipo_prop <- as.factor(datos_2$tipo_prop)
-datos_2$zona <- as.factor(datos_2$zona)
-datos_2$Condition <- as.factor(datos_2$Condition)
-datos_2$disposicion <- as.factor(datos_2$disposicion)
+#Sub datos:
 
-datos_2 <- datos_2 %>% na.omit()
-
-
-modelo <- lm(precio_m2 ~., data = datos_2)
-
-# Resumen del modelo
-summary(modelo)
-vif(modelo)
+# A la columna direccion la quitamos porque estaba la columna municipio y es a lo que nosotros nos queremos enfocar. Por ptro lado, tambien sacamos la columna losa_radiante porque habia otra columna que es calefaccion y nos parecio repetitiva.
+# Tenemos un problema y es que hay algunas variables que estan correlacionadas entre si, y a alguna de ellas, en nuestra opinion son importantes para predecir el precio de las propiedades. En este casa voamos a sacar la variable Apartments_per_Floor. La variable baños y cant_de_est tambien se saco.
+#Tambien le voy a quitar la zona porque vamos a trabajar por municipios
 
 
+datos_sub <- datos_2  |> 
+  select(-direccion, - losa_radiante, -Apartments_per_Floor, -baños, -cant_de_est, -Updated, -zona)
+names(datos_sub)
+```
 
 
+```{r}
 #correlacion:
   
-numerical_vars <- datos_2 %>%
+numerical_vars <- datos_sub %>%
   select_if(is.numeric)
   
 
 # Calcular la matriz de correlación
 cor_matrix <- cor(numerical_vars, use = "complete.obs")
 
-install.packages("corrplot")
+
 library(corrplot)
 # Visualizar la matriz de correlación
 corrplot(cor_matrix, method = "circle", type = "upper", tl.cex = 0.6, tl.col = "black")
@@ -320,30 +355,48 @@ corrplot(cor_matrix, method = "circle", type = "upper", tl.cex = 0.6, tl.col = "
 #Otra columna que me gustraia sacar es la de loza radiante porque hay otra columna que es calefaccion y asumo que la loza radiante es un tipo de calefaccion.
 
 
-
 modelo <- lm(precio_m2 ~. -losa_radiante - año_de_const - cant_de_est - baños -Apartments_per_Floor -cant_cuartos - cant_de_piso -direccion -zona, data = datos_2)
 summary(modelo)
 vif(modelo)
+datos_sub
 ```
 
 Bosques:
 
 ```{r}
-library(tidyverse)
-library(randomForest)
-library(modelr)
-```
-
-```{r}
-names(datos_2)
-intrain <- sample(x = 1:nrow(datos_2), size =
-nrow(datos_2)*.7)
-training <- datos_2[intrain,]
-testing <- datos_2[-intrain,]
+names(datos_sub)
+intrain <- sample(x = 1:nrow(datos_sub), size =
+nrow(datos_sub)*.7)
+training <- datos_sub[intrain,]
+testing <- datos_sub[-intrain,]
 # ajustamos modelo lineal simple
-rf <- randomForest(precio_m2 ~ . -direccion ,data= training)
+rf <- randomForest(precio_m2 ~ .,data= training)
 #raiz cuadrada del error cuadr´atico medio
 rmse(rf, testing)
+```
+```{r}
+pred <- predict(rf, newdata = testing)
+results <- data.frame(
+  Actual = testing$precio_m2,
+  Predicciones = pred
+)
+
+ggplot(results, aes(x = Actual, y = Predicciones)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = "red") +
+  labs( x = "Variables originales", y = "Variables predichas") +
+  theme_minimal()
+
+# este grafico nos muestra que las predicciones no son precisas.
+
+
+resi <- testing$precio_m2 - pred
+
+
+ggplot(data.frame(Residuals = resi), aes(x = Residuals)) +
+  geom_histogram(binwidth = 10, fill = "blue", color = "black") +
+  labs(x = "Reciduos", y = "frecuencia") +
+  theme_minimal()
 ```
 
 
