@@ -1060,7 +1060,7 @@ write_xlsx(datos, path = here("Shiny_Proyecto","app","datos_limpios.xlsx"))
 
 
 
-# PRECIO SEGÚN CANTIDAD DE DISPOSICIÓN 
+# PRECIO SEGÚN DISPOSICIÓN DEL ALQUILER
 
 
 Prueba20 <- datos %>%         # Datos
