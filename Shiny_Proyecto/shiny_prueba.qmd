@@ -298,3 +298,236 @@ shinyApp(ui = ui, server = server)
 
 ``` 
 
+
+
+```{r}
+# PROBANDO COSAS
+ui <- fluidPage(
+  titlePanel("Ejemplo de Panel con Botones de Selección"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      # Botón de selección 1
+      selectInput("option1", 
+                  label = "Gráfico de todos los municipios:",
+                  choices = c("Opción A", "Opción B", "Opción C"),
+                  selected = "Opción A"),
+      
+      # Botón de selección 2
+      selectInput("option2", 
+                  label = "Un municipio en especifico:",
+                  choices = c("Opción 1", "Opción 2", "Opción 3"),
+                  selected = "Opción 1"),
+      
+      # Botón de selección 3
+      selectInput("option3", 
+                  label ="Características de ese municipio :",
+                  choices = c("Elemento X", "Elemento Y", "Elemento Z"),
+                  selected = "Elemento X")
+    ),
+    
+    mainPanel(
+      # Mostrar las selecciones
+      textOutput("selection1"),
+      textOutput("selection2"),
+      textOutput("selection3")
+    )
+  )
+)
+
+# Definir la lógica del servidor
+server <- function(input, output) {
+  output$selection1 <- renderText({
+    paste("Ha seleccionado:", input$option1)
+  })
+  
+  output$selection2 <- renderText({
+    paste("Ha seleccionado:", input$option2)
+  })
+  
+  output$selection3 <- renderText({
+    paste("Ha seleccionado:", input$option3)
+  })
+}
+
+
+
+
+  observeEvent(input$update_municipio, { # Código que se activara cuando toquemos el boton de "update_municipio"
+    output$municipioPlot1 <- renderPlot({ # Gráfico en base al elemento llamado municipioPlot1
+      x_axis <- input$x_axis_municipio # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X 
+      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) + # Datos, ejes y color 
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +          # Gráfico de barras
+        facet_grid(. ~ Municipio, scales = "free_x") +                          # Separamos en grillas con facet_grid
+        labs(x = x_axis, y = "Precio", fill = "Municipio") +                    # Nombres de los ejes
+        ggtitle("Precio por Municipio") +                                       # Título 
+        scale_fill_manual(values = colores_personalizados) +                    # Elegimos los Colores manualmente
+        theme(plot.title = element_text(hjust = 0.5),                           # Tamaño del título
+              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))   # Tamaño y ángulo de los elementos del eje X
+    })
+  })
+  
+
+
+
+
+# Ejecutar la aplicación Shiny
+shinyApp(ui = ui, server = server)
+
+
+```
+
+
+
+
+
+```{r}
+
+data1 <- data.frame(x = rnorm(100), y = rnorm(100))
+data2 <- data.frame(x = rnorm(100), y = rnorm(100))
+data3 <- data.frame(x = rnorm(100), y = rnorm(100))
+
+# Definir la UI
+ui <- fluidPage(
+  titlePanel("Ejemplo de Panel con Botones de Selección y Gráficos"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      # Botón de selección para elegir el gráfico
+      selectInput("graphOption", 
+                  label = "Seleccione el gráfico:",
+                  choices = c("Gráfico 1", "Gráfico 2", "Gráfico 3"),
+                  selected = "Gráfico 1"),
+      
+      # Botón de selección para elegir el eje X
+      selectInput("xAxisOption", 
+                  label = "Seleccione el eje X:",
+                  choices = c("Opción X1", "Opción X2", "Opción X3"),
+                  selected = "Opción X1"),
+      
+      selectInput("option3", 
+                  label ="Características de ese municipio :",
+                  choices = c("Elemento X", "Elemento Y", "Elemento Z"),
+                  selected = "Elemento X")
+      
+    ),
+    
+    mainPanel(
+      # Mostrar el gráfico
+      plotOutput("selectedPlot")
+    )
+  )
+)
+
+# Definir la lógica del servidor
+server <- function(input, output) {
+  output$selectedPlot <- renderPlot({
+    # Seleccionar los datos y el gráfico según la opción elegida
+    if (input$graphOption == "Gráfico 1") {
+      data <- data1
+    } else if (input$graphOption == "Gráfico 2") {
+      data <- data2
+    } else {
+      data <- data3
+    }
+    
+    # Definir el eje X según la opción elegida
+    x_var <- switch(input$xAxisOption,
+                    "Opción X1" = data$x,
+                    "Opción X2" = data$y,
+                    "Opción X3" = sqrt(data$x^2 + data$y^2))
+    
+    # Crear el gráfico
+    ggplot(data, aes(x_var, y)) +
+      geom_point() +
+      labs(x = input$xAxisOption, y = "Valores Y") +
+      theme_minimal()
+  })
+}
+
+# Ejecutar la aplicación Shiny
+shinyApp(ui = ui, server = server)
+
+
+```
+
+
+```{r}
+
+# Datos de ejemplo
+set.seed(123)
+datos <- data.frame(
+  zona = sample(c("Norte", "Sur", "Este", "Oeste"), 100, replace = TRUE),
+  tipo_prop = sample(c("Casa", "Apartamento", "Terreno"), 100, replace = TRUE),
+  Condicion = sample(c("Nueva", "Usada"), 100, replace = TRUE),
+  precio = rnorm(100, 200000, 50000),
+  Municipio = sample(c("Mun1", "Mun2", "Mun3", "Mun4"), 100, replace = TRUE)
+)
+
+# Definir la UI
+ui <- fluidPage(
+  titlePanel("Ejemplo de Gráficos Dinámicos en Shiny"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      conditionalPanel(
+        condition = "input.tabselected == 6",
+        selectInput("x_axis_municipio", "Seleccione el eje X:",
+                    choices = list(
+                      "Zona" = "zona",
+                      "Tipo de Propiedad" = "tipo_prop",
+                      "Condición" = "Condicion")),
+        actionButton("update_municipio", "Actualizar Gráficos"),
+        selectInput("single_plot", "Seleccione el gráfico:",
+                    choices = list("Mun1", "Mun2", "Mun3", "Mun4"),
+                    selected = "Mun1")
+      )
+    ),
+    
+    mainPanel(
+      tabsetPanel(
+        id = "tabselected",
+        tabPanel("Municipio", value = 6,
+                 plotOutput("municipioPlot1"),
+                 plotOutput("singleMunicipioPlot")
+        )
+      )
+    )
+  )
+)
+
+# Definir la lógica del servidor
+server <- function(input, output) {
+  observeEvent(input$update_municipio, {
+    output$municipioPlot1 <- renderPlot({
+      x_axis <- input$x_axis_municipio
+      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+        facet_grid(. ~ Municipio, scales = "free_x") +
+        labs(x = x_axis, y = "Precio", fill = "Municipio") +
+        ggtitle("Precio por Municipio") +
+        theme(plot.title = element_text(hjust = 0.5),
+              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    })
+  })
+  
+  observeEvent(input$update_municipio, {
+    output$singleMunicipioPlot <- renderPlot({
+      x_axis <- input$x_axis_municipio
+      selected_municipio <- input$single_plot
+      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
+      ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+        labs(x = x_axis, y = "Precio", fill = "Municipio") +
+        ggtitle(paste("Precio en", selected_municipio)) +
+        theme(plot.title = element_text(hjust = 0.5),
+              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    })
+  })
+}
+
+# Ejecutar la aplicación Shiny
+shinyApp(ui = ui, server = server)
+
+
+``` 
