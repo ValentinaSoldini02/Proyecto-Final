@@ -7,13 +7,16 @@ editor: visual
 
 # INTRODUCCIÓN:
 
-El mercado inmobiliario ha sido, durante muchos años de gran importancia tanto para inversores como para personas que buscan un alquiler. La variabilidad de los precios puede depender de diferentes factores como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros.Este proyecto se basa en analizar como estas variables afectan en los precios de las propiedades en los diferentes municipios.
+El mercado inmobiliario ha sido ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan un alquiler una propiedad. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios de las propiedades teniendo en cuenta diferentes aspectos. Para realizar este análisis, plenteamos las diferentes preguntas de investigación:
 
-Descripcion de los datos:
+-   ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+-   ¿En que municipio hay más alquileres?
+-   ¿Cuál es la variable que más influye en el precio?
+-   ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo?
+-   ¿Hay alguna variable que debería de eliminarse al modelo?
 
-Los datos utilizados, incluyen inoformación sobre propiedades disponibles para ser alquiladas en todo el año 2023. Contiene múltiples variables como la dirección, el precio, caracteristícas fisicas de la prpiedad, tipo de propiedad, condiciones de la propiedad, y caracterizticas adicionales como terraza, vista al mar, garage. En un primer momento se va a realizar una analisis exploratorio de los datos para ver que relación tienen las diferentes variabes con respecto al precio.
+Estas preguntas guiarán nuestro analisis para comprender mejor los factores que afectan los precios en el mercado inmobiliario y proporcionar una herramienta útil para los distintos agentes, ya sean compradores, vendedores, inversores y agentes inmobiliarios.
 
-Código reestructurado con los nombres de las variables en el español
 
 ```{r}
 # Instalar librerías:
@@ -43,9 +46,14 @@ library(gridExtra)
 
 ```
 
-Datos
+
+
+# Datos 
+
+Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes caracteristicas internas y externas de la propiedad.
 
 ```{r}
+
 
 
 # Datos sobre precio de casas
@@ -124,10 +132,24 @@ tabla_variables[42,] <- c("Solarium", "Numérica", "Propiedad con solarium")
 tabla_variables
 ```
 
-# Limpieza
 
-Pasos: 
-1)  Renombrar columnas de ingles a español
+
+# Análisis exploratorio de los datos
+
+Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados,valores atípocos y valores nulos. Además, se decició eliminar las columnas "Furnished...32", "Furnished...42", y "Floors". Las dos primeras columnas fueron eliminadas porque exixtía una tercera columna que contenía la misma información. La columna "Floors" fue eliminada debido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.
+
+Otra modificación que se realizó fue la agrupación de las zonas de Montevideo en municipios. Cada municipio, con sus respectivas zonas se puede observar en la "Tabla 1". También se convirtió la columna precio por precio por metros cuadrados, para tener un mejor análisis de los datos.
+
+En ciertas columnas habían valores nulos, para evitar esto se realizo lo siguiente:
+
+-   A la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad.
+-   A la columna "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato.
+-   A la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
+
+
+## Limpieza
+
+Pasos: 1) Renombrar columnas de ingles a español
 
 2)  Poner columna de precio por metro cuadrado
 
@@ -139,11 +161,8 @@ Pasos:
 
 6)  Eliminar outliers
 
-
-
-
-
 ## Renombrar las columnas
+
 ```{r}
 
 #datos
@@ -215,7 +234,7 @@ datos
 
 ```
 
-##  Eliminar duplicados
+## Eliminar duplicados
 
 ```{r}
 
@@ -233,7 +252,7 @@ datos
 
 ```
 
-##  Eliminar o rellenar valores nulos
+## Eliminar o rellenar valores nulos
 
 ```{r}
 
@@ -356,7 +375,7 @@ detector_nulos(datos)
 
 ```
 
-##  Detectar y eliminar valores outliers:
+## Detectar y eliminar valores outliers:
 
 ```{r}
 # Criterio de rango intercuartilico
@@ -449,18 +468,14 @@ datos <- datos %>% # Datos
 datos
 ```
 
-
-
-
-
 # Visualización
-
+Pregunta 1) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad?
 ```{r}
 
 # Quitamos atípicos en el precio.
 
 
-# Pregunta 1) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad?
+# 
 
 
 # Elegimos los colores manualmente
@@ -565,11 +580,8 @@ ggplot(datos, aes(x = tipo_prop, y = precio, fill = Municipio)) + # Datos, ejes 
 
 
 ```
+
 En general el tipo de alquiler más común varia según municipio, en los municipios A, C, D y G son más comunes los alquileres de Alquileres. En cambio en los municipios CH y E son más comunes los alquileres de casas, finalmente en el municipio B es más común el alquiler de Oficinas.
-
-
-
-
 
 ```{r}
 datos
@@ -597,10 +609,8 @@ ggplot(grupo_estado, aes(x=fct_reorder(Condicion, Cantidad), y=Cantidad)) + # Da
 # tipo los garages estan en construcción, las casas que estan en buen estado y así 
 
 ```
+
 La mayoría de los alquileres se encuentran en Buena Condición o el Excelente Condición. También hay una parte considerable de alquileres que son nuevos.
-
-
-
 
 La mayoría de los inmuebles estan en buena condición o excelente condición. Pocos de ellos estan en construcción, o con necesidad de mantenimiento o por ser renovados.
 
@@ -624,9 +634,8 @@ ggplot(datos, aes(x = Condicion, y = precio, fill = Municipio)) + # Datos, ejes 
 
 
 ```
+
 En el Municipio A y E estan predominantemente los apartamentos en Excelente Condición. En los municipios C y F es más común los apartamentos con Buena Condición. n los municipios CH y B hay un empate entre la cantidad de apartamentos con Excelente Condición y Buena Condición.
-
-
 
 ```{r}
 
@@ -642,9 +651,8 @@ ggplot(datos, aes(x = Municipio , y = Gastos_Comunes)) +  # Datos y ejes
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
 ```
+
 La mayoría de gastos comúnes se dan en el municipio CH, donde recordemos estan la mayoría de los alquileres, y la minoría de gastos comunes se dan en el municipio F donde recordemos hay la menor cantidad de alquileres.
-
-
 
 ```{r}
 # P8) ¿Cómo influye el tipo de alquiler en el nivel de gastos comunes?
@@ -659,9 +667,8 @@ ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes)) +  # Datos y ejes
 # subdiviridr por municipio? Que gastos son más comunes según el tipo de alquiler por municipio
 
 ```
+
 La mayoría de gastos comúnes se dan en los apartamentos, y muy pocos en las Oficinas. En los otros tipos de alquileres practicamente no existen gastos comunes.
-
-
 
 ```{r}
 
@@ -676,8 +683,8 @@ ggplot(datos, aes(x = Condicion , y = Gastos_Comunes)) +  # Datos y ejes
 
 
 ```
-En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes 
 
+En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes
 
 ```{r}
 
@@ -704,11 +711,8 @@ ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Dato
 #max(datos$Gastos_Comunes)
 
 ```
+
 Como mencionamos anteriormente, en todos los municipios se cumple el mismo patrón, que es que los Gastos Comunes se dan más en alquileres del tipo apartamento.
-
-
-
-
 
 ```{r}
 
@@ -729,18 +733,14 @@ ggplot(datos, aes(x = Condicion, y = Gastos_Comunes, fill = Municipio)) + # Dato
 
 
 ```
-En el municipio A los gastos comunes se dan más en los inmuebles que estan en Buena Condición. 
+
+En el municipio A los gastos comunes se dan más en los inmuebles que estan en Buena Condición.
 
 En el municipio B y C los gastos comunes se da más en los inmuebles que estan en Excelente Condición.
 
-En el municipio CH hay un empate entre los más comunes son la Excelente Condición y Renovados. 
+En el municipio CH hay un empate entre los más comunes son la Excelente Condición y Renovados.
 
-En el municipio E hay un empate entre los más comunes son la Excelente Condición y Buena Condición. 
-
-
-
-
-
+En el municipio E hay un empate entre los más comunes son la Excelente Condición y Buena Condición.
 
 ```{r}
 #
@@ -821,10 +821,7 @@ funcion_dum <- function(datos){
 funcion_dum(resultado_final)
 ```
 
-En este gráfico mostramos distintas variables que representan elementos de confort que puede tener un alquiler o no tener, como son WiFi, Barbacoa, Jardin, Aire Acondicionado, etc. Estas variables toman valores de 0 y 1 donde el 0 representa que el alquiler no posee ese bien y el 1 representa que el alquiler si posee ese bien. Estamos gráficando el precio promedio para cada una de esas variables y comparando como difiere el precio en caso de tener o no tener un bien. 
-Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Barbacoa, Calefacción, Closet, Deposito, Garage, Jardin, Living, Losa Radiante, Patio,  Habitación de juegos, Piscina, Vista al Mar y Barbacoa, el precio es más alto al tener que al no tener. En cambio, en el caso de Balcon, Conexión a Gas, Duplex, Gimansio, Equipo para mascotas, Centro de Bronceado, WiFi o en el caso de ser una vivienda social, el precio es más alto al no tener que al tener.
-
-
+En este gráfico mostramos distintas variables que representan elementos de confort que puede tener un alquiler o no tener, como son WiFi, Barbacoa, Jardin, Aire Acondicionado, etc. Estas variables toman valores de 0 y 1 donde el 0 representa que el alquiler no posee ese bien y el 1 representa que el alquiler si posee ese bien. Estamos gráficando el precio promedio para cada una de esas variables y comparando como difiere el precio en caso de tener o no tener un bien. Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Barbacoa, Calefacción, Closet, Deposito, Garage, Jardin, Living, Losa Radiante, Patio, Habitación de juegos, Piscina, Vista al Mar y Barbacoa, el precio es más alto al tener que al no tener. En cambio, en el caso de Balcon, Conexión a Gas, Duplex, Gimansio, Equipo para mascotas, Centro de Bronceado, WiFi o en el caso de ser una vivienda social, el precio es más alto al no tener que al tener.
 
 ```{r}
 
@@ -884,7 +881,6 @@ ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
 
 Vemos que los inmuebles en general tienen una distribución similar según su cantidad de pisos, excepto en el caso de los inmuebles con 10 pisos que tienen una ocurrencia mucho más alta. En relación, vemos que en general la mayoría se mantiene en los 1000 dolares para cantidades de pisos variadas, y en algunas cantidades de pisos como son 2, 12, 13 la media del precio esta cerca de los 2000 dolares.
 
-
 ```{r}
 
 
@@ -919,10 +915,7 @@ ggplot(Prueba12, aes(x=nro_de_piso, y=media_precio)) + # Datos y ejes
 # Parece que en los pisos mas altos el precio es
 ```
 
-En la distribución los números de piso 0 y 1, luego cuando los pisos van subiendo de número la frecuencia va disminuyendo (con algunas excepciones como son el número 4 y el 9). En relación al precio vemos que casi todos los números de piso tiene un precio similar (casi 1000$) pero particularmente el piso con número 11 tiene un precio más elevado.
-
-
-
+En la distribución los números de piso 0 y 1, luego cuando los pisos van subiendo de número la frecuencia va disminuyendo (con algunas excepciones como son el número 4 y el 9). En relación al precio vemos que casi todos los números de piso tiene un precio similar (casi 1000\$) pero particularmente el piso con número 11 tiene un precio más elevado.
 
 ```{r}
 # P15) ¿Cómo influye la cantidad de apartamentos por piso en el precio?
@@ -952,10 +945,8 @@ ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ej
 
 
 ```
+
 La distribución de la cantidad muestra que en un piso en general es más común encontrarse con 2, 3 o 4 apartamentos. En relación al precio vemos que esos pisos que tienen 2, 3 o 4 apartamentos también son los que tienen el precio más alto.
-
-
-
 
 ```{r}
 # P2) Number_of_Floors
@@ -995,10 +986,8 @@ ggplot(Prueba13, aes(x=baños, y=media_precio)) + # Datos
    scale_x_continuous(breaks =  Prueba13$baños) # Elementos del eje X
 
 ```
-Vemos que en general, lo más común es que los inmuebles tengan un baño, luego el tener 2 o 3 es menos común. Pero vemos que a más baños tenga un inmueble, más alto sera el precio. 
 
-
-
+Vemos que en general, lo más común es que los inmuebles tengan un baño, luego el tener 2 o 3 es menos común. Pero vemos que a más baños tenga un inmueble, más alto sera el precio.
 
 ```{r}
 #colnames(datos)
@@ -1062,10 +1051,8 @@ ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +  # Datos
 
 
 ```
+
 Vemos que tanto para la cantidad de cuartos y de habitaciones, su distribución es muy parecida, tanto en cantidad como en precio. Donde la cantidad más común de cuartos/habitaciones en los inmuebles para alquilar es de 2 o 3. Y se cumple también que al tener más cantidad de cuartos/habitaciones el precio es más alto.
-
-
-
 
 ```{r}
 
@@ -1098,8 +1085,7 @@ ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +  # Datos y ejes
 
 ```
 
-Vemos que en general, lo más común es que los inmuebles no tengan garage o que tengan 1 solo, luego el tener 2 o 3 es menos común. De vuelta, se cumple que a más garages tenga un inmueble, más alto sera el precio. 
-
+Vemos que en general, lo más común es que los inmuebles no tengan garage o que tengan 1 solo, luego el tener 2 o 3 es menos común. De vuelta, se cumple que a más garages tenga un inmueble, más alto sera el precio.
 
 ```{r}
 # Built_Square_Meters
@@ -1142,10 +1128,8 @@ ggplot(datos, aes(x=m2_totales, y=precio)) +   # Datos y ejes
 
 #
 ```
+
 Parece haber una relación clara sobre la relación entre metros cuadrados y precio, el precio va a ser mayor conforme sean mayores los metros cuadrados.
-
-
-
 
 ```{r, eval=FALSE}
 
@@ -1158,7 +1142,6 @@ Parece haber una relación clara sobre la relación entre metros cuadrados y pre
 
 
 ```
-
 
 ```{r, eval=FALSE}
 
@@ -1215,10 +1198,8 @@ table(datos$disposicion)
 
 
 ```
-Lo más común es tener inmuebles al frente, aunque cuando vamos al precio, vemos que si bien los que estan al frente tiene un precio un poco más alto, en general todos estan en niveles similares. (Cerca de los 1000$)
 
-
-
+Lo más común es tener inmuebles al frente, aunque cuando vamos al precio, vemos que si bien los que estan al frente tiene un precio un poco más alto, en general todos estan en niveles similares. (Cerca de los 1000\$)
 
 # Modelo de regresión lineal multiple:
 
