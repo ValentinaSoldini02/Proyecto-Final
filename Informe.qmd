@@ -19,7 +19,9 @@ Estas preguntas guiarán nuestro analisis para comprender mejor los factores que
 
 ## Datos :
 
-Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes caracteristicas internas y externas de la propiedad.
+Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**, consiste en una plataforma web que reúne la comunidad Data Science, con más de 536 mil miembros activos en 194 países. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes caracteristicas internas y externas de la propiedad.
+
+Puedes encontrar el dataset en el siguiente enlace: [Precio de alquiler de casas en Montevideo Dataset](https://www.kaggle.com/datasets/lasm1984/house-rental-price-in-montevideo?select=houses.csv)
 
 ## Análisis exploratorio de los datos
 
@@ -52,6 +54,7 @@ library(modelr)
 ```
 
 ```{r}
+#| echo: false
 tabla_municipio <- data.frame(
   Municipio = c("Municipio A","Municipio B", "Municipio C", "Municipio CH", "Municipio D", "Municipio E", "Municipio F", "Municipio G"),
   Columna2 = c("Cerro, La Teja, Paso de la Arena, Belvedere, Nuevo París, Prado",
@@ -67,8 +70,6 @@ tabla_municipio
 
 gt(tabla_municipio)
 ```
-
-
 
 ```{r}
 #| echo: false
@@ -165,71 +166,6 @@ datos_2 <- datos_2 %>% # Datos
 
 ```
 
-```{r}
-#| echo: false
-# Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
-
-
-# Elegimos los colores manualmente
-colores_personalizados <- c(
-  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   "Municipio_CH" = "purple",  "Municipio_D" = "orange",   "Municipio_E" = "pink",
-  "Municipio_F" = "brown",  "Municipio_G" = "cyan")
-
-
-# Gráfico
-ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes y color
-  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-  # Ancho y posición de las barras
-
-  facet_grid(. ~ Municipio, scales = "free_x") +
-  # Usar facet_grid para crear una grilla por Municipio
-
-  labs(x = "Zona", y = "Precio por m^2", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
-  ggtitle("Precio por Zona y Municipio") + # Título
-  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
-
-  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-# Centrar el título y modificar el texto de los elementos del eje X
-```
-
-En este gráfico se puede observar que los municipios B, CH y E tienen los precios por metro cuadrado más altos. Dentro del municipio B, la zona con el precio por metro cuadrado más elevado es Centro. En el municipio CH, la zona más costosa es Pocitos, mientras que en el municipio E, la zona con el mayor precio por metro cuadrado es Carrasco. 
-
-```{r}
-#| echo: false
-# Pregunta 3) Qué tipo de inmuebles para alquilar hay?
-
-
-grupo_tipo <- datos_2 %>% # Datos
-  group_by(tipo_prop) %>% # Agrupar por tipo de propiedad
-  summarise(Cantidad = n()) # Resumir por cantidad 
-grupo_tipo
-
-
-# Gráfico
-ggplot(grupo_tipo, aes(x=fct_reorder(tipo_prop, Cantidad), y=Cantidad)) + # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  labs(x="Municipio") + # Nombres de los ejes
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
-```
-```{r}
-#| echo: false
-grupo_estado <- datos_2 %>% # Datos
-  group_by(Condition) %>%   # Agrupar por condición de la vivienda
-  summarise(Cantidad = n()) # Resumir por la cantidad
-grupo_estado
-
-
-# Gráfico
-ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) + # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  labs(x="Municipio", y="Precio") + # Nombre de los ejes
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
-```
-En relación a los dos gráficos anteriores, se puede observar que las propiedades más alquiladas son los apartamentos. Esto puede deberse a la gran cantidad de apartamentos dispobles en Montevideo, lo que proporciona a los inversionistas una oportuidad lucrativa. Al relacionar esto con el gráficosiguiente, se puede ver la mayoría de las propiedades se encuentranen buenas o exelentes condiciones, por lo que los inquilinos tendrían una ventaja significativa ya que no se tendrian que realizar modificaciones en dicha propiedad.
-
 
 Comendando la limpieza para la regrecion lineal multiple:
 
@@ -318,6 +254,72 @@ datos_2 <- reemplazar_na_disposicion(datos_2)
 
 
 ```
+```{r}
+#| echo: false
+# Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+
+
+# Elegimos los colores manualmente
+colores_personalizados <- c(
+  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   "Municipio_CH" = "purple",  "Municipio_D" = "orange",   "Municipio_E" = "pink",
+  "Municipio_F" = "brown",  "Municipio_G" = "cyan")
+
+
+# Gráfico
+ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  # Ancho y posición de las barras
+
+  facet_grid(. ~ Municipio, scales = "free_x") +
+  # Usar facet_grid para crear una grilla por Municipio
+
+  labs(x = "Zona", y = "Precio por m^2", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Precio por Zona y Municipio") + # Título
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Centrar el título y modificar el texto de los elementos del eje X
+```
+
+En este gráfico se puede observar que los municipios B, CH y E tienen los precios por metro cuadrado más altos. Dentro del municipio B, la zona con el precio por metro cuadrado más elevado es Centro. En el municipio CH, la zona más costosa es Pocitos, mientras que en el municipio E, la zona con el mayor precio por metro cuadrado es Carrasco.
+
+```{r}
+#| echo: false
+# Pregunta 3) Qué tipo de inmuebles para alquilar hay?
+
+
+grupo_tipo <- datos_2 %>% # Datos
+  group_by(tipo_prop) %>% # Agrupar por tipo de propiedad
+  summarise(Cantidad = n()) # Resumir por cantidad 
+grupo_tipo
+
+
+# Gráfico
+ggplot(grupo_tipo, aes(x=fct_reorder(tipo_prop, Cantidad), y=Cantidad)) + # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  labs(x="Municipio") + # Nombres de los ejes
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+```
+
+```{r}
+#| echo: false
+grupo_estado <- datos_2 %>% # Datos
+  group_by(Condition) %>%   # Agrupar por condición de la vivienda
+  summarise(Cantidad = n()) # Resumir por la cantidad
+grupo_estado
+
+
+# Gráfico
+ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) + # Datos y ejes
+  geom_bar(stat="identity") + # Gráfico de barras
+  labs(x="Municipio", y="Precio") + # Nombre de los ejes
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+```
+
+En relación a los dos gráficos anteriores, se puede observar que las propiedades más alquiladas son los apartamentos. Esto puede deberse a la gran cantidad de apartamentos dispobles en Montevideo, lo que proporciona a los inversionistas una oportuidad lucrativa. Al relacionar esto con el gráficosiguiente, se puede ver la mayoría de las propiedades se encuentranen buenas o exelentes condiciones, por lo que los inquilinos tendrían una ventaja significativa ya que no se tendrian que realizar modificaciones en dicha propiedad.
 
 ```{r}
 #| echo: false
@@ -330,12 +332,12 @@ datos_2 <- reemplazar_na_disposicion(datos_2)
 
 
 datos_sub <- datos_2  |> 
-  select(-direccion, - losa_radiante, -Apartments_per_Floor, -baños, -cant_de_est, -Updated, -zona)
+  select(-direccion, -baños, -cant_de_est, -zona, -cant_cuartos, -cant_de_piso, Air_Conditioning, -losa_radiante )
 names(datos_sub)
 ```
 
-
 ```{r}
+#| echo: false
 #correlacion:
   
 numerical_vars <- datos_sub %>%
@@ -355,15 +357,82 @@ corrplot(cor_matrix, method = "circle", type = "upper", tl.cex = 0.6, tl.col = "
 #Otra columna que me gustraia sacar es la de loza radiante porque hay otra columna que es calefaccion y asumo que la loza radiante es un tipo de calefaccion.
 
 
-modelo <- lm(precio_m2 ~. -losa_radiante - año_de_const - cant_de_est - baños -Apartments_per_Floor -cant_cuartos - cant_de_piso -direccion -zona, data = datos_2)
+modelo <- lm(precio_m2 ~. , data = datos_sub)
 summary(modelo)
-vif(modelo)
-datos_sub
 ```
+```{r}
+#| echo: false
+vif(modelo)
+```
+
+La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo. Las unicas variables que tienen un GVIF ajustados mayor son "m2_totales" y "Municipio", pero sus valores ajustados estan por denajo de 2. Por lo que indica que no hay multicolinealidad severa.
+
+
+```{r}
+#| echo: false
+crPlots(modelo)
+```
+Atípicos:
+```{r}
+#| echo: false
+res <- rstudent(modelo)
+yhat <- fitted(modelo)
+
+which(abs(res)>3)
+
+library(ggplot2)
+ggplot(modelo, aes(x=yhat, y= res))+
+  geom_point()+
+  geom_hline(yintercept = -3,color="darkblue")+
+  geom_hline(yintercept = 3,color="darkblue")
+```
+
+En este caso hay una presencia de 4 datos atipocos. Hay uno que es super notorio y la idea es eliminarlo, con los otros tres hay que ver que se va hacer.
+
+
+```{r}
+#| echo: false
+ncvTest(modelo)
+```
+Datos influyentes:
+
+```{r}
+#| echo: false
+h_i <- influence(modelo)$hat
+D_i <- cooks.distance(modelo)
+df_influencia <- data.frame(i = 1:nrow(datos_sub),
+                            h_i = h_i,
+                            D_i = D_i)
+```
+
+```{r}
+#| echo: false
+ggplot(df_influencia, aes(x = i, y = h_i)) +
+  geom_point() +
+  geom_segment(aes(x = i, xend = i, y = 0, yend = h_i)) +
+  xlab('') +
+  ylab(expression(h[i])) +
+  geom_abline(slope = 0, intercept = 2*length(coefficients(mod))/nrow(df), col = 2, linetype = 'dashed') +
+  ggtitle('Leverage')
+```
+```{r}
+#| echo: false
+ggplot(df_influencia, aes(x = i, y = D_i)) +
+  geom_point() +
+  geom_segment(aes(x = i, xend = i, y = 0, yend = D_i)) +
+  xlab('') +
+  ylab(expression(D[i])) +
+  geom_abline(slope = 0, intercept = 4/nrow(df), col = 2, linetype = 'dashed') +
+  ggtitle('Distancia de Cook')
+```
+
+En este paso estamos tratando de encontrar que datos son influyentes para lograr poder intervenirlos y que el modelo nos quede mejor. Igualmente voy a necesitar ayuda para poder continuar.
+
 
 Bosques:
 
 ```{r}
+#| echo: false
 names(datos_sub)
 intrain <- sample(x = 1:nrow(datos_sub), size =
 nrow(datos_sub)*.7)
@@ -371,10 +440,11 @@ training <- datos_sub[intrain,]
 testing <- datos_sub[-intrain,]
 # ajustamos modelo lineal simple
 rf <- randomForest(precio_m2 ~ .,data= training)
-#raiz cuadrada del error cuadr´atico medio
-rmse(rf, testing)
+
 ```
+
 ```{r}
+#| echo: false
 pred <- predict(rf, newdata = testing)
 results <- data.frame(
   Actual = testing$precio_m2,
@@ -386,35 +456,108 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
   geom_abline(slope = 1, intercept = 0, color = "red") +
   labs( x = "Variables originales", y = "Variables predichas") +
   theme_minimal()
-
-# este grafico nos muestra que las predicciones no son precisas.
-
-
-resi <- testing$precio_m2 - pred
-
-
-ggplot(data.frame(Residuals = resi), aes(x = Residuals)) +
-  geom_histogram(binwidth = 10, fill = "blue", color = "black") +
-  labs(x = "Reciduos", y = "frecuencia") +
-  theme_minimal()
 ```
 
-
-
 ```{r}
+#| echo: false
 library(rpart)
 library(rattle)
 # Separo la muestra en entrenamiento y testeo
 inTrain <- sample(1:nrow(datos_2), nrow(datos_2)*.7)
 train.set <- datos_2[inTrain,]
 test.set <- datos_2[-inTrain,]
-# Ajusto un ´arbol de clasificaci´on sin podar
-tree_ab <- rpart( precio_m2~ Municipio + WiFi,
-data = train.set)
+
+library(rpart.plot)
+tree_ab <- rpart(precio_m2 ~ Municipio + Condition,
+                 data = train.set,
+                 control = rpart.control(minsplit = 5, # número mínimo de observaciones que deben existir en un nodo para ser dividido
+                                         cp = 0.001, # parámetro de complejidad
+                                         maxdepth = 30)) 
+prp(tree_ab, 
+    faclen = 0,           # No abreviar los nombres de las variables
+    cex = 0.8,            # Tamaño del texto
+    extra = 101,          # Mostrar tanto el número de observaciones como la proporción de la clase
+    box.palette = "RdBu", # Colores de los nodos
+    nn = TRUE) 
+
+
 fancyRpartPlot(tree_ab)
+
+names(datos_2)
 ```
+En este paso se trato de ver en que condiciones estaba cada municipio. Creo que noquedo muy bien, pero es un intento de arbol
 
 
 
+Metadatos :
 
 
+```{r}
+#| echo: false
+# Creamos variables del tipo character
+nombre_variable <- character()
+tipo_variable <- character()
+descripcion <- character()
+
+
+# Creamos un dataframe donde vamos a almacenar la información de cada columna basandonos es: Nombre, Tipo de Dato, Descripción
+tabla_variables <- data.frame(
+  "Nombre de la variable" = nombre_variable,
+  "Tipo de variable" = tipo_variable,
+  "Descripción" = descripcion,
+  stringsAsFactors = FALSE
+)
+
+
+
+# Creamos la tabla
+tabla_variables[1,] <- c("direccion", "Character", "Ubicación donde se encuentra la propiedad")
+tabla_variables[2,] <- c("nro_de_piso", "Character", "Número de piso de la propiedad")
+tabla_variables[3,] <- c("tipo_prop", "Character", "Tipo de poropiedad, como apartamento, oficina, casa")
+tabla_variables[4,] <- c("Condicion", "Character", "Condición en la que esta la vivienda, es una variable que se separa en categorias (Excelente, Buena, Renovada)")
+tabla_variables[5,] <- c("disposicion", "Character", "En que posición se encuentra la propiedad separada en categorías (interior, frente, fondo)")
+tabla_variables[6,] <- c("m2_terraza", "Numérica", "Metros cuadrado de la terraza")
+tabla_variables[7,] <- c("cant_cuartos", "Numérica", "Cantidad de dormitoros de la propiedad")
+tabla_variables[8,] <- c("vivienda_social", "Dummy", "Si la propiedad esta destinada para vivienda social, variable de si y no")
+tabla_variables[9,] <- c("Closet", "Dummy", "Espacio de guardaropas en la propiedad, variable de si y no")
+tabla_variables[10,] <- c("Garage", "Dummy", "Garage en la propiedad, variable de si y no")
+tabla_variables[11,] <- c("Playroom", "Dummy", "Sala de juegos en la propiedad, variable de si y no")
+tabla_variables[12,] <- c("WiFi", "Dummy", "Conección a wifi en la propiedad, variable de si y no")
+tabla_variables[13,] <- c("balcon", "Dummy", "Balcon en la propiedad, variable de si y no")
+tabla_variables[14,] <- c("jardin", "Dummy", "Jardin en la propiedad, variable de si y no ")
+tabla_variables[15,] <- c("amueblado", "Dummy", "La propiedad viene con los muebles incluidos a la hora de ser alquilado, variable de si y no ")
+tabla_variables[16,] <- c("Updated", "Fecha", "Última fecha que fue actualizado el listado")
+tabla_variables[17,] <- c("Apartments_per_Floor", "Numérica", "Número de apartamentos por piso en el edificio")
+tabla_variables[18,] <- c("zona", "Character", "En que zona de Montevideo se encuentra la propiedad")
+tabla_variables[19,] <- c("baños", "Numérica", "Cuántos cuartos hay en la propiedad")
+tabla_variables[20,] <- c("m2_totales", "Numérica", "Metros cuadrados de la propiedad, en dolares")
+tabla_variables[21,] <- c("cant_de_est", "Numérica", "Cantidad de estacionamientos que tiene disponible la propiedad")
+tabla_variables[22,] <- c("Barbecue", "Dummy", "Barbacoa en la propiedad, variable de si y no ")
+tabla_variables[23,] <- c("Patio", "Dummy", "Patio en la propiedad, variable de si y no ")
+tabla_variables[24,] <- c("Pet", "Dummy", "Si se aceptan perros o no")
+tabla_variables[25,] <- c("Duplex", "Numérica", "Si es un duplex o no, duplex es una propiedad que esta encima de otra y generalmente son dos")
+tabla_variables[26,] <- c("zona_barbacoa", "Dummy", "Si hay una zona de barbacoa en el edificio de la propiedad, variable de si y no ")
+tabla_variables[27,] <- c("deposito", "Dummy", "Área de almacenaiento o depósito en la propiedad, variable de si y no ")
+tabla_variables[28,] <- c("losa_radiante", "Dummy", "Losa radiante en la propiedad, variable de si y no ")
+tabla_variables[29,] <- c("precio_m2", "Numérica", "El precio de la propiedad por metros cuadrados")
+tabla_variables[30,] <- c("Common_Expenses", "Numérica", "Gastos comunes asociados a la propiedad, en dolares")
+tabla_variables[31,] <- c("cant_de_piso", "Numérica", "Núemero total de piso en el edificio")
+tabla_variables[32,] <- c("Condition", "Character", "En que condición se encuentra el apartamento searado en caregorías(Good condition, 	Excellent condition, 	Brand new)")
+tabla_variables[33,] <- c("cant_habitaciones", "Numérica", "Cantidad de habitaciones en la propiedad")
+tabla_variables[34,] <- c("año_de_const", "Numérica", "En que año fue construida la propiedad")
+tabla_variables[35,] <- c("vista_al_mar", "Dummy", "Propiedad con vista al mar o no, variable de si y no")
+tabla_variables[36,] <- c("Living_Room", "Dummy", "Propiedad con living o no")
+tabla_variables[37,] <- c("Pool", "Numérica", "Pool en la propiedad")
+tabla_variables[38,] <- c("coneccion_cas", "Dummy", "Propiedad cuenta con conección a gas directa o no, variable de si y no")
+tabla_variables[39,] <- c("calefaccion", "Dummy", "Propiedad con calefacción, variable de si y no")
+tabla_variables[40,] <- c("Gym", "Dummy", "Propiedad con gym, variable de si y no")
+tabla_variables[41,] <- c("Air_Conditioning", "Dummy", "Propiedad con aire acondicionado, variable de si y no")
+tabla_variables[42,] <- c("Solarium", "Dummy", "Propiedad con solarium, variable de si y no")
+
+
+
+# Resultado
+tabla_variables <- data.frame(tabla_variables)
+gt(tabla_variables)
+
+```
