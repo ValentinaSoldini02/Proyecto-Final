@@ -7,21 +7,6 @@ editor: visual
 
 
 
-
-```{r}
-
-# install.packages("GGally")
-# install.packages("skedastic")
-# install.packages("robustbase")
-# install.packages("tseries")
-# install.packages("gt")
-# install.packages("randomForest")
-# install.packages("modelr")
-# install.packages("knitr")
-
-```
-
-
 ```{r}
 #| echo: false
 library(tidyverse)
@@ -125,16 +110,17 @@ gt(tabla_municipio)
 
 datos_2 <- datos %>% filter(Price <= 150000 & Common_Expenses <= 10000)
 
-#Reenombramos las variables:
 datos_2 <- datos_2|>
   rename(precio = Price,
          nro_de_piso = Floor,
          cant_de_piso = Number_of_Floors,
+         Gastos_Comunes = Common_Expenses,
+         apartamentos_por_piso = Apartments_per_Floor,
          zona = Zone,
+         condicion = Condition,
          disposicion = Disposition,
          cant_cuartos = Bedrooms...18,
          cant_habitaciones = Bedrooms...13,
-         m2_terraza = Terrace_Square_Meters,
          año_de_const = Year_of_Construction,
          vista_al_mar = Sea_View,
          deposito = Storage,
@@ -146,6 +132,7 @@ datos_2 <- datos_2|>
          baños = Bathrooms,
          m2_const = Built_Square_Meters,
          m2_totales = Land_Square_Meters,
+         m2_terraza = Terrace_Square_Meters,
          vivienda_social = Social_Housing,
          cant_de_est = Garages,
          coneccion_gas = Gas_Pipeline,
@@ -153,6 +140,7 @@ datos_2 <- datos_2|>
          zona_barbacoa = Grill,
          balcon = Balcony
          )
+
 
 
 
@@ -208,7 +196,7 @@ Dado que la presencia de los valores nulos en los datos pueden afectar negativam
 # Convertir columnas categóricas a factores si es necesario
 datos_2$tipo_prop <- as.factor(datos_2$tipo_prop)
 datos_2$zona <- as.factor(datos_2$zona)
-datos_2$Condition <- as.factor(datos_2$Condition)
+datos_2$condicion <- as.factor(datos_2$condicion)
 datos_2$disposicion <- as.factor(datos_2$disposicion)
 datos_2$vista_al_mar <- as.factor(datos_2$vista_al_mar)
 datos_2$vivienda_social <- as.factor(datos_2$vivienda_social)
@@ -233,7 +221,7 @@ datos_2$Solarium <- as.factor(datos_2$Solarium)
 datos_2$amueblado <- as.factor(datos_2$amueblado)
 datos_2$zona_barbacoa <- as.factor(datos_2$zona_barbacoa)
 datos_2$deposito <- as.factor(datos_2$deposito)
-datos_2
+names(datos_2)
 ```
 
 
@@ -264,12 +252,12 @@ media_precio_m2 <- mean(datos_2$precio_m2, na.rm = TRUE)
 
 datos_2 <- rellenar_na_precio_m2(datos_2)
 
-# Función para reemplazar valores NA en 'Condicion' con 'Good condition'
+# Función para reemplazar valores NA en 'Condicion' con 'Good condicion'
 reemplazar_na_condicion <- function(datos_2) {
-  if (!"Condition" %in% colnames(datos_2)) {
+  if (!"condicion" %in% colnames(datos_2)) {
     stop("La columna 'Condicion' no está presente en los datos.")
   }
-  datos_2$Condition[is.na(datos_2$Condition)] <- "Good condition"
+  datos_2$condicion[is.na(datos_2$condicion)] <- "Good condicion"
   return(datos_2)
 }
 #
@@ -345,13 +333,13 @@ ggplot(grupo_tipo, aes(x=fct_reorder(tipo_prop, Cantidad), y=Cantidad)) + # Dato
 ```{r}
 #| echo: false
 grupo_estado <- datos_2 %>% # Datos
-  group_by(Condition) %>%   # Agrupar por condición de la vivienda
+  group_by(condicion) %>%   # Agrupar por condición de la vivienda
   summarise(Cantidad = n()) # Resumir por la cantidad
 grupo_estado
 
 
 # Gráfico
-ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) + # Datos y ejes
+ggplot(grupo_estado, aes(x=fct_reorder(condicion, Cantidad), y=Cantidad)) + # Datos y ejes
   geom_bar(stat="identity") + # Gráfico de barras
   labs(x="Municipio", y="Precio") + # Nombre de los ejes
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
@@ -381,6 +369,9 @@ Aunque el gráfico anterior indicaba que los apartamentos eran el tipo de propie
 
 
 ```{r, echo: false}
+
+
+
 # Gráfico 1: Conteo por Municipio
 grafico1 <- ggplot(datos_2, aes(x = Municipio)) + 
   geom_bar() + 
@@ -398,8 +389,12 @@ grupo_municipio <- datos_2 %>%
 # Gráfico de Precio promedio por municipio
 grafico2 <- ggplot(grupo_municipio, aes(x = fct_reorder(Municipio, Cantidad), y = Cantidad)) + 
   geom_bar(stat = "identity") + 
-  labs(x = "Municipio", y = "Precio por m^2") + 
+  labs(x = "Municipio", y = "Precio promedio") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
+
+
+
+
 
 
 
@@ -411,21 +406,23 @@ grafico7 <- ggplot(datos_2, aes(x = disposicion)) +
     theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
 
   
-# Gráfico Grupo de Precio por metro cuadrado por disposición
+
+
+# Gráfico Grupo de Precio promedio por disposición
 grupo_disposicion <- datos_2 %>% 
   group_by(disposicion) %>% 
-  summarise(Cantidad = mean(precio_m2))
+  summarise(Cantidad = precio_m2)
 
 
-# Gráfico de Precio por metro cuadrado por disposición
+# Gráfico de Precio promedio por disposición
 grafico8 <- ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantidad)) + 
   geom_bar(stat = "identity") + 
-  labs(x = "Disposición", y = "Precio por m^2") + 
+  labs(x = "Disposición", y = "Precio promedio") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
 
 
 
-library(gridExtra)
+
 # Grilla
 grid.arrange(grafico1, grafico2, grafico7, grafico8, ncol = 2, nrow = 2)
 
@@ -471,7 +468,7 @@ En cuanto a la disposición de los inmuebles, la mayoría de las propiedades en 
 
 
 datos_sub <- datos_2  |> 
-  select(-direccion, -baños, -cant_de_est, -zona, -cant_cuartos, -cant_de_piso, Air_Conditioning, -losa_radiante )
+  select(-direccion, -baños, -cant_de_est, -zona, -cant_cuartos, -cant_de_piso, Air_condicioning, -losa_radiante )
 names(datos_sub)
 ```
 
@@ -611,7 +608,7 @@ train.set <- datos_2[inTrain,]
 test.set <- datos_2[-inTrain,]
 
 library(rpart.plot)
-tree_ab <- rpart(precio_m2 ~ Municipio + Condition,
+tree_ab <- rpart(precio_m2 ~ Municipio + condicion,
                  data = train.set,
                  control = rpart.control(minsplit = 5, # número mínimo de observaciones que deben existir en un nodo para ser dividido
                                          cp = 0.001, # parámetro de complejidad
@@ -683,7 +680,7 @@ tabla_variables[28,] <- c("losa_radiante", "Dummy", "Losa radiante en la propied
 tabla_variables[29,] <- c("precio_m2", "Numérica", "El precio de la propiedad por metros cuadrados")
 tabla_variables[30,] <- c("Common_Expenses", "Numérica", "Gastos comunes asociados a la propiedad, en dolares")
 tabla_variables[31,] <- c("cant_de_piso", "Numérica", "Núemero total de piso en el edificio")
-tabla_variables[32,] <- c("Condition", "Character", "En que condición se encuentra el apartamento searado en caregorías(Good condition, 	Excellent condition, 	Brand new)")
+tabla_variables[32,] <- c("condicion", "Character", "En que condición se encuentra el apartamento searado en caregorías(Good condicion, 	Excellent condicion, 	Brand new)")
 tabla_variables[33,] <- c("cant_habitaciones", "Numérica", "Cantidad de habitaciones en la propiedad")
 tabla_variables[34,] <- c("año_de_const", "Numérica", "En que año fue construida la propiedad")
 tabla_variables[35,] <- c("vista_al_mar", "Dummy", "Propiedad con vista al mar o no, variable de si y no")
@@ -692,7 +689,7 @@ tabla_variables[37,] <- c("Pool", "Numérica", "Pool en la propiedad")
 tabla_variables[38,] <- c("coneccion_cas", "Dummy", "Propiedad cuenta con conección a gas directa o no, variable de si y no")
 tabla_variables[39,] <- c("calefaccion", "Dummy", "Propiedad con calefacción, variable de si y no")
 tabla_variables[40,] <- c("Gym", "Dummy", "Propiedad con gym, variable de si y no")
-tabla_variables[41,] <- c("Air_Conditioning", "Dummy", "Propiedad con aire acondicionado, variable de si y no")
+tabla_variables[41,] <- c("Air_condicioning", "Dummy", "Propiedad con aire acondicionado, variable de si y no")
 tabla_variables[42,] <- c("Solarium", "Dummy", "Propiedad con solarium, variable de si y no")
 
 
