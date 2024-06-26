@@ -469,7 +469,138 @@ datos
 ```
 
 # Visualización
-Pregunta 1) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad?
+
+
+Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
+```{r}
+
+
+# Gráfico 1: Conteo por Municipio
+grafico1 <- ggplot(datos, aes(x = Municipio)) + 
+  geom_bar() + 
+  scale_x_discrete(breaks = unique(datos$Municipio)) +
+  labs(title = "Cantidad de alquileres por municipio") + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
+
+  
+
+# Gráfico 2: Grupo de Precio promedio por municipio
+grupo_municipio <- datos %>% 
+  group_by(Municipio) %>% 
+  summarise(Cantidad = mean(precio))
+
+# Gráfico de Precio promedio por municipio
+grafico2 <- ggplot(grupo_municipio, aes(x = fct_reorder(Municipio, Cantidad), y = Cantidad)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Municipio", y = "Precio promedio") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
+
+
+
+
+
+
+
+# Gráfico 2: Conteo de Disposición
+grafico7 <- ggplot(datos, aes(x = disposicion)) + 
+  geom_bar() + 
+  scale_x_discrete(breaks = unique(datos$disposicion)) +
+  labs(title = "Distribución de disposición")
+
+
+# Gráfico Grupo de Precio promedio por disposición
+grupo_disposicion <- datos %>% 
+  group_by(disposicion) %>% 
+  summarise(Cantidad = mean(precio))
+
+
+# Gráfico de Precio promedio por disposición
+grafico8 <- ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantidad)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Disposición", y = "Precio promedio") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
+
+
+
+
+# Grilla
+grid.arrange(grafico1, grafico2, grafico7, grafico8, ncol = 2, nrow = 2)
+
+```
+
+Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de alquileres se dan en el Municipio F. Vemos también que los precios promedio de alquiler son más bajos en el Municipio G y más altos en el municipio A.
+
+Luego en la disposición vemos que los más común son los inmuebles al frente, y vemos que en relación al precio promedio, todos tienen un precio similar (alrededor de los 500 dólares) a excepción de los que estan en el frente que tienen un precio más alto 1500 dólares
+
+
+
+
+
+
+
+Pregunta 2) ¿Cómo se distribuye el tipo de propiedad de los alquileres  y el precio promedio de el tipo de propiedad? ¿¿Cómo se distribuye las condiciones de los alquileres y el precio promedio según las condiciones de los alquileres?
+```{r}
+
+# Gráfico 3: Tipo de propiedad
+grafico3 <- ggplot(datos, aes(x = tipo_prop)) + 
+  geom_bar() + 
+  scale_x_discrete(breaks = unique(datos$tipo_prop)) +
+  labs(title = "Distribución de tipos de propiedad") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
+
+
+# Grupo de Precio promedio por tipo de propiedad
+grupo_tipo <- datos %>% 
+  group_by(tipo_prop) %>% 
+  summarise(Cantidad = mean(precio))
+
+
+# Gráfico de Precio promedio por tipo de propiedad
+grafico4 <- ggplot(grupo_tipo, aes(x = fct_reorder(tipo_prop, Cantidad), y = Cantidad)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Tipo de Propiedad", y = "Precio promedio") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
+
+
+
+
+# Gráfico 4: Condición de la vivienda
+grafico5 <- ggplot(datos, aes(x = Condicion)) + 
+  geom_bar() + 
+  scale_x_discrete(breaks = unique(datos$Condicion)) +
+  labs(title = "Distribución de condición de la vivienda") +
+   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
+
+
+# Grupo de Precio promedio por condición de la vivienda
+grupo_condicion <- datos %>% 
+  group_by(Condicion) %>% 
+  summarise(Cantidad = mean(precio))
+
+
+# Gráfico de Precio promedio por condición de la vivienda
+grafico6 <- ggplot(grupo_condicion, aes(x = fct_reorder(Condicion, Cantidad), y = Cantidad)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Condición", y = "Precio promedio") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
+
+
+
+# Crear la grilla de gráficos
+grid.arrange(grafico3, grafico4, grafico5, grafico6, ncol = 2, nrow = 2)
+
+```
+
+En los tipos de propiedad, mayoritariamente son apartamentos, en relación al precio vemos que los más caros son los edificios seguidos por las tierras.
+
+Luego cuando nos referimos a la condición de las alquileres, vemos que la mayoría se encuentra en Excelente Condición o en Buena Condición, también una cantidad considerable esta recientemente construdido. En relación al precio, vemos que los alquileres Renovados, A ser Renovados y en Excelente Condición son los más caros.
+
+
+
+
+
+
+Pregunta 3) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad?
 ```{r}
 
 # Quitamos atípicos en el precio.
@@ -510,53 +641,9 @@ ggplot(datos, aes(x = zona, y = precio, fill = Municipio)) +  # Datos, ejes y co
 Vemos que si, los barrios ubicados en el municipio A y E son los que tienen un precio más elevado, mientras que los barrios ubicados en los municipios D y G son los más baratos.
 
 
-Pregunta 2) ¿En que municipio hay más alquileres?
-```{r}
-# 
-
-# Cantidad de alquileres por municipio
-grupo_municipio <- datos %>%  # Datos
-  group_by(Municipio) %>%       # Agrupamos por municipio
-  summarise(Cantidad = n())     # Resumimos con la cantidad
-grupo_municipio
-
-
-# Gráfico
-ggplot(grupo_municipio, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) + # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  labs(x="Municipio", y="Precio") + # Nombres de los ejes
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
-
-```
-
-Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de alquileres se dan en el Municipio F
-
-Pregunta 3) Qué tipo de inmuebles para alquilar hay?
-
-```{r}
-#
-
-
-grupo_tipo <- datos %>% # Datos
-  group_by(tipo_prop) %>% # Agrupar por tipo de propiedad
-  summarise(Cantidad = n()) # Resumir por cantidad 
-grupo_tipo
-
-
-# Gráfico
-ggplot(grupo_tipo, aes(x=fct_reorder(tipo_prop, Cantidad), y=Cantidad)) + # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  labs(x="Municipio", y="Precio") + # Nombres de los ejes
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
 
 
-
-```
-
-La mayoría de alquileres son de Apartamentos, muy pocos son de Tierra, de Negocios Especiales, de Edificios o de Garages.
 
 Pregunta 4) ¿Cómo se distribuyen los tipos de inmuebles por municipio?
 
@@ -588,40 +675,12 @@ ggplot(datos, aes(x = tipo_prop, y = precio, fill = Municipio)) + # Datos, ejes 
 En general el tipo de alquiler más común varia según municipio, en los municipios A, C, D y G son más comunes los alquileres de Alquileres. En cambio en los municipios CH y E son más comunes los alquileres de casas, finalmente en el municipio B es más común el alquiler de Oficinas.
 
 
-Pregunta 5) ¿En qué condición se encuentran los alquileres? (Subpregunta de esta: subdividiendo por tipo de alquiler)
-```{r}
-datos
-
-# 
-
-datos
 
 
-grupo_estado <- datos %>% # Datos
-  group_by(Condicion) %>% # Agrupar por condición de la vivienda
-  summarise(Cantidad = n()) # Resumir por la cantidad
-grupo_estado
 
 
-# Gráfico
-ggplot(grupo_estado, aes(x=fct_reorder(Condicion, Cantidad), y=Cantidad)) + # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  labs(x="Municipio", y="Precio") + # Nombre de los ejes
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
-
-# subpregunta: hacer una intersección de tipo de alquileres con estado de alquiler
-# tipo los garages estan en construcción, las casas que estan en buen estado y así 
-
-```
-
-La mayoría de los alquileres se encuentran en Buena Condición o el Excelente Condición. También hay una parte considerable de alquileres que son nuevos.
-
-La mayoría de los inmuebles estan en buena condición o excelente condición. Pocos de ellos estan en construcción, o con necesidad de mantenimiento o por ser renovados.
-
-
-Pregunta 6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
+Pregunta 5) ¿Como se distribuyen las condiciones de las viviendas por municipio?
 
 ```{r}
 
@@ -648,8 +707,24 @@ En el Municipio A y E estan predominantemente los apartamentos en Excelente Cond
 
 
 
-Pregunta 7) ¿Como se distribuyen los gastos comúnes por Municipio?
+
+Gastos Comunes:
+
 ```{r}
+
+
+
+
+```
+
+
+
+
+
+
+Pregunta 6) ¿Como se distribuyen los gastos comúnes por Municipio?
+```{r}
+
 
 
 # A ver los gastos comunes se pueden relacionar
@@ -667,7 +742,7 @@ ggplot(datos, aes(x = Municipio , y = Gastos_Comunes)) +  # Datos y ejes
 La mayoría de gastos comúnes se dan en el municipio CH, donde recordemos estan la mayoría de los alquileres, y la minoría de gastos comunes se dan en el municipio F donde recordemos hay la menor cantidad de alquileres.
 
 
-Pregunta 8) ¿Cómo influye el tipo de alquiler en el nivel de gastos comunes?
+Pregunta 7) ¿Cómo influye el tipo de alquiler en el nivel de gastos comunes?
 
 ```{r}
 #
@@ -724,6 +799,7 @@ ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Dato
 
 
 #
+
 
 
 
@@ -851,200 +927,120 @@ funcion_dum(resultado_final)
 
 En este gráfico mostramos distintas variables que representan elementos de confort que puede tener un alquiler o no tener, como son WiFi, Barbacoa, Jardin, Aire Acondicionado, etc. Estas variables toman valores de 0 y 1 donde el 0 representa que el alquiler no posee ese bien y el 1 representa que el alquiler si posee ese bien. Estamos gráficando el precio promedio para cada una de esas variables y comparando como difiere el precio en caso de tener o no tener un bien. Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Barbacoa, Calefacción, Closet, Deposito, Garage, Jardin, Living, Losa Radiante, Patio, Habitación de juegos, Piscina, Vista al Mar y Barbacoa, el precio es más alto al tener que al no tener. En cambio, en el caso de Balcon, Conexión a Gas, Duplex, Gimansio, Equipo para mascotas, Centro de Bronceado, WiFi o en el caso de ser una vivienda social, el precio es más alto al no tener que al tener.
 
+
+
+
+Pregunta 13) ¿Cómo influyen elementos relativos a los pisos como son el número de pisos, la cantidad de apartamentos en un piso o la cantidad de pisos en todo el edificio del inmueble al precio de alquiler?
+
 ```{r}
 
 
-# Floors (Piso)    Español: nro_de_piso
-
-# Number_of_Floors (Número de pisos en todo el edificio)
-# Español: cant_de_piso
+names(datos)
 
 
-# Apartments_per_Floor (Cantidad de apartamentos en ese piso)   Español: apartamentos_por_piso
-
-
-# Filtro:
-datos <- datos %>% filter( (cant_de_piso < 20 & cant_de_piso > 0) & (apartamentos_por_piso < 14 & apartamentos_por_piso > 0) & (nro_de_piso < 44) )
-
-
-
-
-```
-
-
-Pregunta 13) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
-```{r}
-# 
+# GRUPOS
 grupo_piso_1 <- datos %>% # Datos
   group_by(cant_de_piso) %>% # Agrupados por cantidad de pisos
   summarise(Cantidad = mean(precio)) # Resumidos por cantidad
 grupo_piso_1
 
 
-
-# Filtrar atipicos
-grupo_piso_1 <-grupo_piso_1 %>% filter(cant_de_piso > 0 & cant_de_piso < 16)
-
-
-datos <- datos  %>% filter(cant_de_piso > 0 & cant_de_piso < 16)
+grupo_piso_2 <- datos %>% # Datos
+   group_by(nro_de_piso) %>% #Agrupados por número de piso
+   summarise(media_precio = mean(precio)) # Resumidos por media con respecto al precio
+grupo_piso_2
 
 
-# Gráfico
-ggplot(datos, aes(x = cant_de_piso)) +  # Datos y ejes
-   geom_bar() +
-    scale_x_continuous(breaks =   datos$cant_de_piso) 
-
-  
-
-
-ggplot(grupo_piso_1, aes(x = cant_de_piso, y=Cantidad)) +  # Datos y ejes
-   geom_bar(stat="identity") + # Gráfico de barras
-    scale_x_continuous(breaks =   grupo_piso_1$cant_de_piso) #  Elementos del eje X
+grupo_piso_3 <- datos %>%   # Datos
+  group_by(apartamentos_por_piso) %>% # Agrupados por pisos por apartamentos
+  summarise(Cantidad = n()) # Resumido por cantidad
+grupo_piso_3
 
 
 
 
 
+# Gráfico 1: Cantidad de pisos
+grafico1 <- ggplot(datos, aes(x = cant_de_piso)) +  
+  geom_bar() +
+  scale_x_continuous(breaks = unique(datos$cant_de_piso)) +
+  labs(title = "Cantidad de pisos")
 
-```
+# Gráfico 2: Precio promedio por cantidad de pisos
+grafico2 <- ggplot(grupo_piso_1, aes(x = cant_de_piso, y = Cantidad)) +  
+  geom_bar(stat = "identity") + 
+  scale_x_continuous(breaks = unique(grupo_piso_1$cant_de_piso)) +
+  labs(title = "Precio promedio por cantidad de pisos")
+
+
+
+# Gráfico 3: Número de piso
+grafico3 <- ggplot(datos, aes(x = nro_de_piso)) +  
+  geom_bar() +
+  scale_x_continuous(breaks = unique(datos$nro_de_piso)) +
+  labs(title = "Número de piso")
+
+# Gráfico 4: Precio promedio por número de piso
+grafico4 <- ggplot(grupo_piso_2, aes(x = nro_de_piso, y = media_precio)) +  
+  geom_bar(stat = "identity") + 
+  scale_x_continuous(breaks = unique(Prueba12$nro_de_piso)) +
+  labs(title = "Precio promedio por número de piso")
+
+
+
+# Gráfico 5: Apartamentos por piso
+grafico5 <- ggplot(datos, aes(x = apartamentos_por_piso)) + 
+  geom_bar() +
+  scale_x_continuous(breaks = unique(datos$apartamentos_por_piso)) +
+  labs(title = "Apartamentos por piso")
+
+# Gráfico 6: Cantidad de apartamentos por piso
+grafico6 <- ggplot(grupo_piso_3, aes(x = apartamentos_por_piso, y = Cantidad)) +  
+  geom_bar(stat = "identity") + 
+  scale_x_continuous(breaks = unique(grupo_piso_1$apartamentos_por_piso)) +
+  labs(title = "Cantidad de apartamentos por piso")
+
+
+
+
+# Panel 2x3
+grid.arrange(grafico1, grafico2, grafico3, grafico4, grafico5, grafico6, ncol = 2, nrow = 3)
+
+
+``` 
+
 
 Vemos que los inmuebles en general tienen una distribución similar según su cantidad de pisos, excepto en el caso de los inmuebles con 10 pisos que tienen una ocurrencia mucho más alta. En relación, vemos que en general la mayoría se mantiene en los 1000 dolares para cantidades de pisos variadas, y en algunas cantidades de pisos como son 2, 12, 13 la media del precio esta cerca de los 2000 dolares.
 
 
-
-Pregunta 14) ¿Cómo influye el piso en el precio? Los pisos más altos o más bajos influyen en el precio?
-
-```{r}
-
-
-# 
-
-
-Prueba11 <- datos %>% # Datos
-   group_by(nro_de_piso) %>% #Agrupados por número de piso
-   summarise(media_precio = mean(precio)) # Resumidos por media con respecto al precio
-Prueba11
-
-
-
-# Filtrar nulos
-Prueba12 <- Prueba11 %>% filter(nro_de_piso < 43)
-
-
-
-# Cantidad
-ggplot(datos, aes(x = nro_de_piso)) +  # Datos y ejes
-  geom_bar() +
-    scale_x_continuous(breaks = datos$nro_de_piso) 
-
-
-# Gráfico
-ggplot(Prueba12, aes(x=nro_de_piso, y=media_precio)) + # Datos y ejes
-      geom_bar(stat="identity") + # Gráfico de barras
-      scale_x_continuous(breaks =  Prueba12$nro_de_piso) # Elementos del eje X Escala del eje X
-
-
-
-# Parece que en los pisos mas altos el precio es
-```
-
 En la distribución los números de piso 0 y 1, luego cuando los pisos van subiendo de número la frecuencia va disminuyendo (con algunas excepciones como son el número 4 y el 9). En relación al precio vemos que casi todos los números de piso tiene un precio similar (casi 1000\$) pero particularmente el piso con número 11 tiene un precio más elevado.
 
 
-Pregunta 15) ¿Cómo influye la cantidad de apartamentos por piso en el precio?
-```{r}
-# 
-
-
-grupo_piso_1 <- datos %>%   # Datos
-  group_by(apartamentos_por_piso) %>% # Agrupados por pisos por apartamentos
-  summarise(Cantidad = n()) # Resumido por cantidad
-grupo_piso_1
-
-
-# Filtrar nulos
-grupo_piso_1 <- grupo_piso_1 %>% filter(apartamentos_por_piso < 11)
-
-# Cantidad
-ggplot(datos, aes(x = apartamentos_por_piso)) +# Datos y ejes
-   geom_bar() +
-    scale_x_continuous(breaks =   datos$nro_de_piso) 
-
-
-
-# Gráfico
-ggplot(grupo_piso_1, aes(x = apartamentos_por_piso, y=Cantidad)) +  # Datos y ejes
-   geom_bar(stat="identity") + # Gráfico de barras
-   scale_x_continuous(breaks =  grupo_piso_1$apartamentos_por_piso)
-# Elementos del eje X
-
-
-```
-
 La distribución de la cantidad muestra que en un piso en general es más común encontrarse con 2, 3 o 4 apartamentos. En relación al precio vemos que esos pisos que tienen 2, 3 o 4 apartamentos también son los que tienen el precio más alto.
 
-```{r}
-# P2) Number_of_Floors
-# Cuántos más pisos tiene el inmueble (edificio), más caro es?
-#
 
 
 
 
 
 
- # Vemos que los apartamentos que tienen pocos pisos (exactamente 2) son los más caros
-# Aunque también algunos apartamentos con más pisos, aproximadamente 24 pisos, tiene un precio elevado
-
-```
 
 
 
 
-Pregunta 16) ¿Cómo influye la cantidad de baños en el precio?
+
+Pregunta 14) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
+
+
 ```{r}
 
-# PRECIO SEGÚN BAÑOS
-
-# 
+# Grupos para los gráficos de precios
 Prueba13 <- datos %>%  # Datos
    group_by(baños) %>% # Agrupado por baños
    summarise(media_precio = mean(precio)) # Resumido por la media del precio
 Prueba13
 
 
-# Gráfico de conteo por cantidad de baños
-ggplot(datos, aes(x=baños)) + # Datos y eje
-        geom_bar() +          # Gráfico de barras
-        scale_x_continuous(breaks =  Prueba13$baños) # Elementos del eje X
-
-
-# Gráfico de precio en relación a la cantidad de baños 
-ggplot(Prueba13, aes(x=baños, y=media_precio)) + # Datos
-   geom_bar(stat="identity") +  # Gráfico de barras
-   scale_x_continuous(breaks =  Prueba13$baños) # Elementos del eje X
-
-```
-
-Vemos que en general, lo más común es que los inmuebles tengan un baño, luego el tener 2 o 3 es menos común. Pero vemos que a más baños tenga un inmueble, más alto sera el precio.
-
-
-
-
-
-Pregunta 17) ¿Cómo influye la cantidad de habitaciones en el precio?
-```{r}
-#colnames(datos)
-# PRECIO SEGÚN CANTIDAD DE CUARTOS Y CANTIDAD DE HABITACIONES
-
-
-
-# cant_habitaciones = Bedrooms...13,
-# cant_cuartos = Bedrooms...18,
-
-
-
-# 
 Prueba15 <- datos %>%      # Datos
    group_by(cant_habitaciones) %>% #Agrupados por cantidad de habitaciones
    summarise(media_precio = mean(precio)) # Resumido por la media del precio
@@ -1053,159 +1049,137 @@ Prueba15
 
 
 
-
-# Gráfico de conteo por cantidad de habitaciones
-ggplot(datos, aes(x=cant_habitaciones)) + # Datos y ejes
- geom_bar() +  # Gráfico de barras
- scale_x_continuous(breaks =  Prueba15$cant_habitaciones) # Elementos del eje X
-
-
-
-# Gráfico de precio en relación a la cantidad de habitaciones 
-ggplot(Prueba15, aes(x=cant_habitaciones, y=media_precio)) +  # Datos y ejes
- geom_bar(stat="identity") +  # Gráfico de barras
- scale_x_continuous(breaks =  Prueba15$cant_habitaciones) # Elementos del eje X
-
-```
-
-
-
-Pregunta 18) ¿Cómo influye la cantidad de cuartos en el precio?
-```{r}
-# 
-Prueba25 <- datos %>%  # Datos 
-   group_by(cant_cuartos) %>% # Agrupado por cantidad de cuartos
-   summarise(media_precio = mean(precio)) # Resumido por la media del precio
-Prueba25
-
-
-# Gráfico de conteo por cantidad de cuartos
-ggplot(datos, aes(x=cant_cuartos)) + # Datos
- geom_bar() +   # Gráfico de barras
- scale_x_continuous(breaks =  Prueba25$cant_cuartos) # Elementos del eje X
-
-
-
-# Gráfico de precio en relación a la cantidad de cuartos 
-ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +  # Datos
-  geom_bar(stat="identity") +   # Gráfico de barras
-  scale_x_continuous(breaks =  Prueba25$cant_cuartos) # Elementos del eje X
-
-
-
-
-
-```
-
-Vemos que tanto para la cantidad de cuartos y de habitaciones, su distribución es muy parecida, tanto en cantidad como en precio. Donde la cantidad más común de cuartos/habitaciones en los inmuebles para alquilar es de 2 o 3. Y se cumple también que al tener más cantidad de cuartos/habitaciones el precio es más alto.
-
-
-
-Pregunta 19)  ¿Cómo influye la cantidad de garages en el precio?
-```{r}
-
-# PRECIO SEGÚN CANTIDAD DE GARAGES 
-
-#
 Prueba16 <- datos %>%         # Datos
    group_by(cant_de_est) %>%  # Agrupado por cantidad de garages
    summarise(media_precio = mean(precio)) # Resumido por media del precio
 Prueba16
 
 
-
-# Gráfico de conteo por cantidad de garages
-ggplot(datos, aes(x=cant_de_est)) + # Datos y ejes
-     geom_bar() +  # Gráfico de barras
-     scale_x_continuous(breaks =  Prueba16$cant_de_est) # Elementos del eje X
-
-
-
-# Gráfico de precio en relación a la cantidad de garages 
-ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +  # Datos y ejes
-   geom_bar(stat="identity") +   # Gráfico de barras
-   scale_x_continuous(breaks =  Prueba16$cant_de_est) # Elementos del eje X
+Prueba25 <- datos %>%  # Datos 
+   group_by(cant_cuartos) %>% # Agrupado por cantidad de cuartos
+   summarise(media_precio = mean(precio)) # Resumido por la media del precio
+Prueba25
 
 
 
 
+
+
+
+
+
+
+
+# GRÁFICOS
+grafico1 <- ggplot(datos, aes(x=baños)) + 
+  geom_bar() + 
+  scale_x_continuous(breaks =  Prueba13$baños)
+
+
+grafico2 <- ggplot(Prueba13, aes(x=baños, y=media_precio)) + 
+  geom_bar(stat="identity") +  
+  scale_x_continuous(breaks =  Prueba13$baños)
+
+
+grafico3 <- ggplot(datos, aes(x=cant_habitaciones)) + 
+  geom_bar() +  
+  scale_x_continuous(breaks =  Prueba15$cant_habitaciones)
+
+
+grafico4 <- ggplot(Prueba15, aes(x=cant_habitaciones, y=media_precio)) +  
+  geom_bar(stat="identity") +  
+  scale_x_continuous(breaks =  Prueba15$cant_habitaciones)
+
+
+grafico5 <- ggplot(datos, aes(x=cant_cuartos)) + 
+  geom_bar() +   
+  scale_x_continuous(breaks =  Prueba25$cant_cuartos)
+
+
+grafico6 <- ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +  
+  geom_bar(stat="identity") +   
+  scale_x_continuous(breaks =  Prueba25$cant_cuartos)
+
+
+grafico7 <- ggplot(datos, aes(x=cant_de_est)) + 
+  geom_bar() +  
+  scale_x_continuous(breaks =  Prueba16$cant_de_est)
+
+
+grafico8 <- ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +  
+  geom_bar(stat="identity") +   
+  scale_x_continuous(breaks =  Prueba16$cant_de_est)
+
+# Panel 2x4 (dos columnas, 4 filas para 8 gráficos)
+grid.arrange(grafico1, grafico2, grafico3, grafico4, grafico5, grafico6, grafico7, grafico8, ncol = 2, nrow=4)
 
 
 ```
+En relación a los baños lo más común es que los inmuebles tengan un baño, luego el tener 2 o 3 es menos común. Similarmente ocurre con la cantidad de estacionamientos (garages) donde lo más común es el que el inmueble tenga un garage o ninguno. En relación al número de cuartos y de habitaciones el patrón que se repite es tener 2 o 3 en el caso de habitaciones y 1 o 2 en el caso de cuartos. Pero vemos que siempre para todos estos elementos, se cumple la relación intuitiva de que a más número de baños, estacionamientos, habitaciones o cuartos, el precio del inmueble es más elevado.
 
-Vemos que en general, lo más común es que los inmuebles no tengan garage o que tengan 1 solo, luego el tener 2 o 3 es menos común. De vuelta, se cumple que a más garages tenga un inmueble, más alto sera el precio.
 
-```{r}
-# Built_Square_Meters
-# Terrace_Square_Met
-# Land_Square_Metersers
-```
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pregunta 15) ¿Existe relación entre los metros cuadrados (por propiedad, tierra o totales) y el precio?
 ```{r}
 
 # PRECIO SEGÚN METROS CUADRADOS EN DISTINTOS ELEMENTOS
 
 # Filtramos para eliminar los nulos
-datos <- datos %>% filter( (m2_const < 3000 & m2_const > 0) & (m2_totales < 5000 & m2_const > 0) & (m2_terraza > 0) & (precio < 30000) )
+datos <- datos %>% filter( (m2_const < 2000 & m2_const > 0) & (m2_totales < 220 & m2_const > 0) & (m2_terraza > 0 & m2_terraza < 100) & (precio < 30000) )
+
 
 
 # m2_const = Built_Square_Meters,
 # m2_totales = Land_Square_Meters,
 # m2_terraza = Terrace_Square_Meters,
 
-```
 
 
-Pregunta 20) ¿Cómo influyen los metros cuadrados por construcción en el precio?
-```{r}
-# METROS CUADRADOS POR CONSTRUCCIÓN
-ggplot(datos, aes(x=m2_const, y=precio)) +  # Datos y ejes
-  geom_point()  # Gráfico de barras
-```
+# Gráfico 1
+grafico9 <- ggplot(datos, aes(x=m2_const, y=precio)) +  
+  geom_point() + 
+  labs(title = "Precio vs. m2 construidos")
 
 
-
-Pregunta 21) ¿Cómo influyen los metros cuadrados por terraza en el precio?
-```{r}
-# METROS POR TERRAZA
-ggplot(datos, aes(x=m2_terraza, y=precio)) +   # Datos y ejes   
-  geom_point()  # Gráfico de barras
-```
+# Gráfico 2
+grafico10 <- ggplot(datos, aes(x=m2_terraza, y=precio)) +   
+  geom_point() + 
+  labs(title = "Precio vs. m2 de terraza")
 
 
+# Gráfico 3
+grafico11 <- ggplot(datos, aes(x=m2_totales, y=precio)) +   
+  geom_point() + 
+  labs(title = "Precio vs. m2 totales")
 
-Pregunta 22) ¿Cómo influyen los metros cuadrados por tierra en el precio?
-```{r}
-# METROS CUADRADOS POR TIERRA
-#
-ggplot(datos, aes(x=m2_totales, y=precio)) +   # Datos y ejes
-  geom_point()  # Gráfico de barras
-```
 
-Parece haber una relación clara sobre la relación entre metros cuadrados y precio, el precio va a ser mayor conforme sean mayores los metros cuadrados.
-
-```{r, eval=FALSE}
-
-# Built_Square_Meters
-# Terrace_Square_Met
-# Land_Square_Metersers
-# max(datos$m2_const)
-# max(datos$m2_terraza)
-# max(datos$m2_totales)
+# Panel 1x3, 1 columna y 3 filas.
+grid.arrange(grafico9, grafico10, grafico11, ncol = 1, nrow = 3)
 
 
 ```
 
-```{r, eval=FALSE}
+Vemos que parece haber una relación clara sobre la relación entre metros cuadrados, ya sea en construcción, tierra o totales, y precio. El precio va a ser mayor conforme sean mayores los metros cuadrados.
 
 
-# # Exportar los datos limpios
-# 
-# library(writexl)
-# #()
-# write_xlsx(datos, path = here("Shiny_Proyecto","app","datos_limpios.xlsx"))
-```
 
+Pregunta 16) ¿Cómo determina al precio la ubicación de la vivienda (al frente, atrás, al costado, al interior)
 ```{r}
 # "disposicion", "Character", "En que posición se encuentra la propiedad como, interior, frente, fondo"
 
@@ -1253,6 +1227,18 @@ table(datos$disposicion)
 ```
 
 Lo más común es tener inmuebles al frente, aunque cuando vamos al precio, vemos que si bien los que estan al frente tiene un precio un poco más alto, en general todos estan en niveles similares. (Cerca de los 1000\$)
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Modelo de regresión lineal multiple:
 
