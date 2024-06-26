@@ -1316,7 +1316,7 @@ names(datos)
 vif_values <- vif(modelo)
 
 # Mostrar los valores de VIF
-print(vif_values)
+print(vif_values) #
 ```
 
 valores nulos
