@@ -600,6 +600,9 @@ Luego cuando nos referimos a la condición de las alquileres, vemos que la mayor
 
 
 
+
+
+
 Pregunta 3) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad?
 ```{r}
 
@@ -708,78 +711,50 @@ En el Municipio A y E estan predominantemente los apartamentos en Excelente Cond
 
 
 
-Gastos Comunes:
+Pregunta 6) ¿Cómo se distribuyen los gastos comunes en relación al municipio, eltipo de propiedad y la condición de la propiedad?
 
 ```{r}
 
+# Gráfico 1: Municipio y Gastos Comunes
+grafico1 <- ggplot(datos, aes(x = Municipio, y = Gastos_Comunes)) + 
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(title = "Gastos Comunes por Municipio")
 
+# Gráfico 2: Tipo de propiedad y Gastos Comunes
+grafico2 <- ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes)) + 
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(title = "Gastos Comunes por Tipo de Propiedad")
 
+# Gráfico 3: Condición y Gastos Comunes
+grafico3 <- ggplot(datos, aes(x = Condicion, y = Gastos_Comunes)) + 
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(title = "Gastos Comunes por Condición")
 
-```
+# Crear la grilla de gráficos
+grid.arrange(grafico1, grafico2, grafico3, ncol = 1, nrow = 3)
 
-
-
-
-
-
-Pregunta 6) ¿Como se distribuyen los gastos comúnes por Municipio?
-```{r}
-
-
-
-# A ver los gastos comunes se pueden relacionar
-# con: Municipio, Estado de la vivienda, Tipo de vivienda,
-
-
-# 
-ggplot(datos, aes(x = Municipio , y = Gastos_Comunes)) +  # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
 ```
 
 La mayoría de gastos comúnes se dan en el municipio CH, donde recordemos estan la mayoría de los alquileres, y la minoría de gastos comunes se dan en el municipio F donde recordemos hay la menor cantidad de alquileres.
 
-
-Pregunta 7) ¿Cómo influye el tipo de alquiler en el nivel de gastos comunes?
-
-```{r}
-#
-ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes)) +  # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
-
-
-
-# subdiviridr por municipio? Que gastos son más comunes según el tipo de alquiler por municipio
-
-```
-
 La mayoría de gastos comúnes se dan en los apartamentos, y muy pocos en las Oficinas. En los otros tipos de alquileres practicamente no existen gastos comunes.
 
+En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes.
 
 
-Pregunta 9) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
-
-```{r}
 
 
-# 
-
-ggplot(datos, aes(x = Condicion , y = Gastos_Comunes)) +  # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
 
-```
-
-En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes
 
 
-Pregunta 10) ¿Cómo se distribuyen los Gastos Comunes en relación al tipo de alquiler por Municipio?
+
+
+Pregunta 7) ¿Cómo se distribuyen los Gastos Comunes en relación al tipo de alquiler por Municipio?
 
 ```{r}
 
@@ -811,7 +786,7 @@ Como mencionamos anteriormente, en todos los municipios se cumple el mismo patr�
 
 
 
-Pregunta 11) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
+Pregunta 8) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
 
 ```{r}
 
@@ -844,7 +819,7 @@ En el municipio E hay un empate entre los más comunes son la Excelente Condici�
 
 
 
-Pregunta 12) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
+Pregunta 9) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
 
 ```{r}
 #
@@ -930,7 +905,7 @@ En este gráfico mostramos distintas variables que representan elementos de conf
 
 
 
-Pregunta 13) ¿Cómo influyen elementos relativos a los pisos como son el número de pisos, la cantidad de apartamentos en un piso o la cantidad de pisos en todo el edificio del inmueble al precio de alquiler?
+Pregunta 10) ¿Cómo influyen elementos relativos a los pisos como son el número de pisos, la cantidad de apartamentos en un piso o la cantidad de pisos en todo el edificio del inmueble al precio de alquiler?
 
 ```{r}
 
@@ -1029,7 +1004,7 @@ La distribución de la cantidad muestra que en un piso en general es más común
 
 
 
-Pregunta 14) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
+Pregunta 11) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
 
 
 ```{r}
@@ -1135,7 +1110,7 @@ En relación a los baños lo más común es que los inmuebles tengan un baño, l
 
 
 
-Pregunta 15) ¿Existe relación entre los metros cuadrados (por propiedad, tierra o totales) y el precio?
+Pregunta 12) ¿Existe relación entre los metros cuadrados (por propiedad, tierra o totales) y el precio?
 ```{r}
 
 # PRECIO SEGÚN METROS CUADRADOS EN DISTINTOS ELEMENTOS
@@ -1179,7 +1154,7 @@ Vemos que parece haber una relación clara sobre la relación entre metros cuadr
 
 
 
-Pregunta 16) ¿Cómo determina al precio la ubicación de la vivienda (al frente, atrás, al costado, al interior)
+Pregunta 13) ¿Cómo determina al precio la ubicación de la vivienda (al frente, atrás, al costado, al interior)
 ```{r}
 # "disposicion", "Character", "En que posición se encuentra la propiedad como, interior, frente, fondo"
 
