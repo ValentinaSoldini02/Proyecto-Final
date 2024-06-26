@@ -407,6 +407,7 @@ df_influencia <- data.frame(i = 1:nrow(datos_sub),
 
 ```{r}
 #| echo: false
+#| eval: false
 ggplot(df_influencia, aes(x = i, y = h_i)) +
   geom_point() +
   geom_segment(aes(x = i, xend = i, y = 0, yend = h_i)) +
@@ -417,6 +418,7 @@ ggplot(df_influencia, aes(x = i, y = h_i)) +
 ```
 ```{r}
 #| echo: false
+#| eval: false
 ggplot(df_influencia, aes(x = i, y = D_i)) +
   geom_point() +
   geom_segment(aes(x = i, xend = i, y = 0, yend = D_i)) +
