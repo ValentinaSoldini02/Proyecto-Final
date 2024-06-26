@@ -1101,7 +1101,7 @@ grafico6 <- ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +
 grafico7 <- ggplot(datos, aes(x=cant_de_est)) + 
   geom_bar() +  
   scale_x_continuous(breaks =  Prueba16$cant_de_est)
-
+#
 
 grafico8 <- ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +  
   geom_bar(stat="identity") +   

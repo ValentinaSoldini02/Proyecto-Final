@@ -25,7 +25,7 @@ Puedes encontrar el dataset en el siguiente enlace: [Precio de alquiler de casas
 
 ## Análisis exploratorio de los datos
 
-Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados,valores atípocos y valores nulos. Además, se decició eliminar las columnas "Furnished...32", "Furnished...42", y "Floors". Las dos primeras columnas fueron eliminadas porque exixtía una tercera columna que contenía la misma información. La columna "Floors" fue eliminada debido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.
+Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados,valores atípocos y valores nulos. Además, se decició eliminar las columnas "Furnished...32", "Furnished...42", y "Floors". Las dos primeras columnas fueron eliminadas porque exixtía una tercera columna que contenía la misma información. La columna "Floors" fue eliminada debido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.A lo largo del análisis se fueron quitando y modificando otras variables a medida que lo veíamos necesario.
 
 Otra modificación que se realizó fue la agrupación de las zonas de Montevideo en municipios. Cada municipio, con sus respectivas zonas se puede observar en la "Tabla 1". También se convirtió la columna precio por precio por metros cuadrados, para tener un mejor análisis de los datos.
 
@@ -51,6 +51,7 @@ library(gt)
 library(dplyr)
 library(randomForest)
 library(modelr)
+library(knitr)
 ```
 
 ```{r}
@@ -67,6 +68,8 @@ tabla_municipio <- data.frame(
   "Lezica, Peñarol, Nuevo París, Sayago, Conciliación, Colón"))
 
 tabla_municipio 
+
+gt(tabla_municipio)
 
 gt(tabla_municipio)
 ```
@@ -166,10 +169,9 @@ datos_2 <- datos_2 %>% # Datos
 
 ```
 
-
 Comendando la limpieza para la regrecion lineal multiple:
 
-Dado que la presencia de los valores nulos en los datos pueden afectar negativamente el ajuste y la precisión lineal múltiple, se realizaron varios pasos de limpieza de datos para manejar estos valores faltantes de manera mas adecuada. A continuación, se decriben los métodos utilizados para las diferentes columnas que contiene valores nulos en nuestro conjunto de datos, en la columna de "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato, en la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad y por último la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
+Dado que la presencia de los valores nulos en los datos pueden afectar negativamente el ajuste y la precisión lineal múltiple, se realizaron varios pasos de limpieza de datos para manejar estos valores faltantes de manera mas adecuada. A continuación, se decriben los métodos utilizados para las diferentes columnas que contiene valores nulos en nuestro conjunto de datos,como se menciono anteriormente, en la columna de "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato, en la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad y por último la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
 
 ```{r}
 #| echo: false
@@ -254,6 +256,7 @@ datos_2 <- reemplazar_na_disposicion(datos_2)
 
 
 ```
+
 ```{r}
 #| echo: false
 # Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
@@ -318,8 +321,30 @@ ggplot(grupo_estado, aes(x=fct_reorder(Condition, Cantidad), y=Cantidad)) + # Da
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 ```
+Al analizar los dos gráficos anteriores, se destaca que la mayoría de los alquileres corresponden a apartamentos, mientras que las propiedades de tierra, negocios especiales, edificios o garajes son menos comunes. Esta tendencia sugiere una alta disponibilidad de apartamentos en Montevideo, lo cual representa una oportunidad licrativa para los inversionistas.
 
-En relación a los dos gráficos anteriores, se puede observar que las propiedades más alquiladas son los apartamentos. Esto puede deberse a la gran cantidad de apartamentos dispobles en Montevideo, lo que proporciona a los inversionistas una oportuidad lucrativa. Al relacionar esto con el gráficosiguiente, se puede ver la mayoría de las propiedades se encuentranen buenas o exelentes condiciones, por lo que los inquilinos tendrían una ventaja significativa ya que no se tendrian que realizar modificaciones en dicha propiedad.
+Al considerar el primer gráfico, que muestra que la mayoría de las propiedades están en buenas o excelentes condiciones, los potenciales inquilinos se beneficiarían al evitar la necesidad de realizar modificaciones significativas en las propiedades disponibles para alquilar.
+
+
+```{r}
+# Gráfico
+ggplot(datos_2, aes(x = fct_infreq(tipo_prop), y = precio_m2, fill = Municipio)) + # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Tipo de alquiler por municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+```
+
+En este gráfico trata de explicar que tipo de propiedad se alquila en cada municipio. En los municipios A, CH, es mas comun alquilar apartamentos aunque tambien se alquilan otro tipo de propiedades.
+
+
+
+En general el tipo de alquiler más común varia según municipio, en los municipios A, C, D y G son más comunes los alquileres de Alquileres. En cambio en los municipios CH y E son más comunes los alquileres de casas, finalmente en el municipio B es más común el alquiler de Oficinas.
+
 
 ```{r}
 #| echo: false
@@ -360,6 +385,7 @@ corrplot(cor_matrix, method = "circle", type = "upper", tl.cex = 0.6, tl.col = "
 modelo <- lm(precio_m2 ~. , data = datos_sub)
 summary(modelo)
 ```
+
 ```{r}
 #| echo: false
 vif(modelo)
@@ -367,12 +393,13 @@ vif(modelo)
 
 La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo. Las unicas variables que tienen un GVIF ajustados mayor son "m2_totales" y "Municipio", pero sus valores ajustados estan por denajo de 2. Por lo que indica que no hay multicolinealidad severa.
 
-
 ```{r}
 #| echo: false
 crPlots(modelo)
 ```
+
 Atípicos:
+
 ```{r}
 #| echo: false
 res <- rstudent(modelo)
@@ -389,11 +416,11 @@ ggplot(modelo, aes(x=yhat, y= res))+
 
 En este caso hay una presencia de 4 datos atipocos. Hay uno que es super notorio y la idea es eliminarlo, con los otros tres hay que ver que se va hacer.
 
-
 ```{r}
 #| echo: false
 ncvTest(modelo)
 ```
+
 Datos influyentes:
 
 ```{r}
@@ -415,6 +442,7 @@ ggplot(df_influencia, aes(x = i, y = h_i)) +
   geom_abline(slope = 0, intercept = 2*length(coefficients(mod))/nrow(df), col = 2, linetype = 'dashed') +
   ggtitle('Leverage')
 ```
+
 ```{r}
 #| echo: false
 ggplot(df_influencia, aes(x = i, y = D_i)) +
@@ -427,7 +455,6 @@ ggplot(df_influencia, aes(x = i, y = D_i)) +
 ```
 
 En este paso estamos tratando de encontrar que datos son influyentes para lograr poder intervenirlos y que el modelo nos quede mejor. Igualmente voy a necesitar ayuda para poder continuar.
-
 
 Bosques:
 
@@ -485,12 +512,10 @@ fancyRpartPlot(tree_ab)
 
 names(datos_2)
 ```
+
 En este paso se trato de ver en que condiciones estaba cada municipio. Creo que noquedo muy bien, pero es un intento de arbol
 
-
-
 Metadatos :
-
 
 ```{r}
 #| echo: false
