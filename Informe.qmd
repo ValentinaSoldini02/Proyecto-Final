@@ -9,6 +9,7 @@ editor: visual
 
 ```{r}
 #| echo: false
+library(gridExtra)
 library(tidyverse)
 library(GGally)
 library(car)
@@ -369,9 +370,6 @@ Aunque el gráfico anterior indicaba que los apartamentos eran el tipo de propie
 
 
 ```{r, echo: false}
-
-
-
 # Gráfico 1: Conteo por Municipio
 grafico1 <- ggplot(datos_2, aes(x = Municipio)) + 
   geom_bar() + 
@@ -381,40 +379,35 @@ grafico1 <- ggplot(datos_2, aes(x = Municipio)) +
 
   
 
-# Gráfico 2: Grupo de Precio promedio por municipio
+# Gráfico 2: Grupo de Precio por metro cuadrado por municipio
 grupo_municipio <- datos_2 %>% 
   group_by(Municipio) %>% 
   summarise(Cantidad = mean(precio_m2))
 
-# Gráfico de Precio promedio por municipio
+# Gráfico de Precio por metro cuadrado por municipio
 grafico2 <- ggplot(grupo_municipio, aes(x = fct_reorder(Municipio, Cantidad), y = Cantidad)) + 
   geom_bar(stat = "identity") + 
   labs(x = "Municipio", y = "Precio promedio") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
 
 
-
-
-
-
-
 # Gráfico 2: Conteo de Disposición
 grafico7 <- ggplot(datos_2, aes(x = disposicion)) + 
   geom_bar() + 
-  scale_x_discrete(breaks = unique(datos$disposicion)) +
+  #scale_x_discrete(breaks = unique(datos$disposicion)) +
   labs(title = "Distribución de disposición") +
     theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
 
   
 
 
-# Gráfico Grupo de Precio promedio por disposición
+# Gráfico Grupo de Precio precio por metro cuadrado por disposición
 grupo_disposicion <- datos_2 %>% 
   group_by(disposicion) %>% 
   summarise(Cantidad = precio_m2)
 
 
-# Gráfico de Precio promedio por disposición
+# Gráfico de Precio precio por metro cuadrado por disposición
 grafico8 <- ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantidad)) + 
   geom_bar(stat = "identity") + 
   labs(x = "Disposición", y = "Precio promedio") + 
@@ -433,22 +426,6 @@ Al analizar la distribución de alquileres, observamos que la mayoria de los pro
 En terminos de precios por metro cuadrado de alquiler, identificamos que el municipio F, ofrece las tarifas mas bajas, mientras que el municipio CH se destaca por tener los precios más altos.
 
 En cuanto a la disposición de las propiedades, la mayoría de las propiedades en alquiler están sutuadas al frente. Al analizar los precios por metro cuadrado relacionados con la disposición de las propiedades, encontramos que la mayoría tienen un precio diferente. Las propiedades que esta situadas al fente su precio por metro cuadrado es superior a los 7500 dolares mientras que los que estan en el interior y "side" su precio es inferior a lps 2500 dolares por metro cuadrado.
-
-
-
-
-
-En cuanto a la disposición de los inmuebles, la mayoría de las propiedades en alquiler están situadas al frente. Al analizar los precios promedio relacionados con la disposición de los inmuebles, encontramos que la mayoría tienen un precio similar, rondando los 500 dólares. Sin embargo, los inmuebles ubicados al frente presentan un precio significativamente más alto, alcanzando los 1500 dólares.
-
-
-
-
-
-
-
-
-
-
 
 
 
