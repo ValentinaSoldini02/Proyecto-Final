@@ -465,7 +465,7 @@ datos
 # Visualización
 
 
-Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
+Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
 ```{r}
 
 
@@ -499,7 +499,10 @@ grafico2 <- ggplot(grupo_municipio, aes(x = fct_reorder(Municipio, Cantidad), y 
 grafico7 <- ggplot(datos, aes(x = disposicion)) + 
   geom_bar() + 
   scale_x_discrete(breaks = unique(datos$disposicion)) +
-  labs(title = "Distribución de disposición")
+  labs(title = "Distribución de disposición") +
+    theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
+
+  
 
 
 # Gráfico Grupo de Precio promedio por disposición
@@ -512,7 +515,7 @@ grupo_disposicion <- datos %>%
 grafico8 <- ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantidad)) + 
   geom_bar(stat = "identity") + 
   labs(x = "Disposición", y = "Precio promedio") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
 
 
 
@@ -639,30 +642,10 @@ Vemos que si, los barrios ubicados en el municipio A y E son los que tienen un p
 
 
 
-Pregunta 2) ¿En que municipio hay más alquileres?
 
-```{r}
-# 
-
-# Cantidad de alquileres por municipio
-grupo_municipio <- datos %>%  # Datos
-  group_by(Municipio) %>%       # Agrupamos por municipio
-  summarise(Cantidad = n())     # Resumimos con la cantidad
-grupo_municipio
-
-
-# Gráfico
-ggplot(grupo_municipio, aes(x=fct_reorder(Municipio, Cantidad), y=Cantidad)) + # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  labs(x="Municipio", y="Precio") + # Nombres de los ejes
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
-
-```
 
 Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de alquileres se dan en el Municipio F
 
-Pregunta 3) Qué tipo de inmuebles para alquilar hay?
 
 
 
@@ -705,9 +688,6 @@ La mayoría de los inmuebles estan en buena condición o excelente condición. P
 
 
 
-Pregunta 6) ¿Como se distribuyen las condiciones de las viviendas por municipio?
-
-
 Pregunta 5) ¿Como se distribuyen las condiciones de las viviendas por municipio?
 
 ```{r}
@@ -735,7 +715,7 @@ En el Municipio A y E estan predominantemente los apartamentos en Excelente Cond
 
 
 
-Pregunta 6) ¿Cómo se distribuyen los gastos comunes en relación al municipio, eltipo de propiedad y la condición de la propiedad?
+Pregunta 6) ¿Cómo se distribuyen los gastos comunes en relación al municipio, el tipo de propiedad y la condición de la propiedad?
 
 ```{r}
 
@@ -773,12 +753,7 @@ En los alquileres que estan en Excelentes Condiciones los gastos comunes son má
 
 
 
-Pregunta 7) ¿Cómo influye el tipo de alquiler en el nivel de gastos comunes?
-
-
-La mayoría de gastos comúnes se dan en los apartamentos, y muy pocos en las Oficinas. En los otros tipos de alquileres practicamente no existen gastos comunes.
-
-Pregunta 9) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
+Pregunta 7) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
 
 ```{r}
 
@@ -812,9 +787,6 @@ Como mencionamos anteriormente, en todos los municipios se cumple el mismo patr�
 
 Pregunta 8) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
 
-Pregunta 11) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
-
-
 ```{r}
 
 # 
@@ -846,9 +818,8 @@ En el municipio E hay un empate entre los más comunes son la Excelente Condici�
 
 
 
-Pregunta 9) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
 
-Pregunta 12) Cómo influye l tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
+Pregunta 9) Cómo influye tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
 
 ```{r}
 #
@@ -953,7 +924,9 @@ datos <- datos %>% filter( (cant_de_piso < 20 & cant_de_piso > 0) & (apartamento
 
 ```
 
-Pregunta 13) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
+
+
+Pregunta 11) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
 
 ```{r}
 # 
@@ -1033,14 +1006,7 @@ grid.arrange(grafico1, grafico2, grafico3, grafico4, grafico5, grafico6, ncol = 
 
 Vemos que los inmuebles en general tienen una distribución similar según su cantidad de pisos, excepto en el caso de los inmuebles con 10 pisos que tienen una ocurrencia mucho más alta. En relación, vemos que en general la mayoría se mantiene en los 1000 dolares para cantidades de pisos variadas, y en algunas cantidades de pisos como son 2, 12, 13 la media del precio esta cerca de los 2000 dolares.
 
-
-Pregunta 14) ¿Cómo influye el piso en el precio? Los pisos más altos o más bajos influyen en el precio?
-
-
-
 En la distribución los números de piso 0 y 1, luego cuando los pisos van subiendo de número la frecuencia va disminuyendo (con algunas excepciones como son el número 4 y el 9). En relación al precio vemos que casi todos los números de piso tiene un precio similar (casi 1000\$) pero particularmente el piso con número 11 tiene un precio más elevado.
-
-
 
 La distribución de la cantidad muestra que en un piso en general es más común encontrarse con 2, 3 o 4 apartamentos. En relación al precio vemos que esos pisos que tienen 2, 3 o 4 apartamentos también son los que tienen el precio más alto.
 
@@ -1051,24 +1017,9 @@ La distribución de la cantidad muestra que en un piso en general es más común
 
 
 
-Pregunta 16) ¿Cómo influye la cantidad de baños en el precio?
 
+Pregunta 12) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
 
-
-
-
-Pregunta 11) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
-
-
-
-Vemos que en general, lo más común es que los inmuebles tengan un baño, luego el tener 2 o 3 es menos común. Pero vemos que a más baños tenga un inmueble, más alto sera el precio.
-
-Pregunta 18) ¿Cómo influye la cantidad de cuartos en el precio?
-
-
-Vemos que tanto para la cantidad de cuartos y de habitaciones, su distribución es muy parecida, tanto en cantidad como en precio. Donde la cantidad más común de cuartos/habitaciones en los inmuebles para alquilar es de 2 o 3. Y se cumple también que al tener más cantidad de cuartos/habitaciones el precio es más alto.
-
-Pregunta 19) ¿Cómo influye la cantidad de garages en el precio?
 
 ```{r}
 
@@ -1161,7 +1112,7 @@ En relación a los baños lo más común es que los inmuebles tengan un baño, l
 
 
 
-Pregunta 12) ¿Existe relación entre los metros cuadrados (por propiedad, tierra o totales) y el precio?
+Pregunta 13) ¿Existe relación entre los metros cuadrados (por propiedad, tierra o totales) y el precio?
 ```{r}
 
 # PRECIO SEGÚN METROS CUADRADOS EN DISTINTOS ELEMENTOS
