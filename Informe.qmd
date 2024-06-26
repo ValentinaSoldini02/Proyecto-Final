@@ -123,7 +123,7 @@ datos_2 <- datos_2|>
          m2_terraza = Terrace_Square_Meters,
          vivienda_social = Social_Housing,
          cant_de_est = Garages,
-         coneccion_gas = Gas_Pipeline,
+         conexion_gas = Gas_Pipeline,
          calefaccion = Heating,
          zona_barbacoa = Grill,
          balcon = Balcony
@@ -175,7 +175,7 @@ datos_2 <- datos_2 %>% # Datos
 
 ```
 
-Comendando la limpieza para la regrecion lineal multiple:
+Comendando la limpieza para la regresión lineal multiple:
 
 Dado que la presencia de los valores nulos en los datos pueden afectar negativamente el ajuste y la precisión lineal múltiple, se realizaron varios pasos de limpieza de datos para manejar estos valores faltantes de manera mas adecuada. A continuación, se decriben los métodos utilizados para las diferentes columnas que contiene valores nulos en nuestro conjunto de datos,como se menciono anteriormente, en la columna de "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato, en la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad y por último la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
 
@@ -195,7 +195,7 @@ datos_2$Patio <- as.factor(datos_2$Patio)
 datos_2$Pool <- as.factor(datos_2$Pool)
 datos_2$Garage <- as.factor(datos_2$Garage)
 datos_2$Pet <- as.factor(datos_2$Pet)
-datos_2$coneccion_gas <- as.factor(datos_2$coneccion_gas)
+datos_2$conexion_gas <- as.factor(datos_2$conexion_gas)
 datos_2$Playroom <- as.factor(datos_2$Playroom)
 datos_2$Duplex <- as.factor(datos_2$Duplex)
 datos_2$calefaccion <- as.factor(datos_2$calefaccion)
@@ -481,7 +481,7 @@ ggplot(datos_2, aes(x =año_de_const, y = precio_m2)) +
 En estos graficos lo que se trato de hacer es como algunas variables influyen en el precio por metros cuadrados. Como se puede observar con mucha imaginacion que las propiedades que estan constuidas mas recientemente su precio es mas alto.
 
 
-NUEVOS GRÁFICOS DE VISUALIZACIÓN:
+### NUEVOS GRÁFICOS DE VISUALIZACIÓN:
 
 
 
@@ -545,6 +545,10 @@ grid.arrange(grafico1, grafico2, grafico7, grafico8, ncol = 2, nrow = 2)
 
 
 ``` 
+Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de alquileres se dan en el Municipio F. Vemos también que los precios promedio de alquiler son más bajos en el Municipio G y más altos en el municipio A.
+
+Luego en la disposición vemos que los más común son los inmuebles al frente, y vemos que en relación al precio promedio, todos tienen un precio similar (alrededor de los 500 dólares) a excepción de los que estan en el frente que tienen un precio más alto 1500 dólares
+
 
 
 
@@ -600,6 +604,13 @@ grafico6 <- ggplot(grupo_condicion, aes(x = fct_reorder(condicion, Cantidad), y 
 # Crear la grilla de gráficos
 grid.arrange(grafico3, grafico4, grafico5, grafico6, ncol = 2, nrow = 2)
 ``` 
+
+En los tipos de propiedad, mayoritariamente son apartamentos, en relación al precio vemos que los más caros son los edificios seguidos por las tierras.
+
+Luego cuando nos referimos a la condición de las alquileres, vemos que la mayoría se encuentra en Excelente Condición o en Buena Condición, también una cantidad considerable esta recientemente construdido. En relación al precio, vemos que los alquileres Renovados, A ser Renovados y en Excelente Condición son los más caros.
+
+
+
 
 
 
@@ -685,6 +696,418 @@ ggplot(datos_2, aes(x = condicion, y = precio_m2, fill = Municipio)) + # Datos, 
 
 ``` 
 
+En el Municipio A y E estan predominantemente los apartamentos en Excelente Condición. En los municipios C y F es más común los apartamentos con Buena Condición. n los municipios CH y B hay un empate entre la cantidad de apartamentos con Excelente Condición y Buena Condición.
+
+
+
+
+Pregunta 6) ¿Cómo se distribuyen los gastos comunes en relación al municipio, el tipo de propiedad y la condición de la propiedad?
+```{r}
+
+# Gráfico 1: Municipio y Gastos Comunes
+grafico9 <- ggplot(datos_2, aes(x = Municipio, y = Gastos_Comunes)) + 
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(title = "Gastos Comunes por Municipio")
+
+# Gráfico 2: Tipo de propiedad y Gastos Comunes
+grafico10 <- ggplot(datos_2, aes(x = tipo_prop, y = Gastos_Comunes)) +
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(title = "Gastos Comunes por Tipo de Propiedad")
+
+# Gráfico 3: Condición y Gastos Comunes
+grafico11 <- ggplot(datos_2, aes(x = condicion, y = Gastos_Comunes)) +
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(title = "Gastos Comunes por Condición")
+
+# Crear la grilla de gráficos
+grid.arrange(grafico9, grafico10, grafico11, ncol = 1, nrow = 3)
+
+``` 
+
+La mayoría de gastos comúnes se dan en el municipio CH, donde recordemos estan la mayoría de los alquileres, y la minoría de gastos comunes se dan en el municipio F donde recordemos hay la menor cantidad de alquileres.
+
+La mayoría de gastos comúnes se dan en los apartamentos, y muy pocos en las Oficinas. En los otros tipos de alquileres practicamente no existen gastos comunes.
+
+En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes.
+
+
+
+
+
+
+
+
+Pregunta 7) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
+
+```{r}
+
+#
+datos <- datos %>% filter()
+
+max(datos$precio)
+ggplot(datos_2, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Datos, ejes y municipio
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Gastos Comunes según tipo de alquiler por Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+``` 
+
+Como mencionamos anteriormente, en todos los municipios se cumple el mismo patrón, que es que los Gastos Comunes se dan más en alquileres del tipo apartamento.
+
+
+
+
+
+
+Pregunta 8) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
+
+```{r, echo: false}
+
+
+# 
+
+
+ggplot(datos_2, aes(x = condicion, y = Gastos_Comunes, fill = Municipio)) + # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Gastos Comunes según el tipo de alquiler por Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+
+
+```
+
+En el municipio A los gastos comunes se dan más en los inmuebles que estan en Buena Condición.
+
+En el municipio B y C los gastos comunes se da más en los inmuebles que estan en Excelente Condición.
+
+En el municipio CH hay un empate entre los más comunes son la Excelente Condición y Renovados.
+
+En el municipio E hay un empate entre los más comunes son la Excelente Condición y Buena Condición.
+
+
+
+
+
+
+
+Pregunta 9) Cómo influye tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
+
+```{r, echo: false}
+
+
+
+# # Obtenemos las columnas que tienen valores entre 0 y 1
+#datos_2
+dum <- datos_2 %>%
+select("vista_al_mar","vivienda_social","Barbecue","Living_Room","Closet","Patio","Pool","Garage","Pet","conexion_gas","Playroom","Duplex","calefaccion","WiFi","zona_barbacoa","Gym","balcon","deposito","Air_Conditioning","jardin","losa_radiante","Solarium","amueblado")
+
+
+
+
+# Función para crear el dataframe que tiene 0 y 1 en sus filas, las variables en sus columnas y el promedio de precio en cada celda.
+
+calcular_y_unir <- function(df, col, resultado_final) { # Función
+  temp <- df %>%       # Datos
+    group_by(valor = .data[[col]]) %>% # Agrupamos por todas las columnas
+    summarise(Mean = mean(precio_m2, na.rm = TRUE), .groups = "drop")
+  # Resumimos con la media, ignorando los nulos
+
+  colnames(temp)[2] <- paste0(col, "_Media") # A cada columna del dataframe resultante le vamos a pegar la palabra "_Mean"
+  resultado_final <- left_join(resultado_final, temp, by = "valor", relationship = "many-to-one") # Hacemos un join con todos los resultados, teniendo la columna "valor" como columna común entre las tablas para unirlas
+  return(resultado_final) # Resultado
+}
+
+
+
+# DataFrame inicial
+resultado_final <- data.frame(valor = c(0, 1))
+
+
+# Obtenemos las columnas del dataframe dum
+columnas <- colnames(dum)
+
+
+
+# Aplicar la función creada a cada columna
+for (col in columnas) { # Para cada columna
+  resultado_final <- calcular_y_unir(datos_2, col, resultado_final)
+} # Aplicamos la función
+
+
+# DataFrame resultante
+resultado_final
+
+
+
+# CUIDADO: Este código da error cuando convierto las columnas a factores como hace el código que esta arriba que sirve para el modelo lineal, puedo pensar este código distinto, o ese código que convierte a factor ponerlo abajo cuando empezemos el modelo lineal
+```
+
+```{r, echo: false}
+
+
+#
+# Función para gráficar 
+funcion_dum <- function(datos){
+
+# Pasamos los datos al formato largo con pivot_longer
+  data_long <- resultado_final %>%
+    pivot_longer(-valor, names_to = "variable", values_to = "value")
+
+  # Gráfico
+  ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) + # Datos, ejes y color
+    geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +  # Gráfico de barras, con barras superpuestas
+    labs(x = "Variable", y = "Value", fill = "Value") + # Nombre de los ejes
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+#Cambiar ángulo y tamaño del texto de los elementos del eje X
+  
+}
+
+
+# Resultados
+funcion_dum(resultado_final)
+
+
+
+```
+
+En este gráfico mostramos distintas variables que representan elementos de confort que puede tener un alquiler o no tener, como son WiFi, Barbacoa, Jardin, Aire Acondicionado, etc. Estas variables toman valores de 0 y 1 donde el 0 representa que el alquiler no posee ese bien y el 1 representa que el alquiler si posee ese bien. Estamos gráficando el precio promedio para cada una de esas variables y comparando como difiere el precio en caso de tener o no tener un bien. Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Barbacoa, Calefacción, Closet, Deposito, Garage, Jardin, Living, Losa Radiante, Patio, Habitación de juegos, Piscina, Vista al Mar y Barbacoa, el precio es más alto al tener que al no tener. En cambio, en el caso de Balcon, Conexión a Gas, Duplex, Gimansio, Equipo para mascotas, Centro de Bronceado, WiFi o en el caso de ser una vivienda social, el precio es más alto al no tener que al tener.
+
+
+
+
+
+
+
+
+
+Pregunta 10) ¿Cómo influyen elementos relativos a los pisos como son el número de pisos, la cantidad de apartamentos en un piso o la cantidad de pisos en todo el edificio del inmueble al precio de alquiler?
+
+```{r, echo: false}
+
+
+
+# Filtro:
+datos <- datos %>% filter( (cant_de_piso < 20 & cant_de_piso > 0) & (apartamentos_por_piso < 14 & apartamentos_por_piso > 0) & (nro_de_piso < 44) )
+
+
+
+
+```
+
+Pregunta 11) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
+
+```{r, echo: false}
+
+# 
+
+
+# GRUPOS
+grupo_piso_1 <- datos_2 %>% # Datos
+  group_by(cant_de_piso) %>% # Agrupados por cantidad de pisos
+  summarise(media_precio = mean(precio_m2)) # Resumidos por cantidad
+#grupo_piso_1
+
+
+grupo_piso_2 <- datos_2 %>% # Datos
+   group_by(nro_de_piso) %>% #Agrupados por número de piso
+   summarise(media_precio = mean(precio_m2)) # Resumidos por media con respecto al precio
+#grupo_piso_2
+
+
+grupo_piso_3 <- datos_2 %>%   # Datos
+  group_by(apartamentos_por_piso) %>% # Agrupados por pisos por apartamentos
+  summarise(media_precio = mean(precio_m2)) # Resumido por cantidad
+#grupo_piso_3
+
+
+
+
+
+# Gráfico 1: Cantidad de pisos
+grafico12 <- ggplot(datos_2, aes(x = cant_de_piso)) +  
+  geom_bar() +
+  scale_x_continuous(breaks = unique(datos_2$cant_de_piso)) +
+  labs(title = "Cantidad de pisos")
+
+
+
+# Gráfico 2: Precio promedio por cantidad de pisos
+grafico13 <- ggplot(grupo_piso_1, aes(x = cant_de_piso, y = media_precio)) +  
+  geom_bar(stat = "identity") + 
+  scale_x_continuous(breaks = unique(grupo_piso_1$cant_de_piso)) +
+  labs(title = "Precio promedio por cantidad de pisos")
+
+
+
+# Gráfico 3: Número de piso
+grafico14 <- ggplot(datos_2, aes(x = nro_de_piso)) +  
+  geom_bar() +
+  scale_x_continuous(breaks = unique(datos_2$nro_de_piso)) +
+  labs(title = "Número de piso")
+
+# Gráfico 4: Precio promedio por número de piso
+grafico15 <- ggplot(grupo_piso_2, aes(x = nro_de_piso, y = media_precio)) +  
+  geom_bar(stat = "identity") + 
+  scale_x_continuous(breaks = unique(grupo_piso_2$nro_de_piso)) +
+  labs(title = "Precio promedio por número de piso")
+
+
+
+# Gráfico 5: Apartamentos por piso
+grafico16 <- ggplot(datos_2, aes(x = apartamentos_por_piso)) + 
+  geom_bar() +
+  scale_x_continuous(breaks = unique(datos_2$apartamentos_por_piso)) +
+  labs(title = "Apartamentos por piso")
+
+# Gráfico 6: Cantidad de apartamentos por piso
+grafico17 <- ggplot(grupo_piso_3, aes(x = apartamentos_por_piso, y = media_precio)) +  
+  geom_bar(stat = "identity") + 
+  scale_x_continuous(breaks = unique(grupo_piso_3$apartamentos_por_piso)) +
+  labs(title = "Cantidad de apartamentos por piso")
+
+
+
+
+# Panel 2x3
+grid.arrange(grafico12, grafico13, grafico14, grafico15, grafico16, grafico17, ncol = 2, nrow = 3)
+
+# Hacer el filtro que nos recomendo la profe con los factores para que se vea mejor y no perder datos.
+```
+
+Vemos que los inmuebles en general tienen una distribución similar según su cantidad de pisos, excepto en el caso de los inmuebles con 10 pisos que tienen una ocurrencia mucho más alta. En relación, vemos que en general la mayoría se mantiene en los 1000 dolares para cantidades de pisos variadas, y en algunas cantidades de pisos como son 2, 12, 13 la media del precio esta cerca de los 2000 dolares.
+
+En la distribución los números de piso 0 y 1, luego cuando los pisos van subiendo de número la frecuencia va disminuyendo (con algunas excepciones como son el número 4 y el 9). En relación al precio vemos que casi todos los números de piso tiene un precio similar (casi 1000\$) pero particularmente el piso con número 11 tiene un precio más elevado.
+
+La distribución de la cantidad muestra que en un piso en general es más común encontrarse con 2, 3 o 4 apartamentos. En relación al precio vemos que esos pisos que tienen 2, 3 o 4 apartamentos también son los que tienen el precio más alto.
+
+Pregunta 12) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
+
+```{r, echo: false}
+
+# PRECIO SEGÚN CANTIDAD DE COMODIDADES como son Garages, Habitaciones, Cuartos, Baños 
+
+
+
+
+
+Grupo_Baños <- datos_2 %>%         # Datos
+   group_by(baños) %>%  # Agrupado por cantidad de garages
+   summarise(media_precio = mean(precio_m2)) # Resumido por media del precio
+
+
+
+grupo_cant_habit <- datos_2 %>%         # Datos
+   group_by(cant_habitaciones) %>%  # Agrupado por cantidad de garages
+   summarise(media_precio = mean(precio_m2)) # Resumido por media del precio
+
+
+
+grupo_cant_cuartos <- datos_2 %>%  # Datos 
+   group_by(cant_cuartos) %>% # Agrupado por cantidad de cuartos
+   summarise(media_precio = mean(precio_m2)) # Resumido por la media del precio
+
+
+
+grupo_garage <- datos_2 %>%         # Datos
+   group_by(cant_de_est) %>%  # Agrupado por cantidad de garages
+   summarise(media_precio = mean(precio_m2)) # Resumido por media del precio
+
+
+
+
+
+
+
+
+
+
+
+
+
+# GRÁFICOS
+grafico18 <- ggplot(datos_2, aes(x=baños)) + 
+  geom_bar() + 
+  scale_x_continuous(breaks =  Grupo_Baños$baños)
+
+
+grafico19 <- ggplot(Grupo_Baños, aes(x=baños, y=media_precio)) + 
+  geom_bar(stat="identity") +  
+  scale_x_continuous(breaks =  Grupo_Baños$baños)
+
+
+
+
+
+grafico20 <- ggplot(datos_2, aes(x=cant_habitaciones)) + 
+  geom_bar() +  
+  scale_x_continuous(breaks =  grupo_cant_habit$cant_habitaciones)
+
+
+grafico21 <- ggplot(grupo_cant_habit, aes(x=cant_habitaciones, y=media_precio)) +  
+  geom_bar(stat="identity") +  
+  scale_x_continuous(breaks =  grupo_cant_habit$cant_habitaciones)
+
+
+
+
+
+
+grafico22 <- ggplot(datos_2, aes(x=cant_cuartos)) + 
+  geom_bar() +   
+  scale_x_continuous(breaks =  grupo_cant_cuartos$cant_cuartos)
+
+
+grafico23 <- ggplot(grupo_cant_cuartos, aes(x=cant_cuartos, y=media_precio)) +  
+  geom_bar(stat="identity") +   
+  scale_x_continuous(breaks =  grupo_cant_cuartos$cant_cuartos)
+
+
+
+
+
+
+grafico24 <- ggplot(datos_2, aes(x=cant_de_est)) + 
+  geom_bar() +  
+  scale_x_continuous(breaks =  grupo_garage$cant_de_est)
+#
+
+grafico25 <- ggplot(grupo_garage, aes(x=cant_de_est, y=media_precio)) +  
+  geom_bar(stat="identity") +   
+  scale_x_continuous(breaks =  grupo_garage$cant_de_est)
+
+
+
+
+# Panel 2x4 (dos columnas, 4 filas para 8 gráficos)
+grid.arrange(grafico18, grafico19, grafico20, grafico21, grafico22, grafico23, grafico24, grafico25, ncol = 2, nrow=4)
+
+
+```
+
+En relación a los baños lo más común es que los inmuebles tengan un baño, luego el tener 2 o 3 es menos común. Similarmente ocurre con la cantidad de estacionamientos (garages) donde lo más común es el que el inmueble tenga un garage o ninguno. En relación al número de cuartos y de habitaciones el patrón que se repite es tener 2 o 3 en el caso de habitaciones y 1 o 2 en el caso de cuartos. Pero vemos que siempre para todos estos elementos, se cumple la relación intuitiva de que a más número de baños, estacionamientos, habitaciones o cuartos, el precio del inmueble es más elevado.
+
+
+
+
+```{r}
+
+
+``` 
 
 
 ```{r}
@@ -700,6 +1123,18 @@ ggplot(datos_2, aes(x = condicion, y = precio_m2, fill = Municipio)) + # Datos, 
 ``` 
 
 
+
+```{r}
+
+
+``` 
+
+
+
+```{r}
+
+
+``` 
 
 
 
