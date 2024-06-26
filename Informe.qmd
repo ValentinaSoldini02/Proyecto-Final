@@ -339,7 +339,7 @@ ggplot(datos_2, aes(x = fct_infreq(tipo_prop), y = precio_m2, fill = Municipio))
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 ```
 
-En este gráfico trata de explicar que tipo de propiedad se alquila en cada municipio. En los municipios A, 
+En este gráfico trata de explicar que tipo de propiedad se alquila en cada municipio. En los municipios A, CH, es mas comun alquilar apartamentos aunque tambien se alquilan otro tipo de propiedades.
 
 
 
