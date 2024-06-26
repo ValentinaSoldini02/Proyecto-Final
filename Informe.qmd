@@ -339,11 +339,9 @@ ggplot(datos_2, aes(x = fct_infreq(tipo_prop), y = precio_m2, fill = Municipio))
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 ```
 
-En este gráfico trata de explicar que tipo de propiedad se alquila en cada municipio. En los municipios A, CH, es mas comun alquilar apartamentos aunque tambien se alquilan otro tipo de propiedades.
+En este gráfico trata de explicar que tipo de propiedad se alquila en cada municipio. En los municipios A, CH, es mas comun alquilar apartamentos aunque tambien se alquilan otro tipo de propiedades. En contraste, en el municipio B y otros municipios, predominan las oficinas. Esto sugiere que el tipo de propiedad alquilada varía según el municipio.
 
-
-
-En general el tipo de alquiler más común varia según municipio, en los municipios A, C, D y G son más comunes los alquileres de Alquileres. En cambio en los municipios CH y E son más comunes los alquileres de casas, finalmente en el municipio B es más común el alquiler de Oficinas.
+Aunque el gráfico anterior indicaba que los apartamentos eran el tipo de propiedad más común en general, esta tendencia puede estar influenciada por datos específicos, como los del Prado, que podrían distorsionar los resultados generales
 
 
 ```{r}
