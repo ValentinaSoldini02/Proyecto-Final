@@ -734,25 +734,25 @@ Pregunta 6) ¿Cómo se distribuyen los gastos comunes en relación al municipio,
 
 
 # Gráfico 1: Municipio y Gastos Comunes
-grafico1 <- ggplot(datos, aes(x = Municipio, y = Gastos_Comunes)) + 
+grafico9 <- ggplot(datos, aes(x = Municipio, y = Gastos_Comunes)) + 
   geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(size = 6)) +
   labs(title = "Gastos Comunes por Municipio")
 
 # Gráfico 2: Tipo de propiedad y Gastos Comunes
-grafico2 <- ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes)) + 
+grafico10 <- ggplot(datos, aes(x = tipo_prop, y = Gastos_Comunes)) + 
   geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(size = 6)) +
   labs(title = "Gastos Comunes por Tipo de Propiedad")
 
 # Gráfico 3: Condición y Gastos Comunes
-grafico3 <- ggplot(datos, aes(x = Condicion, y = Gastos_Comunes)) + 
+grafico11 <- ggplot(datos, aes(x = Condicion, y = Gastos_Comunes)) + 
   geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(size = 6)) +
   labs(title = "Gastos Comunes por Condición")
 
 # Crear la grilla de gráficos
-grid.arrange(grafico1, grafico2, grafico3, ncol = 1, nrow = 3)
+grid.arrange(grafico9, grafico10, grafico11, ncol = 1, nrow = 3)
 
 ``` 
 
@@ -975,13 +975,13 @@ grupo_piso_3
 
 
 # Gráfico 1: Cantidad de pisos
-grafico1 <- ggplot(datos, aes(x = cant_de_piso)) +  
+grafico12 <- ggplot(datos, aes(x = cant_de_piso)) +  
   geom_bar() +
   scale_x_continuous(breaks = unique(datos$cant_de_piso)) +
   labs(title = "Cantidad de pisos")
 
 # Gráfico 2: Precio promedio por cantidad de pisos
-grafico2 <- ggplot(grupo_piso_1, aes(x = cant_de_piso, y = Cantidad)) +  
+grafico13 <- ggplot(grupo_piso_1, aes(x = cant_de_piso, y = Cantidad)) +  
   geom_bar(stat = "identity") + 
   scale_x_continuous(breaks = unique(grupo_piso_1$cant_de_piso)) +
   labs(title = "Precio promedio por cantidad de pisos")
@@ -989,29 +989,29 @@ grafico2 <- ggplot(grupo_piso_1, aes(x = cant_de_piso, y = Cantidad)) +
 
 
 # Gráfico 3: Número de piso
-grafico3 <- ggplot(datos, aes(x = nro_de_piso)) +  
+grafico14 <- ggplot(datos, aes(x = nro_de_piso)) +  
   geom_bar() +
   scale_x_continuous(breaks = unique(datos$nro_de_piso)) +
   labs(title = "Número de piso")
 
 # Gráfico 4: Precio promedio por número de piso
-grafico4 <- ggplot(grupo_piso_2, aes(x = nro_de_piso, y = media_precio)) +  
+grafico15 <- ggplot(grupo_piso_2, aes(x = nro_de_piso, y = media_precio)) +  
   geom_bar(stat = "identity") + 
-  scale_x_continuous(breaks = unique(Prueba12$nro_de_piso)) +
+  scale_x_continuous(breaks = unique(grupo_piso_2$nro_de_piso)) +
   labs(title = "Precio promedio por número de piso")
 
 
 
 # Gráfico 5: Apartamentos por piso
-grafico5 <- ggplot(datos, aes(x = apartamentos_por_piso)) + 
+grafico16 <- ggplot(datos, aes(x = apartamentos_por_piso)) + 
   geom_bar() +
   scale_x_continuous(breaks = unique(datos$apartamentos_por_piso)) +
   labs(title = "Apartamentos por piso")
 
 # Gráfico 6: Cantidad de apartamentos por piso
-grafico6 <- ggplot(grupo_piso_3, aes(x = apartamentos_por_piso, y = Cantidad)) +  
+grafico17 <- ggplot(grupo_piso_3, aes(x = apartamentos_por_piso, y = Cantidad)) +  
   geom_bar(stat = "identity") + 
-  scale_x_continuous(breaks = unique(grupo_piso_1$apartamentos_por_piso)) +
+  scale_x_continuous(breaks = unique(grupo_piso_3$apartamentos_por_piso)) +
   labs(title = "Cantidad de apartamentos por piso")
 
 
@@ -1046,16 +1046,34 @@ Pregunta 12) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades 
 # PRECIO SEGÚN CANTIDAD DE GARAGES 
 
 
-Prueba16 <- datos %>%         # Datos
-   group_by(cant_de_est) %>%  # Agrupado por cantidad de garages
+
+
+
+Grupo_Baños <- datos %>%         # Datos
+   group_by(baños) %>%  # Agrupado por cantidad de garages
    summarise(media_precio = mean(precio)) # Resumido por media del precio
-Prueba16
 
 
-Prueba25 <- datos %>%  # Datos 
+
+grupo_cant_habit <- datos %>%         # Datos
+   group_by(cant_habitaciones) %>%  # Agrupado por cantidad de garages
+   summarise(media_precio = mean(precio)) # Resumido por media del precio
+
+
+
+grupo_cant_cuartos <- datos %>%  # Datos 
    group_by(cant_cuartos) %>% # Agrupado por cantidad de cuartos
    summarise(media_precio = mean(precio)) # Resumido por la media del precio
-Prueba25
+
+
+
+
+
+grupo_garage <- datos %>%         # Datos
+   group_by(cant_de_est) %>%  # Agrupado por cantidad de garages
+   summarise(media_precio = mean(precio)) # Resumido por media del precio
+
+
 
 
 
@@ -1068,44 +1086,58 @@ Prueba25
 
 
 # GRÁFICOS
-grafico1 <- ggplot(datos, aes(x=baños)) + 
+grafico18 <- ggplot(datos, aes(x=baños)) + 
   geom_bar() + 
-  scale_x_continuous(breaks =  Prueba13$baños)
+  scale_x_continuous(breaks =  Grupo_Baños$baños)
 
 
-grafico2 <- ggplot(Prueba13, aes(x=baños, y=media_precio)) + 
+grafico19 <- ggplot(Grupo_Baños, aes(x=baños, y=media_precio)) + 
   geom_bar(stat="identity") +  
-  scale_x_continuous(breaks =  Prueba13$baños)
+  scale_x_continuous(breaks =  Grupo_Baños$baños)
 
 
-grafico3 <- ggplot(datos, aes(x=cant_habitaciones)) + 
+
+
+
+grafico20 <- ggplot(datos, aes(x=cant_habitaciones)) + 
   geom_bar() +  
-  scale_x_continuous(breaks =  Prueba15$cant_habitaciones)
+  scale_x_continuous(breaks =  grupo_cant_habit$cant_habitaciones)
 
 
-grafico4 <- ggplot(Prueba15, aes(x=cant_habitaciones, y=media_precio)) +  
+grafico21 <- ggplot(grupo_cant_habit, aes(x=cant_habitaciones, y=media_precio)) +  
   geom_bar(stat="identity") +  
-  scale_x_continuous(breaks =  Prueba15$cant_habitaciones)
+  scale_x_continuous(breaks =  grupo_cant_habit$cant_habitaciones)
 
 
-grafico5 <- ggplot(datos, aes(x=cant_cuartos)) + 
+
+
+
+
+grafico22 <- ggplot(datos, aes(x=cant_cuartos)) + 
   geom_bar() +   
-  scale_x_continuous(breaks =  Prueba25$cant_cuartos)
+  scale_x_continuous(breaks =  grupo_cant_cuartos$cant_cuartos)
 
 
-grafico6 <- ggplot(Prueba25, aes(x=cant_cuartos, y=media_precio)) +  
+grafico23 <- ggplot(grupo_cant_cuartos, aes(x=cant_cuartos, y=media_precio)) +  
   geom_bar(stat="identity") +   
-  scale_x_continuous(breaks =  Prueba25$cant_cuartos)
+  scale_x_continuous(breaks =  grupo_cant_cuartos$cant_cuartos)
 
 
-grafico7 <- ggplot(datos, aes(x=cant_de_est)) + 
+
+
+
+
+grafico24 <- ggplot(datos, aes(x=cant_de_est)) + 
   geom_bar() +  
-  scale_x_continuous(breaks =  Prueba16$cant_de_est)
+  scale_x_continuous(breaks =  grupo_garage$cant_de_est)
 #
 
-grafico8 <- ggplot(Prueba16, aes(x=cant_de_est, y=media_precio)) +  
+grafico25 <- ggplot(grupo_garage, aes(x=cant_de_est, y=media_precio)) +  
   geom_bar(stat="identity") +   
-  scale_x_continuous(breaks =  Prueba16$cant_de_est)
+  scale_x_continuous(breaks =  grupo_garage$cant_de_est)
+
+
+
 
 # Panel 2x4 (dos columnas, 4 filas para 8 gráficos)
 grid.arrange(grafico1, grafico2, grafico3, grafico4, grafico5, grafico6, grafico7, grafico8, ncol = 2, nrow=4)
@@ -1149,19 +1181,19 @@ datos <- datos %>% filter( (m2_const < 2000 & m2_const > 0) & (m2_totales < 220 
 ```{r, echo: false}
 
 # Gráfico 1
-grafico9 <- ggplot(datos, aes(x=m2_const, y=precio)) +  
+grafico26 <- ggplot(datos, aes(x=m2_const, y=precio)) +  
   geom_point() + 
   labs(title = "Precio vs. m2 construidos")
 
 
 # Gráfico 2
-grafico10 <- ggplot(datos, aes(x=m2_terraza, y=precio)) +   
+grafico27 <- ggplot(datos, aes(x=m2_terraza, y=precio)) +   
   geom_point() + 
   labs(title = "Precio vs. m2 de terraza")
 
 
 # Gráfico 3
-grafico11 <- ggplot(datos, aes(x=m2_totales, y=precio)) +   
+grafico28 <- ggplot(datos, aes(x=m2_totales, y=precio)) +   
   geom_point() + 
   labs(title = "Precio vs. m2 totales")
 
@@ -1284,7 +1316,7 @@ names(datos)
 vif_values <- vif(modelo)
 
 # Mostrar los valores de VIF
-print(vif_values)
+print(vif_values) #
 ```
 
 valores nulos

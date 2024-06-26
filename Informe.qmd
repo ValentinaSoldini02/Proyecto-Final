@@ -5,35 +5,22 @@ author: "Diego Da Rosa, Valentina Soldini, Nahuel Bizoso"
 editor: visual
 ---
 
-## Introducción:
 
-El mercado inmobiliario ha sido ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan un alquiler una propiedad. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios de las propiedades teniendo en cuenta diferentes aspectos. Para realizar este análisis, plenteamos las diferentes preguntas de investigación:
 
--   ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
--   ¿En que municipio hay más alquileres?
--   ¿Cuál es la variable que más influye en el precio?
--   ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo?
--   ¿Hay alguna variable que debería de eliminarse al modelo?
 
-Estas preguntas guiarán nuestro analisis para comprender mejor los factores que afectan los precios en el mercado inmobiliario y proporcionar una herramienta útil para los distintos agentes, ya sean compradores, vendedores, inversores y agentes inmobiliarios.
+```{r}
 
-## Datos :
+# install.packages("GGally")
+# install.packages("skedastic")
+# install.packages("robustbase")
+# install.packages("tseries")
+# install.packages("gt")
+# install.packages("randomForest")
+# install.packages("modelr")
+# install.packages("knitr")
 
-Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**, consiste en una plataforma web que reúne la comunidad Data Science, con más de 536 mil miembros activos en 194 países. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes caracteristicas internas y externas de la propiedad.
+```
 
-Puedes encontrar el dataset en el siguiente enlace: [Precio de alquiler de casas en Montevideo Dataset](https://www.kaggle.com/datasets/lasm1984/house-rental-price-in-montevideo?select=houses.csv)
-
-## Análisis exploratorio de los datos
-
-Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados,valores atípocos y valores nulos. Además, se decició eliminar las columnas "Furnished...32", "Furnished...42", y "Floors". Las dos primeras columnas fueron eliminadas porque exixtía una tercera columna que contenía la misma información. La columna "Floors" fue eliminada debido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.A lo largo del análisis se fueron quitando y modificando otras variables a medida que lo veíamos necesario.
-
-Otra modificación que se realizó fue la agrupación de las zonas de Montevideo en municipios. Cada municipio, con sus respectivas zonas se puede observar en la "Tabla 1". También se convirtió la columna precio por precio por metros cuadrados, para tener un mejor análisis de los datos.
-
-En ciertas columnas habían valores nulos, para evitar esto se realizo lo siguiente:
-
--   A la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad.
--   A la columna "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato.
--   A la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
 
 ```{r}
 #| echo: false
@@ -53,6 +40,58 @@ library(randomForest)
 library(modelr)
 library(knitr)
 ```
+
+
+
+
+
+
+
+## Introducción:
+
+El mercado inmobiliario ha sido ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan un alquiler una propiedad. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios de las propiedades teniendo en cuenta diferentes aspectos. Para realizar este análisis, plenteamos las diferentes preguntas de investigación:
+
+-   ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+-   ¿En que municipio hay más alquileres?
+-   ¿Cuál es la variable que más influye en el precio?
+-   ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo?
+-   ¿Hay alguna variable que debería de eliminarse al modelo?
+
+Estas preguntas guiarán nuestro analisis para comprender mejor los factores que afectan los precios en el mercado inmobiliario y proporcionar una herramienta útil para los distintos agentes, ya sean compradores, vendedores, inversores y agentes inmobiliarios.
+
+## Datos
+
+Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**, consiste en una plataforma web que reúne la comunidad Data Science, con más de 536 mil miembros activos en 194 países. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes caracteristicas internas y externas de la propiedad.
+
+Puedes encontrar el dataset en el siguiente enlace: [Precio de alquiler de casas en Montevideo Dataset](https://www.kaggle.com/datasets/lasm1984/house-rental-price-in-montevideo?select=houses.csv)
+
+
+```{r}
+#| echo: false
+# Lectura de los datos:
+# Datos sobre precio de casas
+datos <- read_csv(here("houses.csv"))
+datos
+
+# Datos sobre homicidios por barrio que vamos a usar para hacer un join
+datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
+datos_delitos
+```
+
+
+
+## Análisis exploratorio de los datos
+
+Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados,valores atípocos y valores nulos. Además, se decició eliminar las columnas "Furnished...32", "Furnished...42", y "Floors". Las dos primeras columnas fueron eliminadas porque exixtía una tercera columna que contenía la misma información. La columna "Floors" fue eliminada debido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.A lo largo del análisis se fueron quitando y modificando otras variables a medida que lo veíamos necesario.
+
+Otra modificación que se realizó fue la agrupación de las zonas de Montevideo en municipios. Cada municipio, con sus respectivas zonas se puede observar en la "Tabla 1". También se convirtió la columna precio por precio por metros cuadrados, para tener un mejor análisis de los datos.
+
+En ciertas columnas habían valores nulos, para evitar esto se realizo lo siguiente:
+
+-   A la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad.
+-   A la columna "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato.
+-   A la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
+
 
 ```{r}
 #| echo: false
@@ -74,18 +113,9 @@ gt(tabla_municipio)
 gt(tabla_municipio)
 ```
 
-```{r}
-#| echo: false
-# Lectura de los datos:
-# Datos sobre precio de casas
-datos <- read_csv(here("houses.csv"))
-datos
 
-# Datos sobre homicidios por barrio que vamos a usar para hacer un join
-datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
-datos_delitos
-```
 
+## Limpieza
 ```{r}
 #| echo: false
 
@@ -206,6 +236,8 @@ datos_2$deposito <- as.factor(datos_2$deposito)
 datos_2
 ```
 
+
+
 ```{r}
 #| echo: false
 # Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
@@ -240,7 +272,7 @@ reemplazar_na_condicion <- function(datos_2) {
   datos_2$Condition[is.na(datos_2$Condition)] <- "Good condition"
   return(datos_2)
 }
-
+#
 datos_2 <- reemplazar_na_condicion(datos_2)
 
 # Función para reemplazar valores NA en 'disposicion' con 'Front'
@@ -256,6 +288,10 @@ datos_2 <- reemplazar_na_disposicion(datos_2)
 
 
 ```
+
+
+## Visualización 
+
 
 ```{r}
 #| echo: false
@@ -406,6 +442,24 @@ En cuanto a la disposición de las propiedades, la mayoría de las propiedades e
 
 
 En cuanto a la disposición de los inmuebles, la mayoría de las propiedades en alquiler están situadas al frente. Al analizar los precios promedio relacionados con la disposición de los inmuebles, encontramos que la mayoría tienen un precio similar, rondando los 500 dólares. Sin embargo, los inmuebles ubicados al frente presentan un precio significativamente más alto, alcanzando los 1500 dólares.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Modelo Predictivo
 ```{r}
 #| echo: false
 
