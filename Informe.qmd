@@ -253,29 +253,20 @@ media_precio_m2 <- mean(datos_2$precio_m2, na.rm = TRUE)
 
 datos_2 <- rellenar_na_precio_m2(datos_2)
 
-# Función para reemplazar valores NA en 'Condicion' con 'Good condicion'
-reemplazar_na_condicion <- function(datos_2) {
-  if (!"condicion" %in% colnames(datos_2)) {
-    stop("La columna 'Condicion' no está presente en los datos.")
-  }
-  datos_2$condicion[is.na(datos_2$condicion)] <- "Good condicion"
-  return(datos_2)
-}
-#
-datos_2 <- reemplazar_na_condicion(datos_2)
 
-# Función para reemplazar valores NA en 'disposicion' con 'Front'
-reemplazar_na_disposicion <- function(datos_2) {
-  if (!"disposicion" %in% colnames(datos_2)) {
-    stop("La columna 'disposicion' no está presente en los datos.")
-  }
-  datos_2$disposicion[is.na(datos_2$disposicion)] <- "Front"
-  return(datos_2)
+nombre_1 <- names(sort(table(datos_2$condicion), decreasing = TRUE)[1])
+datos_2$condicion[datos_2$condicion %in% NA] <- nombre_1
+
+detector_nulos <- function(datos_2){ # Función
+  data_nulos <- data.frame(cantidad_nulos = sapply(datos_2, function(x) sum(is.na(x)))) 
+  # Aplicamos la función sapply par ver sumar la cantidad total de nulos en las los datos y a este objeto lo guardamos como un dataframe
+  
+  resultado <- data_nulos %>% filter(cantidad_nulos > 0)
+  return(resultado)
+  # De este DataFrame filtramos solo las columnas que tengan una cantidad total de valores nulos mayor a 0
 }
 
-datos_2 <- reemplazar_na_disposicion(datos_2)
-
-
+detector_nulos(datos_2)
 ```
 
 
@@ -445,8 +436,11 @@ En cuanto a la disposición de las propiedades, la mayoría de las propiedades e
 
 
 datos_sub <- datos_2  |> 
-  select(-direccion, -baños, -cant_de_est, -zona, -cant_cuartos, -cant_de_piso, Air_condicioning, -losa_radiante )
-names(datos_sub)
+  select(-direccion, -baños,-cant_de_est, -zona, -cant_cuartos, -cant_de_piso, Air_Conditioning, -losa_radiante )
+names(datos_2)
+
+
+
 ```
 
 ```{r}
@@ -472,6 +466,10 @@ corrplot(cor_matrix, method = "circle", type = "upper", tl.cex = 0.6, tl.col = "
 
 modelo <- lm(precio_m2 ~. , data = datos_sub)
 summary(modelo)
+
+mean(datos_2$precio_m2)
+
+rmse()
 ```
 
 ```{r}
@@ -557,16 +555,37 @@ training <- datos_sub[intrain,]
 testing <- datos_sub[-intrain,]
 # ajustamos modelo lineal simple
 rf <- randomForest(precio_m2 ~ .,data= training)
-
+names(datos_2)
 ```
 
 ```{r}
 #| echo: false
+
+pred <- predict(rf, newdata = training)
+results <- data.frame(
+  Actual = training$precio_m2,
+  Predicciones = pred
+)
+
+results<-results|>
+  filter(Actual < 400 & Actual >1)
+
+ggplot(results, aes(x = Actual, y = Predicciones)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = "red") +
+  labs( x = "Variables originales", y = "Variables predichas") +
+  theme_minimal()
+
+
+
 pred <- predict(rf, newdata = testing)
 results <- data.frame(
   Actual = testing$precio_m2,
   Predicciones = pred
 )
+
+results<-results|>
+  filter(Actual < 400 & Actual >1)
 
 ggplot(results, aes(x = Actual, y = Predicciones)) +
   geom_point() +
@@ -574,6 +593,10 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
   labs( x = "Variables originales", y = "Variables predichas") +
   theme_minimal()
 ```
+
+ajuste del modleo tiene ciertas, no predice bien porque no se acercan a la liena roja.
+
+
 
 ```{r}
 #| echo: false
@@ -585,7 +608,7 @@ train.set <- datos_2[inTrain,]
 test.set <- datos_2[-inTrain,]
 
 library(rpart.plot)
-tree_ab <- rpart(precio_m2 ~ Municipio + condicion,
+tree_ab <- rpart(precio_m2 ~ Municipio + condicion +WiFi,
                  data = train.set,
                  control = rpart.control(minsplit = 5, # número mínimo de observaciones que deben existir en un nodo para ser dividido
                                          cp = 0.001, # parámetro de complejidad
