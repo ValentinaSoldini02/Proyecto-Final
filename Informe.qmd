@@ -272,7 +272,7 @@ reemplazar_na_condicion <- function(datos_2) {
   datos_2$Condition[is.na(datos_2$Condition)] <- "Good condition"
   return(datos_2)
 }
-
+#
 datos_2 <- reemplazar_na_condicion(datos_2)
 
 # Función para reemplazar valores NA en 'disposicion' con 'Front'
