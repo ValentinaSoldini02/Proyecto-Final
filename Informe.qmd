@@ -357,7 +357,7 @@ grafico1 <- ggplot(datos_2, aes(x = Municipio)) +
 # Gráfico 2: Grupo de Precio promedio por municipio
 grupo_municipio <- datos_2 %>% 
   group_by(Municipio) %>% 
-  summarise(Cantidad = precio_m2)
+  summarise(Cantidad = mean(precio_m2))
 
 # Gráfico de Precio promedio por municipio
 grafico2 <- ggplot(grupo_municipio, aes(x = fct_reorder(Municipio, Cantidad), y = Cantidad)) + 
@@ -378,7 +378,7 @@ grafico7 <- ggplot(datos_2, aes(x = disposicion)) +
 # Gráfico Grupo de Precio por metro cuadrado por disposición
 grupo_disposicion <- datos_2 %>% 
   group_by(disposicion) %>% 
-  summarise(Cantidad = precio_m2)
+  summarise(Cantidad = mean(precio_m2))
 
 
 # Gráfico de Precio por metro cuadrado por disposición
@@ -389,7 +389,7 @@ grafico8 <- ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad)
 
 
 
-
+library(gridExtra)
 # Grilla
 grid.arrange(grafico1, grafico2, grafico7, grafico8, ncol = 2, nrow = 2)
 
@@ -648,3 +648,4 @@ tabla_variables <- data.frame(tabla_variables)
 gt(tabla_variables)
 
 ```
+
