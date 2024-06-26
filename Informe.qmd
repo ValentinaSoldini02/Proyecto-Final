@@ -222,6 +222,7 @@ datos_2$Solarium <- as.factor(datos_2$Solarium)
 datos_2$amueblado <- as.factor(datos_2$amueblado)
 datos_2$zona_barbacoa <- as.factor(datos_2$zona_barbacoa)
 datos_2$deposito <- as.factor(datos_2$deposito)
+datos_2$baños <- as.factor(datos_2$baños)
 names(datos_2)
 ```
 
@@ -256,6 +257,10 @@ datos_2 <- rellenar_na_precio_m2(datos_2)
 
 nombre_1 <- names(sort(table(datos_2$condicion), decreasing = TRUE)[1])
 datos_2$condicion[datos_2$condicion %in% NA] <- nombre_1
+
+
+nombre_2 <- names(sort(table(datos_2$disposicion), decreasing = TRUE)[1])
+datos_2$disposicion[datos_2$disposicion %in% NA] <- nombre_2
 
 detector_nulos <- function(datos_2){ # Función
   data_nulos <- data.frame(cantidad_nulos = sapply(datos_2, function(x) sum(is.na(x)))) 
@@ -419,9 +424,77 @@ En terminos de precios por metro cuadrado de alquiler, identificamos que el muni
 En cuanto a la disposición de las propiedades, la mayoría de las propiedades en alquiler están sutuadas al frente. Al analizar los precios por metro cuadrado relacionados con la disposición de las propiedades, encontramos que la mayoría tienen un precio diferente. Las propiedades que esta situadas al fente su precio por metro cuadrado es superior a los 7500 dolares mientras que los que estan en el interior y "side" su precio es inferior a lps 2500 dolares por metro cuadrado.
 
 
+La idea ahora es tratar de recodificar siertas variables para que los datos sean mas flexibles.
+La idea es agarrar ciertas variables como baños, cantidad de estacionamientos, catidad de pisos y recodificarlas.
 
 
+```{r}
+datos_2 <- datos_2 %>%
+  mutate(baños = case_when(
+    baños == 0 ~ "0",
+    baños == 1 ~ "1",
+    baños == 2 ~ "2",
+    baños == 3 ~ "3",
+    TRUE ~ "mas de 3"
+  ))
 
+ggplot(datos_2, aes(x = baños, y = mean(precio_m2))) +
+  geom_bar(stat = "identity") +
+  labs(x = "Baños", y = "Precio por m2") +
+  ggtitle("Precio por m2 según número de baños") +
+  theme_minimal()
+```
+```{r}
+datos_2 <- datos_2 %>%
+  mutate(cant_de_est = case_when(
+    cant_de_est == 0 ~ "0",
+    cant_de_est == 1 ~ "1",
+    cant_de_est == 2 ~ "2",
+    TRUE ~ "mas de 3"
+  ))
+
+ggplot(datos_2, aes(x = cant_de_est, y = mean(precio_m2))) +
+  geom_bar(stat = "identity") +
+  labs(x = "Cantidad de estacionamientos", y = "Precio por m2") +
+  ggtitle("Precio por m2 según número de baños") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(datos_2, aes(x = Municipio, y = precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Municipio", y = "Precio por m2") +
+  theme_minimal()
+```
+```{r}
+names(datos_2)
+```
+```{r}
+ggplot(datos_2, aes(x = calefaccion, y = precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Calefaccion", y = "Precio por m2") + +
+  theme_minimal()
+```
+```{r}
+ggplot(datos_2, aes(x = vista_al_mar, y = precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Vista al mar", y = "Precio por m2") +
+  theme_minimal()
+```
+```{r}
+media_años <- mean(datos_2$año_de_const[datos_2$año_de_const != 0], na.rm = TRUE)
+datos_2$año_de_const[datos_2$año_de_const == 0] <- media_años
+
+
+ggplot(datos_2, aes(x =año_de_const, y = precio_m2)) +
+  geom_point(stat = "identity") +
+  labs(x = "Año que fue construido la propiedad", y = "Precio por m2") +
+  ggtitle("Precio por m2 según año que fue construida la propiedad") +
+  theme_minimal()
+
+```
+
+En estos graficos lo que se trato de hacer es como algunas variables influyen en el precio por metros cuadrados. Como se puede observar con mucha imaginacion que las propiedades que estan constuidas mas recientemente su precio es mas alto.
 
 
 ## Modelo Predictivo
