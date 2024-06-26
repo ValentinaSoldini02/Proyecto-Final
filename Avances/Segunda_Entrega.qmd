@@ -30,7 +30,8 @@ Estas preguntas guiarán nuestro analisis para comprender mejor los factores que
 
 ```
 
-```{r}
+```{r, echo: false}
+
 # Importar librerías
 
 library(readr)
@@ -49,7 +50,8 @@ library(gridExtra)
 
 Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes caracteristicas internas y externas de la propiedad.
 
-```{r}
+```{r, echo: false}
+
 
 
 
@@ -62,7 +64,8 @@ datos
 
 Tabla con las diferentes variables, tipo de variable y una descripcion
 
-```{r}
+```{r, echo: false}
+
 # Creamos variables del tipo character
 nombre_variable <- character()
 tipo_variable <- character()
@@ -157,7 +160,7 @@ Pasos: 1) Renombrar columnas de ingles a español
 
 ## Renombrar las columnas
 
-```{r}
+```{r, echo: false}
 
 #datos
 
@@ -204,7 +207,8 @@ datos
 
 2)  Poner columna de precio por metro cuadrado
 
-```{r}
+```{r, echo: false}
+
 # Pasar el precio a precio por metro cuadrado (?)
 datos <- datos|>
   mutate(precio_m2 = precio/m2_const)
@@ -215,7 +219,8 @@ datos
 
 3)  Eliminar columnas inecesarias
 
-```{r}
+```{r, echo: false}
+
 # Eliminamos columnas innecesarias
 # Eliminamos Furnished...32 y Furnished...42 porque existe otra columna que tiene la misma información
 # Eliminamos -Floors porque tenia muchos datos nulos, inconsistentes y poco fiables.
@@ -230,7 +235,7 @@ datos
 
 ## Eliminar duplicados
 
-```{r}
+```{r, echo: false}
 
 # Contamos la cantidad de duplicados en el DataFrame
 sum(duplicated(datos))
@@ -248,7 +253,8 @@ datos
 
 ## Eliminar o rellenar valores nulos
 
-```{r}
+```{r, echo: false}
+
 
 # Función para detectar las columnas que tienen nulos
 
@@ -285,7 +291,7 @@ detector_nulos(datos)
 
 ```
 
-```{r}
+```{r, echo: false}
 
 
 datos
@@ -297,7 +303,8 @@ nombre_2 <- names(sort(table(datos$disposicion), decreasing = TRUE)[1])
 
 ```
 
-```{r}
+```{r, echo: false}
+
 # Reemplazamos los NaN de la columna Condicion con nombre_1 y los NaN de la columna disposicion con nombre_2
 datos$Condicion[datos$Condicion %in% NA] <- nombre_1
 datos$disposicion[datos$disposicion %in% NA] <- nombre_2
@@ -305,7 +312,8 @@ datos$disposicion[datos$disposicion %in% NA] <- nombre_2
 
 ```
 
-```{r}
+```{r, echo: false}
+
 
 
 # Revisamos de nuevo la cantidad de nulos
@@ -319,7 +327,8 @@ detector_nulos(datos)
 
 ```
 
-```{r}
+```{r, echo: false}
+
 
 # Filtrar los valores de Inf en la columnad de precio_m2
 mean_filtrada <- datos %>%  # Datos
@@ -337,7 +346,8 @@ datos$precio_m2[datos$precio_m2 %in% "Inf"] <- mean_filtrada
 
 ```
 
-```{r}
+```{r, echo: false}
+
 
 # Reescribimos
 datos <- datos[!is.na(datos$precio_m2), ]
@@ -350,7 +360,8 @@ detector_nulos(datos)
 
 ```
 
-```{r}
+```{r, echo: false}
+
 # Para tratar los datos nulos en la columna de direccion vamos a reemplazarlos con datos de zona asociados
 
 datos <- datos %>% # Datos
@@ -371,7 +382,8 @@ detector_nulos(datos)
 
 ## Detectar y eliminar valores outliers:
 
-```{r}
+```{r, echo: false}
+
 # Criterio de rango intercuartilico
 # Es un criterio que se usa para detectar Outliers
 
@@ -433,7 +445,8 @@ datos
 
 ## Agrupar los barrios por municipios
 
-```{r}
+```{r, echo: false}
+
 
 datos <- datos %>% # Datos
   mutate(Municipio = case_when( # Casos donde a cada barrio le vamos a asociar un municipio
@@ -466,7 +479,8 @@ datos
 
 
 Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
-```{r}
+```{r, echo: false}
+
 
 
 # Gráfico 1: Conteo por Municipio
@@ -536,7 +550,8 @@ Luego en la disposición vemos que los más común son los inmuebles al frente, 
 
 
 Pregunta 2) ¿Cómo se distribuye el tipo de propiedad de los alquileres  y el precio promedio de el tipo de propiedad? ¿¿Cómo se distribuye las condiciones de los alquileres y el precio promedio según las condiciones de los alquileres?
-```{r}
+```{r, echo: false}
+
 
 # Gráfico 3: Tipo de propiedad
 grafico3 <- ggplot(datos, aes(x = tipo_prop)) + 
@@ -601,7 +616,8 @@ Luego cuando nos referimos a la condición de las alquileres, vemos que la mayor
 
 
 Pregunta 3) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad?
-```{r}
+```{r, echo: false}
+
 
 # Quitamos atípicos en el precio.
 
@@ -644,16 +660,12 @@ Vemos que si, los barrios ubicados en el municipio A y E son los que tienen un p
 
 
 
-Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de alquileres se dan en el Municipio F
-
-
-
-
 
 
 Pregunta 4) ¿Cómo se distribuyen los tipos de inmuebles por municipio?
 
-```{r}
+```{r, echo: false}
+
 
 #
 
@@ -690,7 +702,8 @@ La mayoría de los inmuebles estan en buena condición o excelente condición. P
 
 Pregunta 5) ¿Como se distribuyen las condiciones de las viviendas por municipio?
 
-```{r}
+```{r, echo: false}
+
 
 
 # 
@@ -717,7 +730,8 @@ En el Municipio A y E estan predominantemente los apartamentos en Excelente Cond
 
 Pregunta 6) ¿Cómo se distribuyen los gastos comunes en relación al municipio, el tipo de propiedad y la condición de la propiedad?
 
-```{r}
+```{r, echo: false}
+
 
 # Gráfico 1: Municipio y Gastos Comunes
 grafico1 <- ggplot(datos, aes(x = Municipio, y = Gastos_Comunes)) + 
@@ -755,7 +769,8 @@ En los alquileres que estan en Excelentes Condiciones los gastos comunes son má
 
 Pregunta 7) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
 
-```{r}
+```{r, echo: false}
+
 
 #
 datos <- datos %>% filter()
@@ -787,7 +802,8 @@ Como mencionamos anteriormente, en todos los municipios se cumple el mismo patr�
 
 Pregunta 8) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
 
-```{r}
+```{r, echo: false}
+
 
 # 
 
@@ -821,7 +837,8 @@ En el municipio E hay un empate entre los más comunes son la Excelente Condici�
 
 Pregunta 9) Cómo influye tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
 
-```{r}
+```{r, echo: false}
+
 #
 # 
 
@@ -876,7 +893,8 @@ resultado_final
 
 ```
 
-```{r}
+```{r, echo: false}
+
 
 #
 # Función para gráficar 
@@ -907,7 +925,8 @@ En este gráfico mostramos distintas variables que representan elementos de conf
 
 Pregunta 10) ¿Cómo influyen elementos relativos a los pisos como son el número de pisos, la cantidad de apartamentos en un piso o la cantidad de pisos en todo el edificio del inmueble al precio de alquiler?
 
-```{r}
+```{r, echo: false}
+
 
 
 #names(datos)
@@ -928,7 +947,8 @@ datos <- datos %>% filter( (cant_de_piso < 20 & cant_de_piso > 0) & (apartamento
 
 Pregunta 11) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
 
-```{r}
+```{r, echo: false}
+
 # 
 
 
@@ -1021,7 +1041,7 @@ La distribución de la cantidad muestra que en un piso en general es más común
 Pregunta 12) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
 
 
-```{r}
+```{r, echo: false}
 
 # PRECIO SEGÚN CANTIDAD DE GARAGES 
 
@@ -1113,7 +1133,8 @@ En relación a los baños lo más común es que los inmuebles tengan un baño, l
 
 
 Pregunta 13) ¿Existe relación entre los metros cuadrados (por propiedad, tierra o totales) y el precio?
-```{r}
+```{r, echo: false}
+
 
 # PRECIO SEGÚN METROS CUADRADOS EN DISTINTOS ELEMENTOS
 
@@ -1125,7 +1146,8 @@ datos <- datos %>% filter( (m2_const < 2000 & m2_const > 0) & (m2_totales < 220 
 
 
 
-```{r}
+```{r, echo: false}
+
 # Gráfico 1
 grafico9 <- ggplot(datos, aes(x=m2_const, y=precio)) +  
   geom_point() + 
