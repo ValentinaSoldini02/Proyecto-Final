@@ -5,8 +5,6 @@ author: "Diego Da Rosa, Valentina Soldini, Nahuel Bizoso"
 editor: visual
 ---
 
-
-
 ```{r}
 #| echo: false
 library(gridExtra)
@@ -27,12 +25,6 @@ library(modelr)
 library(knitr)
 ```
 
-
-
-
-
-
-
 ## Introducción:
 
 El mercado inmobiliario ha sido ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan un alquiler una propiedad. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios de las propiedades teniendo en cuenta diferentes aspectos. Para realizar este análisis, plenteamos las diferentes preguntas de investigación:
@@ -51,7 +43,6 @@ Los datos utilizados en este análisis se han extraidos de una pagina web llamad
 
 Puedes encontrar el dataset en el siguiente enlace: [Precio de alquiler de casas en Montevideo Dataset](https://www.kaggle.com/datasets/lasm1984/house-rental-price-in-montevideo?select=houses.csv)
 
-
 ```{r}
 #| echo: false
 # Lectura de los datos:
@@ -64,8 +55,6 @@ datos_delitos <- read_excel(here("homicidios_dolosos_consumados.xlsx"))
 datos_delitos
 ```
 
-
-
 ## Análisis exploratorio de los datos
 
 Con el objetivo de responder las preguntas planteadas, en primer lugar, se realizó una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados,valores atípocos y valores nulos. Además, se decició eliminar las columnas "Furnished...32", "Furnished...42", y "Floors". Las dos primeras columnas fueron eliminadas porque exixtía una tercera columna que contenía la misma información. La columna "Floors" fue eliminada debido a que no contenía información relevante, tenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.A lo largo del análisis se fueron quitando y modificando otras variables a medida que lo veíamos necesario.
@@ -77,7 +66,6 @@ En ciertas columnas habían valores nulos, para evitar esto se realizo lo siguie
 -   A la columna "direccion" se le asignó el nombre de la zona a la que correspondía la propiedad.
 -   A la columna "precio_m2" se calculó la media de toda la columna y se le asignó este valor a cada fila que no tenía dato.
 -   A la columna "condición " se le asigno la categoria mas frcuenta y lo mismo sucedio con la columna "disposición"
-
 
 ```{r}
 #| echo: false
@@ -99,9 +87,8 @@ gt(tabla_municipio)
 gt(tabla_municipio)
 ```
 
-
-
 ## Limpieza
+
 ```{r}
 #| echo: false
 
@@ -226,8 +213,6 @@ datos_2$baños <- as.factor(datos_2$baños)
 names(datos_2)
 ```
 
-
-
 ```{r}
 #| echo: false
 # Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
@@ -274,9 +259,7 @@ detector_nulos <- function(datos_2){ # Función
 detector_nulos(datos_2)
 ```
 
-
-## Visualización 
-
+## Visualización
 
 ```{r}
 #| echo: false
@@ -342,10 +325,10 @@ ggplot(grupo_estado, aes(x=fct_reorder(condicion, Cantidad), y=Cantidad)) + # Da
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 ```
+
 Al analizar los dos gráficos anteriores, se destaca que la mayoría de los alquileres corresponden a apartamentos, mientras que las propiedades de tierra, negocios especiales, edificios o garajes son menos comunes. Esta tendencia sugiere una alta disponibilidad de apartamentos en Montevideo, lo cual representa una oportunidad licrativa para los inversionistas.
 
 Al considerar el primer gráfico, que muestra que la mayoría de las propiedades están en buenas o excelentes condiciones, los potenciales inquilinos se beneficiarían al evitar la necesidad de realizar modificaciones significativas en las propiedades disponibles para alquilar.
-
 
 ```{r}
 # Gráfico
@@ -363,7 +346,6 @@ ggplot(datos_2, aes(x = fct_infreq(tipo_prop), y = precio_m2, fill = Municipio))
 En este gráfico trata de explicar que tipo de propiedad se alquila en cada municipio. En los municipios A, CH, es mas comun alquilar apartamentos aunque tambien se alquilan otro tipo de propiedades. En contraste, en el municipio B y otros municipios, predominan las oficinas. Esto sugiere que el tipo de propiedad alquilada varía según el municipio.
 
 Aunque el gráfico anterior indicaba que los apartamentos eran el tipo de propiedad más común en general, esta tendencia puede estar influenciada por datos específicos, como los del Prado, que podrían distorsionar los resultados generales
-
 
 ```{r, echo: false}
 # Gráfico 1: Conteo por Municipio
@@ -423,10 +405,7 @@ En terminos de precios por metro cuadrado de alquiler, identificamos que el muni
 
 En cuanto a la disposición de las propiedades, la mayoría de las propiedades en alquiler están sutuadas al frente. Al analizar los precios por metro cuadrado relacionados con la disposición de las propiedades, encontramos que la mayoría tienen un precio diferente. Las propiedades que esta situadas al fente su precio por metro cuadrado es superior a los 7500 dolares mientras que los que estan en el interior y "side" su precio es inferior a lps 2500 dolares por metro cuadrado.
 
-
-La idea ahora es tratar de recodificar siertas variables para que los datos sean mas flexibles.
-La idea es agarrar ciertas variables como baños, cantidad de estacionamientos, catidad de pisos y recodificarlas.
-
+La idea ahora es tratar de recodificar siertas variables para que los datos sean mas flexibles. La idea es agarrar ciertas variables como baños, cantidad de estacionamientos, catidad de pisos y recodificarlas.
 
 ```{r}
 datos_2 <- datos_2 %>%
@@ -444,6 +423,7 @@ ggplot(datos_2, aes(x = baños, y = mean(precio_m2))) +
   ggtitle("Precio por m2 según número de baños") +
   theme_minimal()
 ```
+
 ```{r}
 datos_2 <- datos_2 %>%
   mutate(cant_de_est = case_when(
@@ -466,21 +446,25 @@ ggplot(datos_2, aes(x = Municipio, y = precio_m2)) +
   labs(x = "Municipio", y = "Precio por m2") +
   theme_minimal()
 ```
+
 ```{r}
 names(datos_2)
 ```
+
 ```{r}
 ggplot(datos_2, aes(x = calefaccion, y = precio_m2)) +
   geom_bar(stat = "identity") +
   labs(x = "Calefaccion", y = "Precio por m2") + +
   theme_minimal()
 ```
+
 ```{r}
 ggplot(datos_2, aes(x = vista_al_mar, y = precio_m2)) +
   geom_bar(stat = "identity") +
   labs(x = "Vista al mar", y = "Precio por m2") +
   theme_minimal()
 ```
+
 ```{r}
 media_años <- mean(datos_2$año_de_const[datos_2$año_de_const != 0], na.rm = TRUE)
 datos_2$año_de_const[datos_2$año_de_const == 0] <- media_años
@@ -496,8 +480,8 @@ ggplot(datos_2, aes(x =año_de_const, y = precio_m2)) +
 
 En estos graficos lo que se trato de hacer es como algunas variables influyen en el precio por metros cuadrados. Como se puede observar con mucha imaginacion que las propiedades que estan constuidas mas recientemente su precio es mas alto.
 
-
 ## Modelo Predictivo
+
 ```{r}
 #| echo: false
 
@@ -669,8 +653,6 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
 
 ajuste del modleo tiene ciertas, no predice bien porque no se acercan a la liena roja.
 
-
-
 ```{r}
 #| echo: false
 library(rpart)
@@ -772,4 +754,3 @@ tabla_variables <- data.frame(tabla_variables)
 gt(tabla_variables)
 
 ```
-
