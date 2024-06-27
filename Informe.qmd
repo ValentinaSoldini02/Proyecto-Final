@@ -545,9 +545,11 @@ grid.arrange(grafico1, grafico2, grafico7, grafico8, ncol = 2, nrow = 2)
 
 
 ``` 
-Vemos que la mayoría de alquileres se dan en el municipio CH y la minoría de alquileres se dan en el Municipio F. Vemos también que los precios promedio de alquiler son más bajos en el Municipio G y más altos en el municipio A.
 
-Luego en la disposición vemos que los más común son los inmuebles al frente, y vemos que en relación al precio promedio, todos tienen un precio similar (alrededor de los 500 dólares) a excepción de los que estan en el frente que tienen un precio más alto 1500 dólares
+En este gráfico se puede observar que la mayoría de los alquileres se encuentran en el municipio CH, B y E. Pero en relación al precio por promedio por metro cuadrado, los alquileres más caros se encuentran en el municipio A, donde hay pocos alquileres en general. Luego los siguientes alquileres más caros se encuentran en el municipio E y CH.
+
+
+Luego en la disposición vemos que los más común son los inmuebles al frente, y vemos que en relación al precio por metro cuadrado, todos tienen un precio similar, que va ascendiendo desde Frente, Atrás, Interior y Costado, pero recordamos que estos incrementos son pequeños en relación al precio promedio por metro cuadrado.
 
 
 
@@ -605,9 +607,9 @@ grafico6 <- ggplot(grupo_condicion, aes(x = fct_reorder(condicion, Cantidad), y 
 grid.arrange(grafico3, grafico4, grafico5, grafico6, ncol = 2, nrow = 2)
 ``` 
 
-En los tipos de propiedad, mayoritariamente son apartamentos, en relación al precio vemos que los más caros son los edificios seguidos por las tierras.
+En los tipos de propiedad, mayoritariamente son apartamentos, en relación al precio promedio por metro cuadrado vemos que los más caros son las oficinas seguidos por los apartamentos y luego por las casas.
 
-Luego cuando nos referimos a la condición de las alquileres, vemos que la mayoría se encuentra en Excelente Condición o en Buena Condición, también una cantidad considerable esta recientemente construdido. En relación al precio, vemos que los alquileres Renovados, A ser Renovados y en Excelente Condición son los más caros.
+Luego cuando nos referimos a la condición de las alquileres, vemos que la mayoría se encuentra en Excelente Condición o en Buena Condición, también una cantidad considerable esta recientemente construdido. En relación al precio promedio por metro cuadrado, vemos que los alquileres "En Construccion", "Para Estrenar" y en Excelente Condición son los más caros.
 
 
 
@@ -616,6 +618,8 @@ Luego cuando nos referimos a la condición de las alquileres, vemos que la mayor
 
 Pregunta 3) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad
 ```{r}
+datos_2 <- datos_2 %>% filter(precio_m2 < 400)
+
 
 
 # Elegimos los colores manualmente
@@ -643,9 +647,14 @@ ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 # Centrar el título y modificar el texto de los elementos del eje X
 
-``` 
 
-Vemos que si, los barrios ubicados en el municipio A y E son los que tienen un precio más elevado, mientras que los barrios ubicados en los municipios D y G son los más baratos
+# Filtro para quitar los outliers
+
+
+``` 
+La respuesta es que si, los barrios ubicados en el municipio E, B y CH son los que tienen el precio promedio por metro cuadrado más alto. Dentro del municipio E el barrio más caro es Carrasco, dentro del municipio B el barrio más caro es Centro, dentro del municipio CH el barrio más caro es Pocitos.
+
+
 
 
 
