@@ -265,204 +265,15 @@ datos_2$año_de_const
 ## Visualización
 
 
-```{r}
-
-
-
-```
-
-
-```{r}
-#| echo: false
-# Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
 
 
 
 
-# Elegimos los colores manualmente
-colores_personalizados <- c(
-  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   "Municipio_CH" = "purple",  "Municipio_D" = "orange",   "Municipio_E" = "pink",
-  "Municipio_F" = "brown",  "Municipio_G" = "cyan")
-
-
-# Gráfico
-ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes y color
-  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-  # Ancho y posición de las barras
-
-  facet_grid(. ~ Municipio, scales = "free_x") +
-  # Usar facet_grid para crear una grilla por Municipio
-
-  labs(x = "Zona", y = "Precio por m^2", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
-  ggtitle("Precio por Zona y Municipio") + # Título
-  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
-
-  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-# Centrar el título y modificar el texto de los elementos del eje X
-```
-
-En este gráfico se puede observar que los municipios B, CH y E tienen los precios por metro cuadrado más altos. Dentro del municipio B, la zona con el precio por metro cuadrado más elevado es Centro. En el municipio CH, la zona más costosa es Pocitos, mientras que en el municipio E, la zona con el mayor precio por metro cuadrado es Carrasco.
-
-```{r}
-#| echo: false
-# Pregunta 3) Qué tipo de inmuebles para alquilar hay?
-
-
-grupo_tipo <- datos_2 %>% # Datos
-  group_by(tipo_prop) %>% # Agrupar por tipo de propiedad
-  summarise(Cantidad = n()) # Resumir por cantidad 
-grupo_tipo
-
-
-# Gráfico
-ggplot(grupo_tipo, aes(x=fct_reorder(tipo_prop, Cantidad), y=Cantidad)) + # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  labs(x="Municipio") + # Nombres de los ejes
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
-```
-
-```{r}
-#| echo: false
-grupo_estado <- datos_2 %>% # Datos
-  group_by(condicion) %>%   # Agrupar por condición de la vivienda
-  summarise(Cantidad = n()) # Resumir por la cantidad
-grupo_estado
-
-
-# Gráfico
-ggplot(grupo_estado, aes(x=fct_reorder(condicion, Cantidad), y=Cantidad)) + # Datos y ejes
-  geom_bar(stat="identity") + # Gráfico de barras
-  labs(x="Municipio", y="Precio") + # Nombre de los ejes
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size=8))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
-```
-
-Al analizar los dos gráficos anteriores, se destaca que la mayoría de los alquileres corresponden a apartamentos, mientras que las propiedades de tierra, negocios especiales, edificios o garajes son menos comunes. Esta tendencia sugiere una alta disponibilidad de apartamentos en Montevideo, lo cual representa una oportunidad licrativa para los inversionistas.
-
-Al considerar el primer gráfico, que muestra que la mayoría de las propiedades están en buenas o excelentes condiciones, los potenciales inquilinos se beneficiarían al evitar la necesidad de realizar modificaciones significativas en las propiedades disponibles para alquilar.
-
-```{r}
-# Gráfico
-ggplot(datos_2, aes(x = fct_infreq(tipo_prop), y = precio_m2, fill = Municipio)) + # Datos, ejes y color
-  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
-  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
-  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
-  ggtitle("Tipo de alquiler por municipio") + # Título del gráfico
-  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
-  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
-        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
-```
-
-En este gráfico trata de explicar que tipo de propiedad se alquila en cada municipio. En los municipios A, CH, es mas comun alquilar apartamentos aunque tambien se alquilan otro tipo de propiedades. En contraste, en el municipio B y otros municipios, predominan las oficinas. Esto sugiere que el tipo de propiedad alquilada varía según el municipio.
-
-Aunque el gráfico anterior indicaba que los apartamentos eran el tipo de propiedad más común en general, esta tendencia puede estar influenciada por datos específicos, como los del Prado, que podrían distorsionar los resultados generales
-
-```{r, echo: false}
-# Gráfico 1: Conteo por Municipio
-grafico1 <- ggplot(datos_2, aes(x = Municipio)) + 
-  geom_bar() + 
-  scale_x_discrete(breaks = unique(datos_2$Municipio)) +
-  labs(title = "Cantidad de alquileres por municipio") + 
-    theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
-
-  
-
-# Gráfico 2: Grupo de Precio por metro cuadrado por municipio
-grupo_municipio <- datos_2 %>% 
-  group_by(Municipio) %>% 
-  summarise(Cantidad = mean(precio_m2))
-
-# Gráfico de Precio por metro cuadrado por municipio
-grafico2 <- ggplot(grupo_municipio, aes(x = fct_reorder(Municipio, Cantidad), y = Cantidad)) + 
-  geom_bar(stat = "identity") + 
-  labs(x = "Municipio", y = "Precio promedio") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
-
-
-# Gráfico 2: Conteo de Disposición
-grafico7 <- ggplot(datos_2, aes(x = disposicion)) + 
-  geom_bar() + 
-  #scale_x_discrete(breaks = unique(datos$disposicion)) +
-  labs(title = "Distribución de disposición") +
-    theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
-
-  
-
-
-# Gráfico Grupo de Precio precio por metro cuadrado por disposición
-grupo_disposicion <- datos_2 %>% 
-  group_by(disposicion) %>% 
-  summarise(Cantidad = precio_m2)
-
-
-# Gráfico de Precio precio por metro cuadrado por disposición
-grafico8 <- ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantidad)) + 
-  geom_bar(stat = "identity") + 
-  labs(x = "Disposición", y = "Precio promedio") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 6))
 
 
 
 
-# Grilla
-grid.arrange(grafico1, grafico2, grafico7, grafico8, ncol = 2, nrow = 2)
 
-```
-
-Al analizar la distribución de alquileres, observamos que la mayoria de los propiedades a alquilar se encuentram en el municipio CH. En contraste, el municipio F presenta la menor cantidad de alquileres.
-
-En terminos de precios por metro cuadrado de alquiler, identificamos que el municipio F, ofrece las tarifas mas bajas, mientras que el municipio CH se destaca por tener los precios más altos.
-
-En cuanto a la disposición de las propiedades, la mayoría de las propiedades en alquiler están sutuadas al frente. Al analizar los precios por metro cuadrado relacionados con la disposición de las propiedades, encontramos que la mayoría tienen un precio diferente. Las propiedades que esta situadas al fente su precio por metro cuadrado es superior a los 7500 dolares mientras que los que estan en el interior y "side" su precio es inferior a lps 2500 dolares por metro cuadrado.
-
-La idea ahora es tratar de recodificar siertas variables para que los datos sean mas flexibles. La idea es agarrar ciertas variables como baños, cantidad de estacionamientos, catidad de pisos y recodificarlas.
-
-```{r}
-datos_2 <- datos_2 %>%
-  mutate(baños = case_when(
-    baños == 0 ~ "0",
-    baños == 1 ~ "1",
-    baños == 2 ~ "2",
-    baños == 3 ~ "3",
-    TRUE ~ "mas de 3"
-  ))
-
-ggplot(datos_2, aes(x = baños, y = mean(precio_m2))) +
-  geom_bar(stat = "identity") +
-  labs(x = "Baños", y = "Precio por m2") +
-  ggtitle("Precio por m2 según número de baños") +
-  theme_minimal()
-```
-
-```{r}
-datos_2 <- datos_2 %>%
-  mutate(cant_de_est = case_when(
-    cant_de_est == 0 ~ "0",
-    cant_de_est == 1 ~ "1",
-    cant_de_est == 2 ~ "2",
-    TRUE ~ "mas de 3"
-  ))
-
-ggplot(datos_2, aes(x = cant_de_est, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Cantidad de estacionamientos", y = "Precio por m2") +
-  ggtitle("Precio por m2 según número de baños") +
-  theme_minimal()
-```
-
-```{r}
-ggplot(datos_2, aes(x = Municipio, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Municipio", y = "Precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-names(datos_2)
-```
 
 ```{r}
 ggplot(datos_2, aes(x = calefaccion, y = precio_m2)) +
@@ -532,7 +343,7 @@ names(datos_2)
 summary(mod)
 ```
 
-### NUEVOS GRÁFICOS DE VISUALIZACIÓN:
+## VISUALIZACIÓN (Correcto)
 
 Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
 
@@ -540,11 +351,14 @@ Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquil
 # Filtro de outliers para los gráficos
 
 datos_2 <- datos_2 %>% 
-  filter(precio_m2 < 400 & Gastos_Comunes < 200000)
+  filter(precio_m2 < 400 & 
+           Gastos_Comunes < 200000 &
+           nro_de_piso < 40)# &
+        #   cant_de_piso > 0 &
+        #   apartamentos_por_piso > 0)
 
 
-max(datos_2$Gastos_Comunes)
-
+datos_2
 ```
 
 
@@ -616,6 +430,12 @@ Luego en la disposición vemos que los más común son los inmuebles al frente, 
 
 
 
+
+
+
+
+
+
 Pregunta 2) ¿Cómo se distribuye el tipo de propiedad de los alquileres y el precio promedio de el tipo de propiedad? ¿¿Cómo se distribuye las condiciones de los alquileres y el precio promedio según las condiciones de los alquileres?
 
 ```{r}
@@ -669,9 +489,15 @@ grafico6 <- ggplot(grupo_condicion, aes(x = fct_reorder(condicion, Cantidad), y 
 grid.arrange(grafico3, grafico4, grafico5, grafico6, ncol = 2, nrow = 2)
 ```
 
-En los tipos de propiedad, mayoritariamente son apartamentos, en relación al precio promedio por metro cuadrado vemos que los más caros son las oficinas seguidos por los apartamentos y luego por las casas.
+En los tipos de propiedad, mayoritariamente son apartamentos, en relación al precio promedio por metro cuadrado vemos que los más caros son las oficinas seguidos por los apartamentos y luego por las casas. mientras que las propiedades de tierra, negocios especiales, edificios o garajes son menos comunes. Esta tendencia sugiere una alta disponibilidad de apartamentos en Montevideo, lo cual representa una oportunidad lucrativa para los inversionistas.
 
-Luego cuando nos referimos a la condición de las alquileres, vemos que la mayoría se encuentra en Excelente Condición o en Buena Condición, también una cantidad considerable esta recientemente construdido. En relación al precio promedio por metro cuadrado, vemos que los alquileres "En Construccion", "Para Estrenar" y en Excelente Condición son los más caros.
+Luego cuando nos referimos a la condición de las alquileres, vemos que la mayoría se encuentra en Excelente Condición o en Buena Condición, también una cantidad considerable esta recientemente construdido. En relación al precio promedio por metro cuadrado, vemos que los alquileres "En Construccion", "Para Estrenar" y en Excelente Condición son los más caros. Los potenciales inquilinos se beneficiarían al evitar la necesidad de realizar modificaciones significativas en las propiedades disponibles para alquilar.
+
+
+
+
+
+
 
 Pregunta 3) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad
 
@@ -1045,14 +871,68 @@ grid.arrange(grafico12, grafico13, grafico14, grafico15, grafico16, grafico17, n
 
 # Hacer el filtro que nos recomendo la profe con los factores para que se vea mejor y no perder datos.
 ```
-
+(Probablemente quitar este gráfico)
 Vemos que los inmuebles en general tienen una distribución similar según su cantidad de pisos, excepto en el caso de los inmuebles con 10 pisos que tienen una ocurrencia mucho más alta. En relación, vemos que en general la mayoría se mantiene en los 1000 dolares para cantidades de pisos variadas, y en algunas cantidades de pisos como son 2, 12, 13 la media del precio esta cerca de los 2000 dolares.
 
 En la distribución los números de piso 0 y 1, luego cuando los pisos van subiendo de número la frecuencia va disminuyendo (con algunas excepciones como son el número 4 y el 9). En relación al precio vemos que casi todos los números de piso tiene un precio similar (casi 1000\$) pero particularmente el piso con número 11 tiene un precio más elevado.
 
 La distribución de la cantidad muestra que en un piso en general es más común encontrarse con 2, 3 o 4 apartamentos. En relación al precio vemos que esos pisos que tienen 2, 3 o 4 apartamentos también son los que tienen el precio más alto.
 
+
+
 Pregunta 12) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
+
+
+```{r}
+# Recodificar Variables: CASE MATCH para no tener que eliminar variables y agrupar las que cumplen la carcterística de ser mayores a determinado valor en una sola categoría
+
+
+# Recodificar Baños
+datos_2 <- datos_2 %>%
+  mutate(baños = case_when(
+    baños == 0 ~ "0",
+    baños == 1 ~ "1",
+    baños == 2 ~ "2",
+    TRUE ~ "Tres o más"
+  ))
+
+
+# Recodificar Cantidad de Estacionamientos
+datos_2 <- datos_2 %>%
+  mutate(cant_de_est = case_when(
+    cant_de_est == 0 ~ "0",
+    cant_de_est == 1 ~ "1",
+    cant_de_est == 2 ~ "2",
+    TRUE ~ "tres o más"
+  ))
+
+
+# Recodificar Cantidad de Habitaciones
+datos_2 <- datos_2 %>%
+  mutate(cant_habitaciones = case_when(
+    cant_habitaciones == 0 ~ "0",
+    cant_habitaciones == 1 ~ "1",
+    cant_habitaciones == 2 ~ "2",
+    TRUE ~ "tres o más"
+  ))
+
+
+
+# Recodificar Cantidad de Cuartos
+datos_2 <- datos_2 %>%
+  mutate(cant_cuartos = case_when(
+    cant_cuartos == 0 ~ "0",
+    cant_cuartos == 1 ~ "1",
+    cant_cuartos == 2 ~ "2",
+    TRUE ~ "tres o más"
+  ))
+
+
+
+
+
+``` 
+
 
 ```{r, echo: false}
 
@@ -1099,12 +979,12 @@ grupo_garage <- datos_2 %>%         # Datos
 # GRÁFICOS
 grafico18 <- ggplot(datos_2, aes(x=baños)) + 
   geom_bar() + 
-  scale_x_continuous(breaks =  Grupo_Baños$baños)
+  scale_x_discrete(breaks =  Grupo_Baños$baños)
 
 
 grafico19 <- ggplot(Grupo_Baños, aes(x=baños, y=media_precio)) + 
   geom_bar(stat="identity") +  
-  scale_x_continuous(breaks =  Grupo_Baños$baños)
+  scale_x_discrete(breaks =  Grupo_Baños$baños)
 
 
 
@@ -1112,12 +992,12 @@ grafico19 <- ggplot(Grupo_Baños, aes(x=baños, y=media_precio)) +
 
 grafico20 <- ggplot(datos_2, aes(x=cant_habitaciones)) + 
   geom_bar() +  
-  scale_x_continuous(breaks =  grupo_cant_habit$cant_habitaciones)
+  scale_x_discrete(breaks =  grupo_cant_habit$cant_habitaciones)
 
 
 grafico21 <- ggplot(grupo_cant_habit, aes(x=cant_habitaciones, y=media_precio)) +  
   geom_bar(stat="identity") +  
-  scale_x_continuous(breaks =  grupo_cant_habit$cant_habitaciones)
+  scale_x_discrete(breaks =  grupo_cant_habit$cant_habitaciones)
 
 
 
@@ -1126,12 +1006,12 @@ grafico21 <- ggplot(grupo_cant_habit, aes(x=cant_habitaciones, y=media_precio)) 
 
 grafico22 <- ggplot(datos_2, aes(x=cant_cuartos)) + 
   geom_bar() +   
-  scale_x_continuous(breaks =  grupo_cant_cuartos$cant_cuartos)
+  scale_x_discrete(breaks =  grupo_cant_cuartos$cant_cuartos)
 
 
 grafico23 <- ggplot(grupo_cant_cuartos, aes(x=cant_cuartos, y=media_precio)) +  
   geom_bar(stat="identity") +   
-  scale_x_continuous(breaks =  grupo_cant_cuartos$cant_cuartos)
+  scale_x_discrete(breaks =  grupo_cant_cuartos$cant_cuartos)
 
 
 
@@ -1140,12 +1020,12 @@ grafico23 <- ggplot(grupo_cant_cuartos, aes(x=cant_cuartos, y=media_precio)) +
 
 grafico24 <- ggplot(datos_2, aes(x=cant_de_est)) + 
   geom_bar() +  
-  scale_x_continuous(breaks =  grupo_garage$cant_de_est)
+  scale_x_discrete(breaks =  grupo_garage$cant_de_est)
 #
 
 grafico25 <- ggplot(grupo_garage, aes(x=cant_de_est, y=media_precio)) +  
   geom_bar(stat="identity") +   
-  scale_x_continuous(breaks =  grupo_garage$cant_de_est)
+  scale_x_discrete(breaks =  grupo_garage$cant_de_est)
 
 
 
