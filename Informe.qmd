@@ -856,11 +856,12 @@ ggplot(datos_2, aes(x = condicion, y = Gastos_Comunes, fill = Municipio)) + # Da
 
 En el municipio A los gastos comunes se dan más en los inmuebles que estan en Buena Condición.
 
-En el municipio B y C los gastos comunes se da más en los inmuebles que estan en Excelente Condición.
+En el municipio B, CH, E y F los gastos comunes se da más en los inmuebles que estan en Excelente Condición. 
 
-En el municipio CH hay un empate entre los más comunes son la Excelente Condición y Renovados.
+Mientras que en el municipio C hay un empate entre Excelente Condición y Buena Condición. En el municipio D hay un empate entre "A Estrenar", Buena Condición y Excelente Condición. En el municipio G hay un empate entre "A Estrenar" y Buena Condición.
 
-En el municipio E hay un empate entre los más comunes son la Excelente Condición y Buena Condición.
+
+
 
 Pregunta 9) Cómo influye tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
 
@@ -942,7 +943,14 @@ funcion_dum(resultado_final)
 
 ```
 
-En este gráfico mostramos distintas variables que representan elementos de confort que puede tener un alquiler o no tener, como son WiFi, Barbacoa, Jardin, Aire Acondicionado, etc. Estas variables toman valores de 0 y 1 donde el 0 representa que el alquiler no posee ese bien y el 1 representa que el alquiler si posee ese bien. Estamos gráficando el precio promedio para cada una de esas variables y comparando como difiere el precio en caso de tener o no tener un bien. Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Barbacoa, Calefacción, Closet, Deposito, Garage, Jardin, Living, Losa Radiante, Patio, Habitación de juegos, Piscina, Vista al Mar y Barbacoa, el precio es más alto al tener que al no tener. En cambio, en el caso de Balcon, Conexión a Gas, Duplex, Gimansio, Equipo para mascotas, Centro de Bronceado, WiFi o en el caso de ser una vivienda social, el precio es más alto al no tener que al tener.
+En este gráfico mostramos distintas variables que representan elementos de confort que puede tener un alquiler o no tener, como son WiFi, Barbacoa, Jardin, Aire Acondicionado, etc. Estas variables toman valores de 0 y 1 donde el 0 representa que el alquiler no posee ese bien y el 1 representa que el alquiler si posee ese bien. Estamos gráficando el precio promedio para cada una de esas variables y comparando como difiere el precio en caso de tener o no tener un bien. 
+Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Balcon,  Barbacoa, Calefacción, Closet, Garage, Gimnasio, Jardin, Living, Losa Radiante, Habitación de juegos, Cuarto de Bronceado, Piscina, Vista al Mar, Vivienda Social, Wifi, Barbacoa ocurre que el precio es más alto al tener que al no tener. 
+
+En cambio, en el caso de Balcon, Conexión a Gas, Deposito, Duplex, Equipo para mascotas, Cuarto de Juegos, Patio ocurre que el precio es más alto al no tener que al tener.
+
+
+
+
 
 Pregunta 10) ¿Cómo influyen elementos relativos a los pisos como son el número de pisos, la cantidad de apartamentos en un piso o la cantidad de pisos en todo el edificio del inmueble al precio de alquiler?
 
