@@ -96,9 +96,11 @@ gt(tabla_municipio)
 
 #Eliminando los datos atipicos
 
-datos_2 <- datos %>% filter(Price <= 150000 & Common_Expenses <= 10000)
 
-datos_2 <- datos_2|>
+
+
+
+datos_2 <- datos |>
   rename(precio = Price,
          nro_de_piso = Floor,
          cant_de_piso = Number_of_Floors,
@@ -262,9 +264,19 @@ datos_2$año_de_const
 
 ## Visualización
 
+
+```{r}
+
+
+
+```
+
+
 ```{r}
 #| echo: false
 # Pregunta 1) ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+
+
 
 
 # Elegimos los colores manualmente
@@ -525,6 +537,18 @@ summary(mod)
 Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
 
 ```{r}
+# Filtro de outliers para los gráficos
+
+datos_2 <- datos_2 %>% 
+  filter(precio_m2 < 400 & Gastos_Comunes < 200000)
+
+
+max(datos_2$Gastos_Comunes)
+
+```
+
+
+```{r}
 
 
 # Gráfico 1: Conteo por Municipio
@@ -587,6 +611,10 @@ grid.arrange(grafico1, grafico2, grafico7, grafico8, ncol = 2, nrow = 2)
 En este gráfico se puede observar que la mayoría de los alquileres se encuentran en el municipio CH, B y E. Pero en relación al precio por promedio por metro cuadrado, los alquileres más caros se encuentran en el municipio A, donde hay pocos alquileres en general. Luego los siguientes alquileres más caros se encuentran en el municipio E y CH.
 
 Luego en la disposición vemos que los más común son los inmuebles al frente, y vemos que en relación al precio por metro cuadrado, todos tienen un precio similar, que va ascendiendo desde Frente, Atrás, Interior y Costado, pero recordamos que estos incrementos son pequeños en relación al precio promedio por metro cuadrado.
+
+
+
+
 
 Pregunta 2) ¿Cómo se distribuye el tipo de propiedad de los alquileres y el precio promedio de el tipo de propiedad? ¿¿Cómo se distribuye las condiciones de los alquileres y el precio promedio según las condiciones de los alquileres?
 
@@ -702,11 +730,13 @@ ggplot(datos_2, aes(x = tipo_prop, y = precio_m2, fill = Municipio)) + # Datos, 
 
 ```
 
-En general el tipo de alquiler más común varia según municipio, en los municipios A, C, D y G son más comunes los alquileres de Alquileres. En cambio en los municipios CH y E son más comunes los alquileres de casas, finalmente en el municipio B es más común el alquiler de Oficinas.
 
-La mayoría de los alquileres se encuentran en Buena Condición o el Excelente Condición. También hay una parte considerable de alquileres que son nuevos.
+En general el tipo de alquiler más común varia según municipio, en los municipios A, C, CH y D son más comunes los alquileres de apartamentos. En cambio en los municipios E, F y G son más comunes los alquileres de casas, finalmente en el municipio B es más común el alquiler de Oficinas.
 
-La mayoría de los inmuebles estan en buena condición o excelente condición. Pocos de ellos estan en construcción, o con necesidad de mantenimiento o por ser renovados
+
+
+
+
 
 Pregunta 5) ¿Cómo se distribuyen las condiciones de las viviendas por municipio?
 
@@ -729,7 +759,13 @@ ggplot(datos_2, aes(x = condicion, y = precio_m2, fill = Municipio)) + # Datos, 
 
 ```
 
-En el Municipio A y E estan predominantemente los apartamentos en Excelente Condición. En los municipios C y F es más común los apartamentos con Buena Condición. n los municipios CH y B hay un empate entre la cantidad de apartamentos con Excelente Condición y Buena Condición.
+
+Este aspecto también varia según municipio, en los municipios A, CH y E los precios promedio por metro cuadrado más altos son los que están en Buena Condición. En los municipios C y D es Excelente Condición y en el caso de los municipios B, F y G son "A Estrenar"
+
+
+
+
+
 
 Pregunta 6) ¿Cómo se distribuyen los gastos comunes en relación al municipio, el tipo de propiedad y la condición de la propiedad?
 
@@ -762,7 +798,11 @@ La mayoría de gastos comúnes se dan en el municipio CH, donde recordemos estan
 
 La mayoría de gastos comúnes se dan en los apartamentos, y muy pocos en las Oficinas. En los otros tipos de alquileres practicamente no existen gastos comunes.
 
-En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes.
+En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes. También hay una cantidad considerable de gastos comunes en las viviendas "A Estrenar".
+
+
+
+
 
 Pregunta 7) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
 
@@ -784,8 +824,12 @@ ggplot(datos_2, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Da
 
 
 ```
+En el municipio A los gastos comunes son mayores en los inmuebles del tipo Comercial, y en el Municipio B se dan más en las Oficinas. Para todos los otros municipios los gastos comunes se dan más en los Apartamentos
 
-Como mencionamos anteriormente, en todos los municipios se cumple el mismo patrón, que es que los Gastos Comunes se dan más en alquileres del tipo apartamento.
+
+
+
+
 
 Pregunta 8) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
 
@@ -907,7 +951,7 @@ Pregunta 10) ¿Cómo influyen elementos relativos a los pisos como son el númer
 
 
 # Filtro:
-datos <- datos %>% filter( (cant_de_piso < 20 & cant_de_piso > 0) & (apartamentos_por_piso < 14 & apartamentos_por_piso > 0) & (nro_de_piso < 44) )
+# datos <- datos %>% filter( (cant_de_piso < 20 & cant_de_piso > 0) & (apartamentos_por_piso < 14 & apartamentos_por_piso > 0) & (nro_de_piso < 44) )
 
 
 
