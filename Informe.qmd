@@ -257,6 +257,7 @@ detector_nulos <- function(datos_2){ # Función
 }
 
 detector_nulos(datos_2)
+datos_2$año_de_const
 ```
 
 ## Visualización
@@ -433,7 +434,7 @@ datos_2 <- datos_2 %>%
     TRUE ~ "mas de 3"
   ))
 
-ggplot(datos_2, aes(x = cant_de_est, y = mean(precio_m2))) +
+ggplot(datos_2, aes(x = cant_de_est, y = precio_m2)) +
   geom_bar(stat = "identity") +
   labs(x = "Cantidad de estacionamientos", y = "Precio por m2") +
   ggtitle("Precio por m2 según número de baños") +
@@ -454,7 +455,8 @@ names(datos_2)
 ```{r}
 ggplot(datos_2, aes(x = calefaccion, y = precio_m2)) +
   geom_bar(stat = "identity") +
-  labs(x = "Calefaccion", y = "Precio por m2") + 
+  labs(x = "Calefacción", y = "Impacto en el precio por m2") +
+  ggtitle("Impacto de la calefacción en el precio por m2") +
   theme_minimal()
 ```
 
@@ -466,28 +468,62 @@ ggplot(datos_2, aes(x = vista_al_mar, y = precio_m2)) +
 ```
 
 ```{r}
-media_años <- mean(datos_2$año_de_const[datos_2$año_de_const != 0], na.rm = TRUE)
-datos_2$año_de_const[datos_2$año_de_const == 0] <- media_años
+datos_filtrados <- datos_2 %>%
+  filter(precio_m2 <= 400)
 
+media_años <- round(mean(datos_filtrados$año_de_const[datos_filtrados$año_de_const != 0], na.rm = TRUE))
+datos_filtrados$año_de_const[datos_filtrados$año_de_const == 0] <- media_años
 
-ggplot(datos_2, aes(x =año_de_const, y = precio_m2)) +
-  geom_point(stat = "identity") +
-  labs(x = "Año que fue construido la propiedad", y = "Precio por m2") +
-  ggtitle("Precio por m2 según año que fue construida la propiedad") +
+# Definir los reemplazos y los valores de reemplazo
+reemplazos <- c(3, 10, 15, 90, 39, 95, 60)
+valores_reemplazo <- c(2003, 2010, 2015, 1990, 1939, 1995, 1960)
+
+# Aplicar las reglas de reemplazo
+for (i in seq_along(reemplazos)) {
+  datos_filtrados$año_de_const[datos_filtrados$año_de_const == reemplazos[i]] <- valores_reemplazo[i]
+}
+
+# Convertir año_de_const a tipo numérico
+datos_filtrados$año_de_const <- as.numeric(datos_filtrados$año_de_const)
+
+# Gráfico de dispersión para visualizar la relación entre año de construcción y precio por m2
+ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
+  geom_point(alpha = 0.7) +
+  labs(x = "Año de construcción de la propiedad", y = "Precio por m2") +
+  ggtitle("Relación entre año de construcción y precio por m2") +
   theme_minimal()
 
 ```
 
 En estos graficos lo que se trato de hacer es como algunas variables influyen en el precio por metros cuadrados. Como se puede observar con mucha imaginacion que las propiedades que estan constuidas mas recientemente su precio es mas alto.
 
-<<<<<<< HEAD
-=======
+```{r}
+datos_2 <- datos_2 %>%
+  mutate(tipo_prop = case_when(
+    tipo_prop == "Apartament" ~ "Apartamento",
+    tipo_prop == "Commercial" ~ "Comercial",
+    tipo_prop == "House" ~ "Casa",
+    tipo_prop == "Office" ~ "Oficina",
+    TRUE ~ "otros"
+  ))
+
+ggplot(datos_2, aes(x = tipo_prop, y = precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Tipo de propiedad", y = "Impacto en el precio por m2") +
+  ggtitle("Impacto del tipo de propiedad en el precio por m2") +
+  theme_minimal()
+```
+
+```{r}
+mod <- lm(precio_m2 ~ Municipio + Gastos_Comunes + condicion + año_de_const + tipo_prop , data = datos_2)
+names(datos_2)
+summary(mod)
+```
 
 ### NUEVOS GRÁFICOS DE VISUALIZACIÓN:
 
-
-
 Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
+
 ```{r}
 
 
@@ -546,15 +582,11 @@ grafico8 <- ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad)
 grid.arrange(grafico1, grafico2, grafico7, grafico8, ncol = 2, nrow = 2)
 
 
-``` 
+```
 
 En este gráfico se puede observar que la mayoría de los alquileres se encuentran en el municipio CH, B y E. Pero en relación al precio por promedio por metro cuadrado, los alquileres más caros se encuentran en el municipio A, donde hay pocos alquileres en general. Luego los siguientes alquileres más caros se encuentran en el municipio E y CH.
 
-
 Luego en la disposición vemos que los más común son los inmuebles al frente, y vemos que en relación al precio por metro cuadrado, todos tienen un precio similar, que va ascendiendo desde Frente, Atrás, Interior y Costado, pero recordamos que estos incrementos son pequeños en relación al precio promedio por metro cuadrado.
-
-
-
 
 Pregunta 2) ¿Cómo se distribuye el tipo de propiedad de los alquileres y el precio promedio de el tipo de propiedad? ¿¿Cómo se distribuye las condiciones de los alquileres y el precio promedio según las condiciones de los alquileres?
 
@@ -607,18 +639,14 @@ grafico6 <- ggplot(grupo_condicion, aes(x = fct_reorder(condicion, Cantidad), y 
 
 # Crear la grilla de gráficos
 grid.arrange(grafico3, grafico4, grafico5, grafico6, ncol = 2, nrow = 2)
-``` 
+```
 
 En los tipos de propiedad, mayoritariamente son apartamentos, en relación al precio promedio por metro cuadrado vemos que los más caros son las oficinas seguidos por los apartamentos y luego por las casas.
 
 Luego cuando nos referimos a la condición de las alquileres, vemos que la mayoría se encuentra en Excelente Condición o en Buena Condición, también una cantidad considerable esta recientemente construdido. En relación al precio promedio por metro cuadrado, vemos que los alquileres "En Construccion", "Para Estrenar" y en Excelente Condición son los más caros.
 
-
-
-
-
-
 Pregunta 3) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad
+
 ```{r}
 datos_2 <- datos_2 %>% filter(precio_m2 < 400)
 
@@ -653,13 +681,9 @@ ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes
 # Filtro para quitar los outliers
 
 
-``` 
+```
+
 La respuesta es que si, los barrios ubicados en el municipio E, B y CH son los que tienen el precio promedio por metro cuadrado más alto. Dentro del municipio E el barrio más caro es Carrasco, dentro del municipio B el barrio más caro es Centro, dentro del municipio CH el barrio más caro es Pocitos.
-
-
-
-
-
 
 Pregunta 4) ¿Cómo se distribuyen los tipos de inmuebles por municipio?
 
@@ -684,8 +708,6 @@ La mayoría de los alquileres se encuentran en Buena Condición o el Excelente C
 
 La mayoría de los inmuebles estan en buena condición o excelente condición. Pocos de ellos estan en construcción, o con necesidad de mantenimiento o por ser renovados
 
-
-
 Pregunta 5) ¿Cómo se distribuyen las condiciones de las viviendas por municipio?
 
 ```{r}
@@ -705,14 +727,12 @@ ggplot(datos_2, aes(x = condicion, y = precio_m2, fill = Municipio)) + # Datos, 
 
 
 
-``` 
+```
 
 En el Municipio A y E estan predominantemente los apartamentos en Excelente Condición. En los municipios C y F es más común los apartamentos con Buena Condición. n los municipios CH y B hay un empate entre la cantidad de apartamentos con Excelente Condición y Buena Condición.
 
-
-
-
 Pregunta 6) ¿Cómo se distribuyen los gastos comunes en relación al municipio, el tipo de propiedad y la condición de la propiedad?
+
 ```{r}
 
 # Gráfico 1: Municipio y Gastos Comunes
@@ -736,20 +756,13 @@ grafico11 <- ggplot(datos_2, aes(x = condicion, y = Gastos_Comunes)) +
 # Crear la grilla de gráficos
 grid.arrange(grafico9, grafico10, grafico11, ncol = 1, nrow = 3)
 
-``` 
+```
 
 La mayoría de gastos comúnes se dan en el municipio CH, donde recordemos estan la mayoría de los alquileres, y la minoría de gastos comunes se dan en el municipio F donde recordemos hay la menor cantidad de alquileres.
 
 La mayoría de gastos comúnes se dan en los apartamentos, y muy pocos en las Oficinas. En los otros tipos de alquileres practicamente no existen gastos comunes.
 
 En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes.
-
-
-
-
-
-
-
 
 Pregunta 7) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
 
@@ -770,14 +783,9 @@ ggplot(datos_2, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Da
 # Cambiar el ángulo y el tamaño del texto de los elementos del eje X
 
 
-``` 
+```
 
 Como mencionamos anteriormente, en todos los municipios se cumple el mismo patrón, que es que los Gastos Comunes se dan más en alquileres del tipo apartamento.
-
-
-
-
-
 
 Pregunta 8) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
 
@@ -809,12 +817,6 @@ En el municipio B y C los gastos comunes se da más en los inmuebles que estan e
 En el municipio CH hay un empate entre los más comunes son la Excelente Condición y Renovados.
 
 En el municipio E hay un empate entre los más comunes son la Excelente Condición y Buena Condición.
-
-
-
-
-
-
 
 Pregunta 9) Cómo influye tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
 
@@ -897,14 +899,6 @@ funcion_dum(resultado_final)
 ```
 
 En este gráfico mostramos distintas variables que representan elementos de confort que puede tener un alquiler o no tener, como son WiFi, Barbacoa, Jardin, Aire Acondicionado, etc. Estas variables toman valores de 0 y 1 donde el 0 representa que el alquiler no posee ese bien y el 1 representa que el alquiler si posee ese bien. Estamos gráficando el precio promedio para cada una de esas variables y comparando como difiere el precio en caso de tener o no tener un bien. Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Barbacoa, Calefacción, Closet, Deposito, Garage, Jardin, Living, Losa Radiante, Patio, Habitación de juegos, Piscina, Vista al Mar y Barbacoa, el precio es más alto al tener que al no tener. En cambio, en el caso de Balcon, Conexión a Gas, Duplex, Gimansio, Equipo para mascotas, Centro de Bronceado, WiFi o en el caso de ser una vivienda social, el precio es más alto al no tener que al tener.
-
-
-
-
-
-
-
-
 
 Pregunta 10) ¿Cómo influyen elementos relativos a los pisos como son el número de pisos, la cantidad de apartamentos en un piso o la cantidad de pisos en todo el edificio del inmueble al precio de alquiler?
 
@@ -1112,47 +1106,31 @@ grid.arrange(grafico18, grafico19, grafico20, grafico21, grafico22, grafico23, g
 
 En relación a los baños lo más común es que los inmuebles tengan un baño, luego el tener 2 o 3 es menos común. Similarmente ocurre con la cantidad de estacionamientos (garages) donde lo más común es el que el inmueble tenga un garage o ninguno. En relación al número de cuartos y de habitaciones el patrón que se repite es tener 2 o 3 en el caso de habitaciones y 1 o 2 en el caso de cuartos. Pero vemos que siempre para todos estos elementos, se cumple la relación intuitiva de que a más número de baños, estacionamientos, habitaciones o cuartos, el precio del inmueble es más elevado.
 
+```{r}
 
 
+```
 
 ```{r}
 
 
-``` 
-
-
-```{r}
-
-
-``` 
-
-
+```
 
 ```{r}
 
 
-``` 
-
-
+```
 
 ```{r}
 
 
-``` 
-
-
+```
 
 ```{r}
 
 
-``` 
+```
 
-
-
-
-
-
->>>>>>> a00d0868a725216b86682d4a5a119580427ce1e4
 ## Modelo Predictivo
 
 ```{r}
