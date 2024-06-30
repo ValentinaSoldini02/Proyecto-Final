@@ -262,92 +262,7 @@ detector_nulos(datos_2)
 datos_2$año_de_const
 ```
 
-## Visualización
-
-
-
-
-
-
-
-
-
-
-
-### NUEVOS GRÁFICOS DE VISUALIZACIÓN:
-=======
-
-
-```{r}
-ggplot(datos_2, aes(x = calefaccion, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Calefacción", y = "Impacto en el precio por m2") +
-  ggtitle("Impacto de la calefacción en el precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-ggplot(datos_2, aes(x = vista_al_mar, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Vista al mar", y = "Precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-datos_filtrados <- datos_2 %>%
-  filter(precio_m2 <= 400)
-
-media_años <- round(mean(datos_filtrados$año_de_const[datos_filtrados$año_de_const != 0], na.rm = TRUE))
-datos_filtrados$año_de_const[datos_filtrados$año_de_const == 0] <- media_años
-
-# Definir los reemplazos y los valores de reemplazo
-reemplazos <- c(3, 10, 15, 90, 39, 95, 60)
-valores_reemplazo <- c(2003, 2010, 2015, 1990, 1939, 1995, 1960)
-
-# Aplicar las reglas de reemplazo
-for (i in seq_along(reemplazos)) {
-  datos_filtrados$año_de_const[datos_filtrados$año_de_const == reemplazos[i]] <- valores_reemplazo[i]
-}
-
-# Convertir año_de_const a tipo numérico
-datos_filtrados$año_de_const <- as.numeric(datos_filtrados$año_de_const)
-
-# Gráfico de dispersión para visualizar la relación entre año de construcción y precio por m2
-ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
-  geom_point(alpha = 0.7) +
-  labs(x = "Año de construcción de la propiedad", y = "Precio por m2") +
-  ggtitle("Relación entre año de construcción y precio por m2") +
-  theme_minimal()
-
-```
-
-En estos graficos lo que se trato de hacer es como algunas variables influyen en el precio por metros cuadrados. Como se puede observar con mucha imaginacion que las propiedades que estan constuidas mas recientemente su precio es mas alto.
-
-```{r}
-datos_2 <- datos_2 %>%
-  mutate(tipo_prop = case_when(
-    tipo_prop == "Apartament" ~ "Apartamento",
-    tipo_prop == "Commercial" ~ "Comercial",
-    tipo_prop == "House" ~ "Casa",
-    tipo_prop == "Office" ~ "Oficina",
-    TRUE ~ "otros"
-  ))
-
-ggplot(datos_2, aes(x = tipo_prop, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Tipo de propiedad", y = "Impacto en el precio por m2") +
-  ggtitle("Impacto del tipo de propiedad en el precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-mod <- lm(precio_m2 ~ Municipio + Gastos_Comunes + condicion + año_de_const + tipo_prop , data = datos_2)
-names(datos_2)
-summary(mod)
-```
-
 ## VISUALIZACIÓN (Correcto)
->>>>>>> 42b0dfab3096a4582d7ca6b0f15261bc95354837
 
 Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
 
@@ -364,7 +279,6 @@ datos_2 <- datos_2 %>%
 
 datos_2
 ```
-
 
 ```{r}
 
@@ -430,16 +344,6 @@ En este gráfico se puede observar que la mayoría de los alquileres se encuentr
 
 Luego en la disposición vemos que los más común son los inmuebles al frente, y vemos que en relación al precio por metro cuadrado, todos tienen un precio similar, que va ascendiendo desde Frente, Atrás, Interior y Costado, pero recordamos que estos incrementos son pequeños en relación al precio promedio por metro cuadrado.
 
-
-
-
-
-
-
-
-
-
-
 Pregunta 2) ¿Cómo se distribuye el tipo de propiedad de los alquileres y el precio promedio de el tipo de propiedad? ¿¿Cómo se distribuye las condiciones de los alquileres y el precio promedio según las condiciones de los alquileres?
 
 ```{r}
@@ -496,12 +400,6 @@ grid.arrange(grafico3, grafico4, grafico5, grafico6, ncol = 2, nrow = 2)
 En los tipos de propiedad, mayoritariamente son apartamentos, en relación al precio promedio por metro cuadrado vemos que los más caros son las oficinas seguidos por los apartamentos y luego por las casas. mientras que las propiedades de tierra, negocios especiales, edificios o garajes son menos comunes. Esta tendencia sugiere una alta disponibilidad de apartamentos en Montevideo, lo cual representa una oportunidad lucrativa para los inversionistas.
 
 Luego cuando nos referimos a la condición de las alquileres, vemos que la mayoría se encuentra en Excelente Condición o en Buena Condición, también una cantidad considerable esta recientemente construdido. En relación al precio promedio por metro cuadrado, vemos que los alquileres "En Construccion", "Para Estrenar" y en Excelente Condición son los más caros. Los potenciales inquilinos se beneficiarían al evitar la necesidad de realizar modificaciones significativas en las propiedades disponibles para alquilar.
-
-
-
-
-
-
 
 Pregunta 3) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad
 
@@ -560,13 +458,7 @@ ggplot(datos_2, aes(x = tipo_prop, y = precio_m2, fill = Municipio)) + # Datos, 
 
 ```
 
-
 En general el tipo de alquiler más común varia según municipio, en los municipios A, C, CH y D son más comunes los alquileres de apartamentos. En cambio en los municipios E, F y G son más comunes los alquileres de casas, finalmente en el municipio B es más común el alquiler de Oficinas.
-
-
-
-
-
 
 Pregunta 5) ¿Cómo se distribuyen las condiciones de las viviendas por municipio?
 
@@ -589,13 +481,7 @@ ggplot(datos_2, aes(x = condicion, y = precio_m2, fill = Municipio)) + # Datos, 
 
 ```
 
-
 Este aspecto también varia según municipio, en los municipios A, CH y E los precios promedio por metro cuadrado más altos son los que están en Buena Condición. En los municipios C y D es Excelente Condición y en el caso de los municipios B, F y G son "A Estrenar"
-
-
-
-
-
 
 Pregunta 6) ¿Cómo se distribuyen los gastos comunes en relación al municipio, el tipo de propiedad y la condición de la propiedad?
 
@@ -630,10 +516,6 @@ La mayoría de gastos comúnes se dan en los apartamentos, y muy pocos en las Of
 
 En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes. También hay una cantidad considerable de gastos comunes en las viviendas "A Estrenar".
 
-
-
-
-
 Pregunta 7) ¿Cómo influye la condición de el alquiler en el nivel de gastos comunes?
 
 ```{r}
@@ -654,12 +536,8 @@ ggplot(datos_2, aes(x = tipo_prop, y = Gastos_Comunes, fill = Municipio)) + # Da
 
 
 ```
+
 En el municipio A los gastos comunes son mayores en los inmuebles del tipo Comercial, y en el Municipio B se dan más en las Oficinas. Para todos los otros municipios los gastos comunes se dan más en los Apartamentos
-
-
-
-
-
 
 Pregunta 8) ¿Cómo se distribuyen los Gastos Comunes en relación a la condición del alquiler por Municipio?
 
@@ -686,12 +564,9 @@ ggplot(datos_2, aes(x = condicion, y = Gastos_Comunes, fill = Municipio)) + # Da
 
 En el municipio A los gastos comunes se dan más en los inmuebles que estan en Buena Condición.
 
-En el municipio B, CH, E y F los gastos comunes se da más en los inmuebles que estan en Excelente Condición. 
+En el municipio B, CH, E y F los gastos comunes se da más en los inmuebles que estan en Excelente Condición.
 
 Mientras que en el municipio C hay un empate entre Excelente Condición y Buena Condición. En el municipio D hay un empate entre "A Estrenar", Buena Condición y Excelente Condición. En el municipio G hay un empate entre "A Estrenar" y Buena Condición.
-
-
-
 
 Pregunta 9) Cómo influye tener o no ciertas caracteristicas en el alquiler (como son wifi, una barbacoa o un jardin) en el precio con respecto a los alquileres que no lo tienen?
 
@@ -773,14 +648,9 @@ funcion_dum(resultado_final)
 
 ```
 
-En este gráfico mostramos distintas variables que representan elementos de confort que puede tener un alquiler o no tener, como son WiFi, Barbacoa, Jardin, Aire Acondicionado, etc. Estas variables toman valores de 0 y 1 donde el 0 representa que el alquiler no posee ese bien y el 1 representa que el alquiler si posee ese bien. Estamos gráficando el precio promedio para cada una de esas variables y comparando como difiere el precio en caso de tener o no tener un bien. 
-Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Balcon,  Barbacoa, Calefacción, Closet, Garage, Gimnasio, Jardin, Living, Losa Radiante, Habitación de juegos, Cuarto de Bronceado, Piscina, Vista al Mar, Vivienda Social, Wifi, Barbacoa ocurre que el precio es más alto al tener que al no tener. 
+En este gráfico mostramos distintas variables que representan elementos de confort que puede tener un alquiler o no tener, como son WiFi, Barbacoa, Jardin, Aire Acondicionado, etc. Estas variables toman valores de 0 y 1 donde el 0 representa que el alquiler no posee ese bien y el 1 representa que el alquiler si posee ese bien. Estamos gráficando el precio promedio para cada una de esas variables y comparando como difiere el precio en caso de tener o no tener un bien. Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Balcon, Barbacoa, Calefacción, Closet, Garage, Gimnasio, Jardin, Living, Losa Radiante, Habitación de juegos, Cuarto de Bronceado, Piscina, Vista al Mar, Vivienda Social, Wifi, Barbacoa ocurre que el precio es más alto al tener que al no tener.
 
 En cambio, en el caso de Balcon, Conexión a Gas, Deposito, Duplex, Equipo para mascotas, Cuarto de Juegos, Patio ocurre que el precio es más alto al no tener que al tener.
-
-
-
-
 
 Pregunta 10) ¿Cómo influyen elementos relativos a los pisos como son el número de pisos, la cantidad de apartamentos en un piso o la cantidad de pisos en todo el edificio del inmueble al precio de alquiler?
 
@@ -799,10 +669,6 @@ Pregunta 10) ¿Cómo influyen elementos relativos a los pisos como son el númer
 Pregunta 11) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
 
 ```{r, echo: false}
-
-# 
-
-
 # GRUPOS
 grupo_piso_1 <- datos_2 %>% # Datos
   group_by(cant_de_piso) %>% # Agrupados por cantidad de pisos
@@ -822,24 +688,17 @@ grupo_piso_3 <- datos_2 %>%   # Datos
 #grupo_piso_3
 
 
-
-
-
 # Gráfico 1: Cantidad de pisos
 grafico12 <- ggplot(datos_2, aes(x = cant_de_piso)) +  
   geom_bar() +
   scale_x_continuous(breaks = unique(datos_2$cant_de_piso)) +
   labs(title = "Cantidad de pisos")
 
-
-
 # Gráfico 2: Precio promedio por cantidad de pisos
 grafico13 <- ggplot(grupo_piso_1, aes(x = cant_de_piso, y = media_precio)) +  
   geom_bar(stat = "identity") + 
   scale_x_continuous(breaks = unique(grupo_piso_1$cant_de_piso)) +
   labs(title = "Precio promedio por cantidad de pisos")
-
-
 
 # Gráfico 3: Número de piso
 grafico14 <- ggplot(datos_2, aes(x = nro_de_piso)) +  
@@ -852,8 +711,6 @@ grafico15 <- ggplot(grupo_piso_2, aes(x = nro_de_piso, y = media_precio)) +
   geom_bar(stat = "identity") + 
   scale_x_continuous(breaks = unique(grupo_piso_2$nro_de_piso)) +
   labs(title = "Precio promedio por número de piso")
-
-
 
 # Gráfico 5: Apartamentos por piso
 grafico16 <- ggplot(datos_2, aes(x = apartamentos_por_piso)) + 
@@ -868,24 +725,19 @@ grafico17 <- ggplot(grupo_piso_3, aes(x = apartamentos_por_piso, y = media_preci
   labs(title = "Cantidad de apartamentos por piso")
 
 
-
-
 # Panel 2x3
 grid.arrange(grafico12, grafico13, grafico14, grafico15, grafico16, grafico17, ncol = 2, nrow = 3)
 
 # Hacer el filtro que nos recomendo la profe con los factores para que se vea mejor y no perder datos.
 ```
-(Probablemente quitar este gráfico)
-Vemos que los inmuebles en general tienen una distribución similar según su cantidad de pisos, excepto en el caso de los inmuebles con 10 pisos que tienen una ocurrencia mucho más alta. En relación, vemos que en general la mayoría se mantiene en los 1000 dolares para cantidades de pisos variadas, y en algunas cantidades de pisos como son 2, 12, 13 la media del precio esta cerca de los 2000 dolares.
+
+(Probablemente quitar este gráfico) Vemos que los inmuebles en general tienen una distribución similar según su cantidad de pisos, excepto en el caso de los inmuebles con 10 pisos que tienen una ocurrencia mucho más alta. En relación, vemos que en general la mayoría se mantiene en los 1000 dolares para cantidades de pisos variadas, y en algunas cantidades de pisos como son 2, 12, 13 la media del precio esta cerca de los 2000 dolares.
 
 En la distribución los números de piso 0 y 1, luego cuando los pisos van subiendo de número la frecuencia va disminuyendo (con algunas excepciones como son el número 4 y el 9). En relación al precio vemos que casi todos los números de piso tiene un precio similar (casi 1000\$) pero particularmente el piso con número 11 tiene un precio más elevado.
 
 La distribución de la cantidad muestra que en un piso en general es más común encontrarse con 2, 3 o 4 apartamentos. En relación al precio vemos que esos pisos que tienen 2, 3 o 4 apartamentos también son los que tienen el precio más alto.
 
-
-
 Pregunta 12) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
-
 
 ```{r}
 # Recodificar Variables: CASE MATCH para no tener que eliminar variables y agrupar las que cumplen la carcterística de ser mayores a determinado valor en una sola categoría
@@ -935,8 +787,7 @@ datos_2 <- datos_2 %>%
 
 
 
-``` 
-
+```
 
 ```{r, echo: false}
 
@@ -1071,15 +922,16 @@ En relación a los baños lo más común es que los inmuebles tengan un baño, l
 
 **Análisis Exploratorio para Determinar las variables que más Influyen en el Precio por metro cuadrado:**
 
-Se realizará un análisis exploratorio con el objetivo de identificar las variables que tienen mayor impacto en el precio por metro cuadrado. Para ello, se elaboraron graficos lineales que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas variables agecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos, sin embargo, en el informe solo se presentan algunos de los resultados más relevenates.
+Se realizará un análisis exploratorio con el objetivo de identificar las variables que tienen mayor impacto en el precio por metro cuadrado. Para ello, se elaboraron graficos lineales que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas variables afecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos, sin embargo, en el informe solo se presentan algunos de los resultados más relevenates.
 
-El gráfico a continuación muestra como afecta la contidad de baños en el precio por metro cuadrado.Se observa que las propiedades con un solo baño presentan un precio por metro cuadrado más alto. Esto sugiere que la cantidad de baños no influye significativamente en la determinación del precio de la propiedad. Sin embargo, se reconoce que esta conclusión puede no refelejarse a la realidad. Este resultado podría deberse a una posible falla en los datos o algún otro factor no considerado en el análisis.
+El gráfico a continuación muestra como afecta la contidad de baños en el precio por metro cuadrado.Se observa que las propiedades con 1 y 2 baños tienen un precio por metro cuadrado mayor al resto de las propiedades. Esto significa que la cantidad de baños no influye demaciado en la determinacion de precios de una propiedad.
 
 Además, se decicio categorizar las propiedades en cuatro grupos según la coantidad de baños: propiedades con 1 baño, 2 baños, 3 baños y más de 3 baños.Para asi de esta manera poder tener un mejor manejo de los datos.
 
 ```{r}
 datos_2 <- datos_2 %>%
   mutate(baños = case_when(
+    baños == 0 ~ "0",
     baños == 1 ~ "1",
     baños == 2 ~ "2",
     baños == 3 ~ "3",
@@ -1098,12 +950,12 @@ ggplot(promedios1, aes(x = baños, y = promedio_precio_m2)) +
   theme_minimal()
 ```
 
-Se aplicó el mismo proceso de categorización d¿utilizado para los baños a las propiedades en función de la cantidad de estacionamientos. En este caso, se excluyeron del análisis las propiedades que no tienen disponibilidad de estacionamientos, con el objetivo de comparar únicamente aquellas que sí cuentan con estacionamientos. Los resultados despuestran que la cantidad de estacionamientos influye significativamente en la determinación del precio por metro cuadrado.
+Se aplicó el mismo proceso de categorización utilizado para los baños a las propiedades en función de la cantidad de estacionamientos. En este caso, que la propiedad tenga o no tenga estacionamiento no afecta de gran manera el precio por metro cuadrado. Igualmente el grafico muestra que las propiedades que tiene solo un estacionamiento son las propiedades que tienen un precio por metro cuadrado mayor.
 
 ```{r}
 datos_2 <- datos_2 %>%
-  filter(cant_de_est != 0) %>%
   mutate(cant_de_est = case_when(
+    cant_de_est == 0 ~ "0",
     cant_de_est == 1 ~ "1",
     cant_de_est == 2 ~ "2",
     TRUE ~ "más de 3"
@@ -1161,7 +1013,7 @@ Municipios: El gráfico que compara los diferentes municipios muestra que existe
 
 Calefacción: El siguiente gráfico indica que la presencia de calefacción no parece afectar significativamente el precio por metro cuadrado
 
-Vista al Mar: Similar a lo observado con los baños, las propiedades con vista al mar generalemnte tienen un precio por metro cuadrado más alto en comparación con las demás. Sin embargo, esta relación no necesariamente refelja la realidad del mercado.
+Vista al Mar: Una propiedad que tiene vista al mar si presebte aun precio por metro cuadrado superior a que al resto de las propiedades que no tienen.
 
 A continuación, se presenta un gráfico que muestra la antigüedad de la propiedad y cómo varía el precio por metro cuadrado según el año de construcción. Se observa que, a medida que las propiedades son más nueveas, el precio por metro cuadrado tiende a aumentar.
 
@@ -1199,9 +1051,6 @@ ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
 datos_2 <- datos_2 %>%
   mutate(tipo_prop = case_when(
     tipo_prop == "Apartament" ~ "Apartamento",
-    tipo_prop == "Commercial" ~ "Comercial",
-    tipo_prop == "House" ~ "Casa",
-    tipo_prop == "Office" ~ "Oficina",
     TRUE ~ "Otros"
   ))
 
@@ -1210,9 +1059,7 @@ promedios6 <- datos_2 %>%
   group_by(tipo_prop) %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
-# Mostrar los promedios
-print(promedios)
-
+datos_2$tipo_prop
 # Crear el gráfico
 ggplot(promedios6, aes(x = tipo_prop, y = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
