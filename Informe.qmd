@@ -406,120 +406,6 @@ En terminos de precios por metro cuadrado de alquiler, identificamos que el muni
 
 En cuanto a la disposición de las propiedades, la mayoría de las propiedades en alquiler están sutuadas al frente. Al analizar los precios por metro cuadrado relacionados con la disposición de las propiedades, encontramos que la mayoría tienen un precio diferente. Las propiedades que esta situadas al fente su precio por metro cuadrado es superior a los 7500 dolares mientras que los que estan en el interior y "side" su precio es inferior a lps 2500 dolares por metro cuadrado.
 
-La idea ahora es tratar de recodificar siertas variables para que los datos sean mas flexibles. La idea es agarrar ciertas variables como baños, cantidad de estacionamientos, catidad de pisos y recodificarlas.
-
-```{r}
-datos_2 <- datos_2 %>%
-  mutate(baños = case_when(
-    baños == 0 ~ "0",
-    baños == 1 ~ "1",
-    baños == 2 ~ "2",
-    baños == 3 ~ "3",
-    TRUE ~ "mas de 3"
-  ))
-
-ggplot(datos_2, aes(x = baños, y = mean(precio_m2))) +
-  geom_bar(stat = "identity") +
-  labs(x = "Baños", y = "Precio por m2") +
-  ggtitle("Precio por m2 según número de baños") +
-  theme_minimal()
-```
-
-```{r}
-datos_2 <- datos_2 %>%
-  mutate(cant_de_est = case_when(
-    cant_de_est == 0 ~ "0",
-    cant_de_est == 1 ~ "1",
-    cant_de_est == 2 ~ "2",
-    TRUE ~ "mas de 3"
-  ))
-
-ggplot(datos_2, aes(x = cant_de_est, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Cantidad de estacionamientos", y = "Precio por m2") +
-  ggtitle("Precio por m2 según número de baños") +
-  theme_minimal()
-```
-
-```{r}
-ggplot(datos_2, aes(x = Municipio, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Municipio", y = "Precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-names(datos_2)
-```
-
-```{r}
-ggplot(datos_2, aes(x = calefaccion, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Calefacción", y = "Impacto en el precio por m2") +
-  ggtitle("Impacto de la calefacción en el precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-ggplot(datos_2, aes(x = vista_al_mar, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Vista al mar", y = "Precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-datos_filtrados <- datos_2 %>%
-  filter(precio_m2 <= 400)
-
-media_años <- round(mean(datos_filtrados$año_de_const[datos_filtrados$año_de_const != 0], na.rm = TRUE))
-datos_filtrados$año_de_const[datos_filtrados$año_de_const == 0] <- media_años
-
-# Definir los reemplazos y los valores de reemplazo
-reemplazos <- c(3, 10, 15, 90, 39, 95, 60)
-valores_reemplazo <- c(2003, 2010, 2015, 1990, 1939, 1995, 1960)
-
-# Aplicar las reglas de reemplazo
-for (i in seq_along(reemplazos)) {
-  datos_filtrados$año_de_const[datos_filtrados$año_de_const == reemplazos[i]] <- valores_reemplazo[i]
-}
-
-# Convertir año_de_const a tipo numérico
-datos_filtrados$año_de_const <- as.numeric(datos_filtrados$año_de_const)
-
-# Gráfico de dispersión para visualizar la relación entre año de construcción y precio por m2
-ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
-  geom_point(alpha = 0.7) +
-  labs(x = "Año de construcción de la propiedad", y = "Precio por m2") +
-  ggtitle("Relación entre año de construcción y precio por m2") +
-  theme_minimal()
-
-```
-
-En estos graficos lo que se trato de hacer es como algunas variables influyen en el precio por metros cuadrados. Como se puede observar con mucha imaginacion que las propiedades que estan constuidas mas recientemente su precio es mas alto.
-
-```{r}
-datos_2 <- datos_2 %>%
-  mutate(tipo_prop = case_when(
-    tipo_prop == "Apartament" ~ "Apartamento",
-    tipo_prop == "Commercial" ~ "Comercial",
-    tipo_prop == "House" ~ "Casa",
-    tipo_prop == "Office" ~ "Oficina",
-    TRUE ~ "otros"
-  ))
-
-ggplot(datos_2, aes(x = tipo_prop, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Tipo de propiedad", y = "Impacto en el precio por m2") +
-  ggtitle("Impacto del tipo de propiedad en el precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-mod <- lm(precio_m2 ~ Municipio + Gastos_Comunes + condicion + año_de_const + tipo_prop , data = datos_2)
-names(datos_2)
-summary(mod)
-```
-
 ### NUEVOS GRÁFICOS DE VISUALIZACIÓN:
 
 Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
@@ -1132,6 +1018,164 @@ En relación a los baños lo más común es que los inmuebles tengan un baño, l
 ```
 
 ## Modelo Predictivo
+
+**Análisis Exploratorio para Determinar las variables que más Influyen en el Precio por metro cuadrado:**
+
+Se realizará un análisis exploratorio con el objetivo de identificar las variables que tienen mayor impacto en el precio por metro cuadrado. Para ello, se elaboraron graficos lineales que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas variables agecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos, sin embargo, en el informe solo se presentan algunos de los resultados más relevenates.
+
+El gráfico a continuación muestra como afecta la contidad de baños en el precio por metro cuadrado.Se observa que las propiedades con un solo baño presentan un precio por metro cuadrado más alto. Esto sugiere que la cantidad de baños no influye significativamente en la determinación del precio de la propiedad. Sin embargo, se reconoce que esta conclusión puede no refelejarse a la realidad. Este resultado podría deberse a una posible falla en los datos o algún otro factor no considerado en el análisis.
+
+Además, se decicio categorizar las propiedades en cuatro grupos según la coantidad de baños: propiedades con 1 baño, 2 baños, 3 baños y más de 3 baños.Para asi de esta manera poder tener un mejor manejo de los datos.
+
+```{r}
+datos_2 <- datos_2 %>%
+  mutate(baños = case_when(
+    baños == 1 ~ "1",
+    baños == 2 ~ "2",
+    baños == 3 ~ "3",
+    TRUE ~ "mas de 3"
+  ))
+
+promedios1 <- datos_2 %>%
+  group_by(baños) %>%
+  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
+
+
+ggplot(promedios1, aes(x = baños, y = promedio_precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Baños", y = "Precio por m2") +
+  ggtitle("Precio por m2 según número de baños") +
+  theme_minimal()
+```
+
+Se aplicó el mismo proceso de categorización d¿utilizado para los baños a las propiedades en función de la cantidad de estacionamientos. En este caso, se excluyeron del análisis las propiedades que no tienen disponibilidad de estacionamientos, con el objetivo de comparar únicamente aquellas que sí cuentan con estacionamientos. Los resultados despuestran que la cantidad de estacionamientos influye significativamente en la determinación del precio por metro cuadrado.
+
+```{r}
+datos_2 <- datos_2 %>%
+  filter(cant_de_est != 0) %>%
+  mutate(cant_de_est = case_when(
+    cant_de_est == 1 ~ "1",
+    cant_de_est == 2 ~ "2",
+    TRUE ~ "más de 3"
+  ))
+
+promedios2 <- datos_2 %>%
+  group_by(cant_de_est) %>%
+  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
+
+# Crear el gráfico
+ggplot(promedios2, aes(x = cant_de_est, y = promedio_precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Cantidad de estacionamientos", y = "Precio por m2") +
+  ggtitle("Precio por m2 según número de estacionamientos") +
+  theme_minimal()
+```
+
+```{r}
+promedios3 <- datos_2 %>%
+  group_by(Municipio) %>%
+  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
+
+ggplot(promedios3, aes(x = Municipio, y = promedio_precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Municipio", y = "Precio por m2") +
+  theme_minimal()
+```
+
+```{r}
+promedios4 <- datos_2 %>%
+  group_by(calefaccion) %>%
+  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
+
+ggplot(promedios4, aes(x = calefaccion, y = promedio_precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Calefacción", y = "Impacto en el precio por m2") +
+  ggtitle("Impacto de la calefacción en el precio por m2") +
+  theme_minimal()
+```
+
+```{r}
+promedios5 <- datos_2 %>%
+  group_by(vista_al_mar) %>%
+  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
+
+ggplot(promedios5, aes(x = vista_al_mar, y = promedio_precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Vista al mar", y = "Precio por m2") +
+  theme_minimal()
+```
+
+Al analizar los tres graficos, se pueden destacat las siguientes observaciones:
+
+Municipios: El gráfico que compara los diferentes municipios muestra que existe una clara diferencia en los precios por metro cuadrado entre los distintos municipios.
+
+Calefacción: El siguiente gráfico indica que la presencia de calefacción no parece afectar significativamente el precio por metro cuadrado
+
+Vista al Mar: Similar a lo observado con los baños, las propiedades con vista al mar generalemnte tienen un precio por metro cuadrado más alto en comparación con las demás. Sin embargo, esta relación no necesariamente refelja la realidad del mercado.
+
+A continuación, se presenta un gráfico que muestra la antigüedad de la propiedad y cómo varía el precio por metro cuadrado según el año de construcción. Se observa que, a medida que las propiedades son más nueveas, el precio por metro cuadrado tiende a aumentar.
+
+Para llevar a cabo este análisis, fue necesario acotar ciertos datos y eliminar algunos valores atípicos que distorcionaban la visualización.
+
+```{r}
+datos_filtrados <- datos_2 %>%
+  filter(precio_m2 <= 400)
+
+media_años <- round(mean(datos_filtrados$año_de_const[datos_filtrados$año_de_const != 0], na.rm = TRUE))
+datos_filtrados$año_de_const[datos_filtrados$año_de_const == 0] <- media_años
+
+# Definir los reemplazos y los valores de reemplazo
+reemplazos <- c(3, 10, 15, 90, 39, 95, 60)
+valores_reemplazo <- c(2003, 2010, 2015, 1990, 1939, 1995, 1960)
+
+# Aplicar las reglas de reemplazo
+for (i in seq_along(reemplazos)) {
+  datos_filtrados$año_de_const[datos_filtrados$año_de_const == reemplazos[i]] <- valores_reemplazo[i]
+}
+
+# Convertir año_de_const a tipo numérico
+datos_filtrados$año_de_const <- as.numeric(datos_filtrados$año_de_const)
+
+# Gráfico de dispersión para visualizar la relación entre año de construcción y precio por m2
+ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
+  geom_point(alpha = 0.7) +
+  labs(x = "Año de construcción de la propiedad", y = "Precio por m2") +
+  ggtitle("Relación entre año de construcción y precio por m2") +
+  theme_minimal()
+
+```
+
+```{r}
+datos_2 <- datos_2 %>%
+  mutate(tipo_prop = case_when(
+    tipo_prop == "Apartament" ~ "Apartamento",
+    tipo_prop == "Commercial" ~ "Comercial",
+    tipo_prop == "House" ~ "Casa",
+    tipo_prop == "Office" ~ "Oficina",
+    TRUE ~ "Otros"
+  ))
+
+# Calcular el promedio del precio por metro cuadrado para cada tipo de propiedad
+promedios6 <- datos_2 %>%
+  group_by(tipo_prop) %>%
+  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
+
+# Mostrar los promedios
+print(promedios)
+
+# Crear el gráfico
+ggplot(promedios6, aes(x = tipo_prop, y = promedio_precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Tipo de propiedad", y = "Promedio del precio por m2") +
+  ggtitle("Promedio del precio por m2 según el tipo de propiedad") +
+  theme_minimal()
+```
+
+```{r}
+mod <- lm(precio_m2 ~ Municipio + Gastos_Comunes + condicion + año_de_const + tipo_prop , data = datos_2)
+names(datos_2)
+summary(mod)
+```
 
 ```{r}
 #| echo: false
