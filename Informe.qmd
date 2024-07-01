@@ -219,7 +219,7 @@ detector_nulos <- function(datos_2){ # Función
 }
 
 detector_nulos(datos_2)
-datos_2$año_de_const
+
 ```
 
 ### NUEVOS GRÁFICOS DE VISUALIZACIÓN:
@@ -738,7 +738,6 @@ datos_2$amueblado <- as.factor(datos_2$amueblado)
 datos_2$zona_barbacoa <- as.factor(datos_2$zona_barbacoa)
 datos_2$deposito <- as.factor(datos_2$deposito)
 datos_2$baños <- as.factor(datos_2$baños)
-names(datos_2)
 ```
 
 **Análisis Exploratorio para Determinar las variables que más Influyen en el Precio por metro cuadrado:**
@@ -831,7 +830,12 @@ ggplot(promedios5, aes(x = vista_al_mar, y = promedio_precio_m2)) +
 Analizar esto, hacer un histograma y no una densidad
 
 ```{r}
-plot(density(datos_2$precio_m2))
+plot(hist(datos_2$precio_m2, 
+     main = "Histograma de Precio por Metro Cuadrado", 
+     xlab = "Precio por Metro Cuadrado", 
+     ylab = "Frecuencia", 
+     col = "lightblue", 
+     border = "black"))
 
 median(datos_2$precio_m2)
 mean(datos_2$precio_m2)
@@ -963,7 +967,7 @@ datos_sub <- datos_2[, c("Gastos_Comunes", "cant_de_est", "tipo_prop", "vista_al
 names(datos_sub)
 ```
 
-
+Multicolinealidad:
 ```{r}
 #| echo: false
 vif(mod)
@@ -971,16 +975,23 @@ vif(mod)
 
 La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo.
 
-```{r}
-#| echo: false
-crPlots(mod)
-```
 
+Homoscedasticidad:
 ```{r}
 #| echo: false
 ncvTest(mod)
 
 ```
+
+Test de normalidad:
+
+```{r}
+#| echo: false
+shapiro.test(rstudent(mod))
+jarque.bera.test(na.omit(rstudent(mod)))
+ks.test(rstudent(mod), 'pnorm')
+```
+
 
 Atípicos:
 
@@ -1170,10 +1181,14 @@ tabla_variables[41,] <- c("Air_condicioning", "Dummy", "Propiedad con aire acond
 tabla_variables[42,] <- c("Solarium", "Dummy", "Propiedad con solarium, variable de si y no")
 
 
-
+library(gt)
 # Resultado
-tabla_variables <- data.frame(tabla_variables)
-gt(tabla_variables) |>
+tabla_gt <- gt(tabla_variables) |>
+  cols_label(
+    Nombre.de.la.variable = md("**Nombre de la variable**"),
+    Tipo.de.variable = md("**Tipo de variable**"),
+    Descripción = md("**Descripción**")
+  ) |>
   tab_style(
     style = cell_text(size = pct(75)),
     locations = cells_column_labels()
