@@ -391,7 +391,6 @@ ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes
 
 # Filtro para quitar los outliers
 
-
 ``` 
 La respuesta es que si, los barrios ubicados en el municipio E, B y CH son los que tienen el precio promedio por metro cuadrado más alto. Dentro del municipio E el barrio más caro es Carrasco, dentro del municipio B el barrio más caro es Centro, dentro del municipio CH el barrio más caro es Pocitos.
 
@@ -483,6 +482,30 @@ La mayoría de gastos comúnes se dan en los apartamentos, y muy pocos en las Of
 
 En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes.
 
+
+```{r, echo: false}
+
+datos_2$precio_m2 <- as.numeric(datos_2$precio_m2)
+
+datos_3 <- datos_2 %>%
+  mutate(nro_de_piso = case_when(
+    nro_de_piso >= 15 ~ "Número de piso mayor a 15",
+    TRUE ~ "Número de piso menor a 15"))
+
+datos_3 <- datos_3 %>%
+  mutate(precio_m2 = case_when(
+    precio_m2 >= 13 ~ "Precio m2 mayor 13",
+    TRUE ~ "Precio m2 menor 13"
+  ))
+
+datos_3$precio_m2
+install.packages("ggmosaic")
+library(ggmosaic)
+ggplot(data = datos_3) +
+ geom_mosaic(aes(x = product(precio_m2, nro_de_piso), fill= precio_m2)) +
+ labs(title='f(precio_m2 | nro_de_piso) f(nro_de_piso)')   
+
+```
 
 
 Pregunta 11) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
