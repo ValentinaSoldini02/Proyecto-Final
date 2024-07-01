@@ -486,7 +486,10 @@ datos <- data.frame(
   precio = rnorm(100, 200000, 50000),
   Municipio = sample(c("Mun1", "Mun2", "Mun3", "Mun4"), 100, replace = TRUE)
 )
+
+
 #
+
 # Definir la UI
 ui <- fluidPage(
   titlePanel("Ejemplo de Gráficos Dinámicos en Shiny"),
