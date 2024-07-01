@@ -19,11 +19,11 @@ Estas preguntas guiarán nuestro analisis para comprender mejor los factores que
 
 ```{r}
 # Instalar librerías:
-
-install.packages("readr")
-install.packages("here")
-install.packages("cowplot")
-install.packages("gridExtra")
+# 
+# install.packages("readr")
+# install.packages("here")
+# install.packages("cowplot")
+# install.packages("gridExtra")
 
 # NOTA) Usar disposicion
 
@@ -910,7 +910,7 @@ Pregunta 10) ¿Cómo influyen elementos relativos a los pisos como son el númer
 
 
 # Filtro:
-datos <- datos %>% filter( (cant_de_piso < 20 & cant_de_piso > 0) & (apartamentos_por_piso < 14 & apartamentos_por_piso > 0) & (nro_de_piso < 44) )
+# datos <- datos %>% filter( (cant_de_piso < 20 & cant_de_piso > 0) & (apartamentos_por_piso < 14 & apartamentos_por_piso > 0) & (nro_de_piso < 44) )
 
 
 
@@ -999,8 +999,6 @@ grid.arrange(grafico12, grafico13, grafico14, grafico15, grafico16, grafico17, n
 # Hacer el filtro que nos recomendo la profe con los factores para que se vea mejor y no perder datos.
  
 
-
-
 ```
 
 
@@ -1013,10 +1011,54 @@ La distribución de la cantidad muestra que en un piso en general es más común
 
 Pregunta 12) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
 
-
+## Comodidades
 ```{r, echo: false}
 
 # PRECIO SEGÚN CANTIDAD DE COMODIDADES como son Garages, Habitaciones, Cuartos, Baños 
+
+
+
+# Recodificaciones:
+# 
+# datos_2 <- datos_2 %>%
+#   mutate(cant_de_est = case_when(
+#     cant_de_est == 0 ~ "0",
+#     cant_de_est == 1 ~ "1",
+#     cant_de_est == 2 ~ "2",
+#     TRUE ~ "más de 3"
+#   ))
+# 
+# 
+# datos_2 <- datos_2 %>%
+#   mutate(baños = case_when(
+#     baños == 0 ~ "0",
+#     baños == 1 ~ "1",
+#     baños == 2 ~ "2",
+#     baños == 3 ~ "3",
+#     TRUE ~ "mas de 3"
+#   ))
+# 
+# 
+# datos_2 <- datos_2 %>%
+#   mutate(cant_habitaciones = case_when(
+#     cant_habitaciones == 0 ~ "0",
+#     cant_habitaciones == 1 ~ "1",
+#     cant_habitaciones == 2 ~ "2",
+#     cant_habitaciones == 3 ~ "3",
+#     TRUE ~ "mas de 3"
+#   ))
+# 
+# 
+# datos_2 <- datos_2 %>%
+#   mutate(cant_cuartos = case_when(
+#     cant_cuartos == 0 ~ "0",
+#     cant_cuartos == 1 ~ "1",
+#     cant_cuartos == 2 ~ "2",
+#     cant_cuartos == 3 ~ "3",
+#     TRUE ~ "mas de 3"
+#   ))
+
+
 
 
 
@@ -1121,6 +1163,35 @@ Recodificar estas variables.
 
 En relación a los baños lo más común es que los inmuebles tengan un baño, luego el tener 2 o 3 es menos común. Similarmente ocurre con la cantidad de estacionamientos (garages) donde lo más común es el que el inmueble tenga un garage o ninguno. En relación al número de cuartos y de habitaciones el patrón que se repite es tener 2 o 3 en el caso de habitaciones y 1 o 2 en el caso de cuartos. Pero vemos que siempre para todos estos elementos, se cumple la relación intuitiva de que a más número de baños, estacionamientos, habitaciones o cuartos, el precio del inmueble es más elevado.
 
+### Mosaico
+
+```{r}
+
+
+datos_2$precio_m2 <- as.numeric(datos_2$precio_m2)
+
+datos_3 <- datos_2 %>%
+  mutate(nro_de_piso = case_when(
+    nro_de_piso >= 15 ~ "Número de piso mayor a 15",
+    TRUE ~ "Número de piso menor a 15"))
+
+datos_3 <- datos_3 %>%
+  mutate(precio_m2 = case_when(
+    precio_m2 >= 13 ~ "Precio m2 mayor 13",
+    TRUE ~ "Precio m2 menor 13"
+  ))
+
+
+datos_3$precio_m2
+
+install.packages("ggmosaic")
+library(ggmosaic)
+ggplot(data = datos_3) +
+ geom_mosaic(aes(x = product(precio_m2, nro_de_piso), fill= precio_m2)) +
+ labs(title='f(precio_m2 | nro_de_piso) f(nro_de_piso)')   
+
+
+```
 
 
 
@@ -1129,8 +1200,7 @@ En relación a los baños lo más común es que los inmuebles tengan un baño, l
 
 
 
-
-Pregunta 13) ¿Existe relación entre los metros cuadrados (por propiedad, tierra o totales) y el precio?
+Pregunta 13) ¿Existe relación entre los metros cuadrados (por propiedad, tierra o totales) y el precio? (esta no)
 
 ```{r, echo: false}
 
