@@ -37,7 +37,30 @@ datos
 ```
 
 
+```{r}
 
+
+# Función para el criterio de outliers
+detectar_outliers_iqr <- function(x) { # Función
+  Q1 <- quantile(x, 0.05)              # Primer Quantil
+  Q3 <- quantile(x, 0.95)              # Tercer Quantil
+  IQR <- Q3 - Q1                       # Rango Intercuartilico
+  lower_bound <- Q1 - 1.5 * IQR        # Límite Inferior
+  upper_bound <- Q3 + 1.5 * IQR        # Límite Superior
+  
+  outliers <- x[x < lower_bound | x > upper_bound] 
+  # Si el valor esta por debajo del limite inferior o por encima del límite superior, entonces es un outlier
+  
+  return(outliers) # Retorno
+}
+
+
+
+
+
+
+
+```
 
 
 
@@ -463,7 +486,7 @@ datos <- data.frame(
   precio = rnorm(100, 200000, 50000),
   Municipio = sample(c("Mun1", "Mun2", "Mun3", "Mun4"), 100, replace = TRUE)
 )
-
+#
 # Definir la UI
 ui <- fluidPage(
   titlePanel("Ejemplo de Gráficos Dinámicos en Shiny"),
