@@ -1,6 +1,10 @@
 ---
 title: "Informe"
 format: pdf
+execute: 
+  echo: false
+  warning: false
+  message : false
 author: "Diego Da Rosa, Valentina Soldini, Nahuel Bizoso"
 editor: visual
 ---
@@ -170,9 +174,6 @@ datos_2 <- datos_2 %>% # Datos
 
     TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
   ))
-
-
-
 ```
 
 Comendando la limpieza para la regresión lineal multiple:
@@ -1088,6 +1089,7 @@ El gráfico a continuación muestra como afecta la contidad de baños en el prec
 Además, se decicio categorizar las propiedades en cuatro grupos según la coantidad de baños: propiedades con 1 baño, 2 baños, 3 baños y más de 3 baños.Para asi de esta manera poder tener un mejor manejo de los datos.
 
 ```{r}
+
 datos_2 <- datos_2 %>%
   mutate(baños = case_when(
     baños == 0 ~ "0",
@@ -1250,7 +1252,7 @@ mod <- lm(precio_m2 ~ Municipio + Gastos_Comunes + baños+ año_de_const + tipo_
 summary(mod)
 ```
 
-A pesar de que las variabes comparadas con el precio por metro cuadrado linealemnete eran significativas para un aumento del precio por metro cuadrado, ahora nos podemos dar cuanta que no es asi. En el summary del modelo podemos darnos cuenta que no todas las variables son significativas y por otro lado el R2 da demaciado baji. Esto significa que las variables que tenemos en el modelo no describen en su totalidad el precio por metro cuadrado.
+A pesar de que las variabes comparadas con el precio por metro cuadrado linealemnete eran significativas para un aumento del precio por metro cuadrado, ahora nos podemos dar cuanta que no es asi. En el summary del modelo podemos darnos cuenta que no todas las variables son significativas y por otro lado el R2 da demaciado bajo. Esto significa que las variables que tenemos en el modelo no describen en su totalidad el precio por metro cuadrado.
 
 
 Error cuadratico medio:
@@ -1264,6 +1266,7 @@ mse_valor <- mse(datos_2$precio_m2, predicciones)
 
 # MAPE:
 
+library(MLmetrics)
 mape_valor <- MAPE(datos_2$precio_m2, predicciones)
 ```
 
