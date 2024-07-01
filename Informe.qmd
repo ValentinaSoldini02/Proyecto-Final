@@ -52,7 +52,7 @@ Puedes encontrar el dataset en el siguiente enlace: [Precio de alquiler de casas
 # Lectura de los datos:
 # Datos sobre precio de casas
 datos <- read_csv(here("houses.csv"))
-datos
+dim(datos)
 
 ```
 
@@ -809,7 +809,7 @@ ggplot(promedios3, aes(x = Municipio, y = promedio_precio_m2)) +
 ```{r}
 promedios4 <- datos_2 %>%
   group_by(calefaccion) %>%
-  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
+  summarise(promedio_precio_m2 = median(precio_m2, na.rm = TRUE))
 
 ggplot(promedios4, aes(x = calefaccion, y = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
@@ -821,13 +821,24 @@ ggplot(promedios4, aes(x = calefaccion, y = promedio_precio_m2)) +
 ```{r}
 promedios5 <- datos_2 %>%
   group_by(vista_al_mar) %>%
-  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
+  summarise(promedio_precio_m2 = median(precio_m2, na.rm = TRUE))
 
 ggplot(promedios5, aes(x = vista_al_mar, y = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
   labs(x = "Vista al mar", y = "Precio por m2") +
   theme_minimal()
 ```
+Analizar esto, hacer un histograma y no una densidad
+
+```{r}
+plot(density(datos_2$precio_m2))
+
+median(datos_2$precio_m2)
+mean(datos_2$precio_m2)
+```
+
+
+
 
 Al analizar los tres graficos, se pueden destacat las siguientes observaciones:
 
@@ -907,6 +918,10 @@ ggplot(datos_2, aes(x = Gastos_Comunes, y = precio_m2)) +
   theme_minimal()
 
 ```
+no influye tanto en el tama;o de la propiedad
+
+
+
 ```{r}
 mod <- lm(precio_m2 ~ Municipio + Gastos_Comunes + baños+ año_de_const + tipo_prop + vista_al_mar + cant_de_est , data = datos_2)
 
@@ -928,8 +943,11 @@ mse_valor <- mse(datos_2$precio_m2, predicciones)
 # MAPE:
 
 library(MLmetrics)
-mape_valor <- MAPE(datos_2$precio_m2, predicciones)
+mape_valor <- MAPE(datos_2$precio_m2, predicciones)/100
 ```
+248 predice mal 
+
+
 
 ```{r}
 #| echo: false
@@ -942,27 +960,9 @@ mape_valor <- MAPE(datos_2$precio_m2, predicciones)
 
 
 datos_sub <- datos_2[, c("Gastos_Comunes", "cant_de_est", "tipo_prop", "vista_al_mar", "calefaccion", "Municipio", "baños", "precio_m2"), drop = FALSE]
-
+names(datos_sub)
 ```
 
-```{r}
-#| echo: false
-#correlacion:
-  
-numerical_vars <- datos_sub %>%
-  select_if(is.numeric)
-  
-
-# Calcular la matriz de correlación
-cor_matrix <- cor(numerical_vars, use = "complete.obs")
-
-
-library(corrplot)
-# Visualizar la matriz de correlación
-corrplot(cor_matrix, method = "circle", type = "upper", tl.cex = 0.6, tl.col = "black")
-
-
-```
 
 ```{r}
 #| echo: false
@@ -974,6 +974,12 @@ La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que
 ```{r}
 #| echo: false
 crPlots(mod)
+```
+
+```{r}
+#| echo: false
+ncvTest(mod)
+
 ```
 
 Atípicos:
@@ -1001,6 +1007,7 @@ Bosques:
 ```{r}
 #| echo: false
 names(datos_sub)
+set.seed(50)
 intrain <- sample(x = 1:nrow(datos_sub), size =
 nrow(datos_sub)*.7)
 training <- datos_sub[intrain,]
@@ -1087,9 +1094,13 @@ prp(tree_ab,
     nn = TRUE) 
 
 
-fancyRpartPlot(tree_ab)
+fancy <- fancyRpartPlot(tree_ab, cex = 0.5)
 
-names(datos_2_2)
+pdf(tf <- tempfile(fileext = ".pdf"))
+fancyRpartPlot(tree_ab)
+dev.off()
+cat(tf)
+
 ```
 
 En este paso se trato de ver en que condiciones estaba cada municipio. Creo que noquedo muy bien, pero es un intento de arbol
@@ -1162,6 +1173,10 @@ tabla_variables[42,] <- c("Solarium", "Dummy", "Propiedad con solarium, variable
 
 # Resultado
 tabla_variables <- data.frame(tabla_variables)
-gt(tabla_variables)
+gt(tabla_variables) |>
+  tab_style(
+    style = cell_text(size = pct(75)),
+    locations = cells_column_labels()
+  )
 
 ```
