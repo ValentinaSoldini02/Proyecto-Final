@@ -406,121 +406,6 @@ En terminos de precios por metro cuadrado de alquiler, identificamos que el muni
 
 En cuanto a la disposición de las propiedades, la mayoría de las propiedades en alquiler están sutuadas al frente. Al analizar los precios por metro cuadrado relacionados con la disposición de las propiedades, encontramos que la mayoría tienen un precio diferente. Las propiedades que esta situadas al fente su precio por metro cuadrado es superior a los 7500 dolares mientras que los que estan en el interior y "side" su precio es inferior a lps 2500 dolares por metro cuadrado.
 
-La idea ahora es tratar de recodificar siertas variables para que los datos sean mas flexibles. La idea es agarrar ciertas variables como baños, cantidad de estacionamientos, catidad de pisos y recodificarlas.
-
-```{r}
-datos_2 <- datos_2 %>%
-  mutate(baños = case_when(
-    baños == 0 ~ "0",
-    baños == 1 ~ "1",
-    baños == 2 ~ "2",
-    baños == 3 ~ "3",
-    TRUE ~ "mas de 3"
-  ))
-
-ggplot(datos_2, aes(x = baños, y = mean(precio_m2))) +
-  geom_bar(stat = "identity") +
-  labs(x = "Baños", y = "Precio por m2") +
-  ggtitle("Precio por m2 según número de baños") +
-  theme_minimal()
-```
-
-```{r}
-datos_2 <- datos_2 %>%
-  mutate(cant_de_est = case_when(
-    cant_de_est == 0 ~ "0",
-    cant_de_est == 1 ~ "1",
-    cant_de_est == 2 ~ "2",
-    TRUE ~ "mas de 3"
-  ))
-
-ggplot(datos_2, aes(x = cant_de_est, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Cantidad de estacionamientos", y = "Precio por m2") +
-  ggtitle("Precio por m2 según número de baños") +
-  theme_minimal()
-```
-
-```{r}
-ggplot(datos_2, aes(x = Municipio, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Municipio", y = "Precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-names(datos_2)
-```
-
-```{r}
-ggplot(datos_2, aes(x = calefaccion, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Calefacción", y = "Impacto en el precio por m2") +
-  ggtitle("Impacto de la calefacción en el precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-ggplot(datos_2, aes(x = vista_al_mar, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Vista al mar", y = "Precio por m2") +
-  theme_minimal()
-```
-
-```{r}
-datos_filtrados <- datos_2 %>%
-  filter(precio_m2 <= 400)
-
-media_años <- round(mean(datos_filtrados$año_de_const[datos_filtrados$año_de_const != 0], na.rm = TRUE))
-datos_filtrados$año_de_const[datos_filtrados$año_de_const == 0] <- media_años
-
-# Definir los reemplazos y los valores de reemplazo
-reemplazos <- c(3, 10, 15, 90, 39, 95, 60)
-valores_reemplazo <- c(2003, 2010, 2015, 1990, 1939, 1995, 1960)
-
-# Aplicar las reglas de reemplazo
-for (i in seq_along(reemplazos)) {
-  datos_filtrados$año_de_const[datos_filtrados$año_de_const == reemplazos[i]] <- valores_reemplazo[i]
-}
-
-# Convertir año_de_const a tipo numérico
-datos_filtrados$año_de_const <- as.numeric(datos_filtrados$año_de_const)
-
-# Gráfico de dispersión para visualizar la relación entre año de construcción y precio por m2
-ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
-  geom_point(alpha = 0.7) +
-  labs(x = "Año de construcción de la propiedad", y = "Precio por m2") +
-  ggtitle("Relación entre año de construcción y precio por m2") +
-  theme_minimal()
-
-```
-
-En estos graficos lo que se trato de hacer es como algunas variables influyen en el precio por metros cuadrados. Como se puede observar con mucha imaginacion que las propiedades que estan constuidas mas recientemente su precio es mas alto.
-
-
-```{r}
-datos_2 <- datos_2 %>%
-  mutate(tipo_prop = case_when(
-    tipo_prop == "Apartament" ~ "Apartamento",
-    tipo_prop == "Commercial" ~ "Comercial",
-    tipo_prop == "House" ~ "Casa",
-    tipo_prop == "Office" ~ "Oficina",
-    TRUE ~ "otros"
-  ))
-
-ggplot(datos_2, aes(x = tipo_prop, y = precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Tipo de propiedad", y = "Impacto en el precio por m2") +
-  ggtitle("Impacto del tipo de propiedad en el precio por m2") +
-  theme_minimal()
-```
-```{r}
-mod <- lm(precio_m2 ~ Municipio + Gastos_Comunes + condicion + año_de_const + tipo_prop , data = datos_2)
-names(datos_2)
-summary(mod)
-```
-
-Una vez realizado 
 
 
 ### NUEVOS GRÁFICOS DE VISUALIZACIÓN:
@@ -1285,7 +1170,7 @@ Al analizar los tres graficos, se pueden destacat las siguientes observaciones:
 
 Municipios: El gráfico que compara los diferentes municipios muestra que existe una clara diferencia en los precios por metro cuadrado entre los distintos municipios.
 
-Calefacción: El siguiente gráfico indica que la presencia de calefacción no parece afectar significativamente el precio por metro cuadrado
+Calefacción: El siguiente gráfico indica que la presencia de calefacción parece afectar significativamente el precio por metro cuadrado
 
 Vista al Mar: Una propiedad que tiene vista al mar si presebte aun precio por metro cuadrado superior a que al resto de las propiedades que no tienen.
 
@@ -1324,7 +1209,10 @@ ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
 ```{r}
 datos_2 <- datos_2 %>%
   mutate(tipo_prop = case_when(
-    tipo_prop == "Apartament" ~ "Apartamento",
+    tipo_prop == "Apartment" ~ "Apartamento",
+    tipo_prop == "Commercial" ~ "Commercial",
+    tipo_prop == "Office" ~ "oficina",
+    tipo_prop == "House" ~ "casa",
     TRUE ~ "Otros"
   ))
 
@@ -1342,7 +1230,42 @@ ggplot(promedios6, aes(x = tipo_prop, y = promedio_precio_m2)) +
   theme_minimal()
 ```
 
+```{r}
+media_gastos <- mean(datos_2$Gastos_Comunes[datos_2$Gastos_Comunes != 0], na.rm = TRUE)
 
+# Reemplazar los valores cero con la media calculada
+datos_2$Gastos_Comunes[datos_2$Gastos_Comunes == 0] <- round(media_gastos)
+
+
+ggplot(datos_2, aes(x = Gastos_Comunes, y = precio_m2)) +
+  geom_point(alpha = 0.7) +
+  labs(x = "Gastos Comunes", y = "Precio por m2") +
+  ggtitle("Relación entre Gastos Comunes y precio por m2") +
+  theme_minimal()
+
+```
+```{r}
+mod <- lm(precio_m2 ~ Municipio + Gastos_Comunes + baños+ año_de_const + tipo_prop + vista_al_mar + cant_de_est , data = datos_2)
+
+summary(mod)
+```
+
+A pesar de que las variabes comparadas con el precio por metro cuadrado linealemnete eran significativas para un aumento del precio por metro cuadrado, ahora nos podemos dar cuanta que no es asi. En el summary del modelo podemos darnos cuenta que no todas las variables son significativas y por otro lado el R2 da demaciado baji. Esto significa que las variables que tenemos en el modelo no describen en su totalidad el precio por metro cuadrado.
+
+
+Error cuadratico medio:
+
+```{r}
+predicciones <- predict(mod, newdata = datos_2)
+
+# Calcular el Error Cuadrático Medio 
+library(Metrics)
+mse_valor <- mse(datos_2$precio_m2, predicciones)
+
+# MAPE:
+
+mape_valor <- MAPE(datos_2$precio_m2, predicciones)
+```
 
 ```{r}
 #| echo: false
@@ -1354,11 +1277,7 @@ ggplot(promedios6, aes(x = tipo_prop, y = promedio_precio_m2)) +
 #Tambien le voy a quitar la zona porque vamos a trabajar por municipios
 
 
-datos_sub <- datos_2  |> 
-  select(-direccion, -baños,-cant_de_est, -zona, -cant_cuartos, -cant_de_piso, Air_Conditioning, -losa_radiante )
-names(datos_2)
-
-
+datos_sub <- datos_2[, c("Gastos_Comunes", "cant_de_est", "tipo_prop", "vista_al_mar", "calefaccion", "Municipio", "baños", "precio_m2"), drop = FALSE]
 
 ```
 
@@ -1378,42 +1297,32 @@ library(corrplot)
 # Visualizar la matriz de correlación
 corrplot(cor_matrix, method = "circle", type = "upper", tl.cex = 0.6, tl.col = "black")
 
-#columnas que me gustaria sacar
-#año_de_cont, cantidad de habitaciones y cantidad de estacionamientos estan muy correlacionadas. Cantidad de estacionamientos a lo mejor la puedo sacar y que me deje de complicar la vida. Lacolumna banios tambien me esta complicando aunque entiendo que es importane para la prediccion del precio.
-#Otra columna que me gustraia sacar es la de loza radiante porque hay otra columna que es calefaccion y asumo que la loza radiante es un tipo de calefaccion.
 
-
-modelo <- lm(precio_m2 ~. , data = datos_sub)
-summary(modelo)
-
-mean(datos_2$precio_m2)
-
-rmse()
 ```
 
 ```{r}
 #| echo: false
-vif(modelo)
+vif(mod)
 ```
 
-La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo. Las unicas variables que tienen un GVIF ajustados mayor son "m2_totales" y "Municipio", pero sus valores ajustados estan por denajo de 2. Por lo que indica que no hay multicolinealidad severa.
+La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo.
 
 ```{r}
 #| echo: false
-crPlots(modelo)
+crPlots(mod)
 ```
 
 Atípicos:
 
 ```{r}
 #| echo: false
-res <- rstudent(modelo)
-yhat <- fitted(modelo)
+res <- rstudent(mod)
+yhat <- fitted(mod)
 
 which(abs(res)>3)
 
 library(ggplot2)
-ggplot(modelo, aes(x=yhat, y= res))+
+ggplot(mod, aes(x=yhat, y= res))+
   geom_point()+
   geom_hline(yintercept = -3,color="darkblue")+
   geom_hline(yintercept = 3,color="darkblue")
@@ -1421,47 +1330,7 @@ ggplot(modelo, aes(x=yhat, y= res))+
 
 En este caso hay una presencia de 4 datos atipocos. Hay uno que es super notorio y la idea es eliminarlo, con los otros tres hay que ver que se va hacer.
 
-```{r}
-#| echo: false
-ncvTest(modelo)
-```
 
-Datos influyentes:
-
-```{r}
-#| echo: false
-h_i <- influence(modelo)$hat
-D_i <- cooks.distance(modelo)
-df_influencia <- data.frame(i = 1:nrow(datos_sub),
-                            h_i = h_i,
-                            D_i = D_i)
-```
-
-```{r}
-#| echo: false
-#| eval: false
-ggplot(df_influencia, aes(x = i, y = h_i)) +
-  geom_point() +
-  geom_segment(aes(x = i, xend = i, y = 0, yend = h_i)) +
-  xlab('') +
-  ylab(expression(h[i])) +
-  geom_abline(slope = 0, intercept = 2*length(coefficients(mod))/nrow(df), col = 2, linetype = 'dashed') +
-  ggtitle('Leverage')
-```
-
-```{r}
-#| echo: false
-#| eval: false
-ggplot(df_influencia, aes(x = i, y = D_i)) +
-  geom_point() +
-  geom_segment(aes(x = i, xend = i, y = 0, yend = D_i)) +
-  xlab('') +
-  ylab(expression(D[i])) +
-  geom_abline(slope = 0, intercept = 4/nrow(df), col = 2, linetype = 'dashed') +
-  ggtitle('Distancia de Cook')
-```
-
-En este paso estamos tratando de encontrar que datos son influyentes para lograr poder intervenirlos y que el modelo nos quede mejor. Igualmente voy a necesitar ayuda para poder continuar.
 
 Bosques:
 
@@ -1512,11 +1381,27 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
   labs( x = "Variables originales", y = "Variables predichas") +
   theme_minimal()
 ```
-
-ajuste del modleo tiene ciertas, no predice bien porque no se acercan a la liena roja.
+En este gráfico por más que los puntos esten bastantes dispersos al rededor de la línea roja siguen la linea creciente.
+Por lo que nos podemos dar cuenta, que las variables predictoras no predicen muy bien a las variables originales.
 
 ```{r}
 #| echo: false
+
+media_años <- round(mean(datos_2$año_de_const[datos_2$año_de_const != 0], na.rm = TRUE))
+datos_2$año_de_const[datos_2$año_de_const == 0] <- media_años
+
+# Definir los reemplazos y los valores de reemplazo
+reemplazos <- c(3, 10, 15, 90, 39, 95, 60, 966)
+valores_reemplazo <- c(2003, 2010, 2015, 1990, 1939, 1995, 1960, 1966)
+
+# Aplicar las reglas de reemplazo
+for (i in seq_along(reemplazos)) {
+  datos_2$año_de_const[datos_2$año_de_const == reemplazos[i]] <- valores_reemplazo[i]
+}
+
+# Convertir año_de_const a tipo numérico
+datos_2$año_de_const <- as.numeric(datos_2$año_de_const)
+
 library(rpart)
 library(rattle)
 # Separo la muestra en entrenamiento y testeo
@@ -1525,7 +1410,7 @@ train.set <- datos_2[inTrain,]
 test.set <- datos_2[-inTrain,]
 
 library(rpart.plot)
-tree_ab <- rpart(precio_m2 ~ Municipio + condicion +WiFi,
+tree_ab <- rpart(precio_m2 ~ Municipio + año_de_const,
                  data = train.set,
                  control = rpart.control(minsplit = 5, # número mínimo de observaciones que deben existir en un nodo para ser dividido
                                          cp = 0.001, # parámetro de complejidad
