@@ -37,34 +37,10 @@ datos
 ```
 
 
-```{r}
-
-
-# Función para el criterio de outliers
-detectar_outliers_iqr <- function(x) { # Función
-  Q1 <- quantile(x, 0.05)              # Primer Quantil
-  Q3 <- quantile(x, 0.95)              # Tercer Quantil
-  IQR <- Q3 - Q1                       # Rango Intercuartilico
-  lower_bound <- Q1 - 1.5 * IQR        # Límite Inferior
-  upper_bound <- Q3 + 1.5 * IQR        # Límite Superior
-  
-  outliers <- x[x < lower_bound | x > upper_bound] 
-  # Si el valor esta por debajo del limite inferior o por encima del límite superior, entonces es un outlier
-  
-  return(outliers) # Retorno
-}
 
 
 
-
-
-
-
-```
-
-
-
-
+# VIEJO
 ```{r}
 
 # NOTA) Ajustar los datos de los gráficos de puntos, tiene valores atípicos (anque puedo perder datos de otros gráficos)
@@ -323,246 +299,8 @@ shinyApp(ui = ui, server = server)
 
 
 
-```{r}
-# PROBANDO COSAS
-ui <- fluidPage(
-  titlePanel("Ejemplo de Panel con Botones de Selección"),
-  
-  sidebarLayout(
-    sidebarPanel(
-      # Botón de selección 1
-      selectInput("option1", 
-                  label = "Gráfico de todos los municipios:",
-                  choices = c("Opción A", "Opción B", "Opción C"),
-                  selected = "Opción A"),
-      
-      # Botón de selección 2
-      selectInput("option2", 
-                  label = "Un municipio en especifico:",
-                  choices = c("Opción 1", "Opción 2", "Opción 3"),
-                  selected = "Opción 1"),
-      
-      # Botón de selección 3
-      selectInput("option3", 
-                  label ="Características de ese municipio :",
-                  choices = c("Elemento X", "Elemento Y", "Elemento Z"),
-                  selected = "Elemento X")
-    ),
-    
-    mainPanel(
-      # Mostrar las selecciones
-      textOutput("selection1"),
-      textOutput("selection2"),
-      textOutput("selection3")
-    )
-  )
-)
-
-# Definir la lógica del servidor
-server <- function(input, output) {
-  output$selection1 <- renderText({
-    paste("Ha seleccionado:", input$option1)
-  })
-  
-  output$selection2 <- renderText({
-    paste("Ha seleccionado:", input$option2)
-  })
-  
-  output$selection3 <- renderText({
-    paste("Ha seleccionado:", input$option3)
-  })
-}
 
 
-
-
-  observeEvent(input$update_municipio, { # Código que se activara cuando toquemos el boton de "update_municipio"
-    output$municipioPlot1 <- renderPlot({ # Gráfico en base al elemento llamado municipioPlot1
-      x_axis <- input$x_axis_municipio # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X 
-      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) + # Datos, ejes y color 
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +          # Gráfico de barras
-        facet_grid(. ~ Municipio, scales = "free_x") +                          # Separamos en grillas con facet_grid
-        labs(x = x_axis, y = "Precio", fill = "Municipio") +                    # Nombres de los ejes
-        ggtitle("Precio por Municipio") +                                       # Título 
-        scale_fill_manual(values = colores_personalizados) +                    # Elegimos los Colores manualmente
-        theme(plot.title = element_text(hjust = 0.5),                           # Tamaño del título
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))   # Tamaño y ángulo de los elementos del eje X
-    })
-  })
-  
-
-
-
-
-# Ejecutar la aplicación Shiny
-shinyApp(ui = ui, server = server)
-
-
-```
-
-
-
-
-
-```{r}
-
-# data1 <- data.frame(x = rnorm(100), y = rnorm(100))
-# data2 <- data.frame(x = rnorm(100), y = rnorm(100))
-# data3 <- data.frame(x = rnorm(100), y = rnorm(100))
-
-# Definir la UI
-ui <- fluidPage(
-  titlePanel("Ejemplo de Panel con Botones de Selección y Gráficos"),
-  
-  sidebarLayout(
-    sidebarPanel(
-      # Botón de selección para elegir el gráfico
-      selectInput("graphOption", 
-                  label = "Seleccione el gráfico:",
-                  choices = c("Gráfico 1", "Gráfico 2", "Gráfico 3"),
-                  selected = "Gráfico 1"),
-      
-      # Botón de selección para elegir el eje X
-      selectInput("xAxisOption", 
-                  label = "Seleccione el eje X:",
-                  choices = c("Opción X1", "Opción X2", "Opción X3"),
-                  selected = "Opción X1"),
-      
-      selectInput("option3", 
-                  label ="Características de ese municipio :",
-                  choices = c("Elemento X", "Elemento Y", "Elemento Z"),
-                  selected = "Elemento X")
-      
-    ),
-    
-    mainPanel(
-      # Mostrar el gráfico
-      plotOutput("selectedPlot")
-    )
-  )
-)
-
-# Definir la lógica del servidor
-server <- function(input, output) {
-  output$selectedPlot <- renderPlot({
-    # Seleccionar los datos y el gráfico según la opción elegida
-    if (input$graphOption == "Gráfico 1") {
-      datos <- data1
-    } else if (input$graphOption == "Gráfico 2") {
-      datos <- data2
-    } else {
-      datos <- data3
-    }
-    
-    # Definir el eje X según la opción elegida
-    x_var <- switch(input$xAxisOption,
-                    "Opción X1" = datos$x,
-                    "Opción X2" = datos$y,
-                    "Opción X3" = sqrt(datos$x^2 + datos$y^2))
-    
-    # Crear el gráfico
-    ggplot(datos, aes(x_var, y)) +
-      geom_point() +
-      labs(x = input$xAxisOption, y = "Valores Y") +
-      theme_minimal()
-  })
-}
-
-# Ejecutar la aplicación Shiny
-shinyApp(ui = ui, server = server)
-
-
-```
-
-
-```{r}
-#datos <- datos
-# Datos de ejemplo
-#set.seed(123)
-# datos <- data.frame(
-#   zona = sample(c("Norte", "Sur", "Este", "Oeste"), 100, replace = TRUE),
-#   tipo_prop = sample(c("Casa", "Apartamento", "Terreno"), 100, replace = TRUE),
-#   Condicion = sample(c("Nueva", "Usada"), 100, replace = TRUE),
-#   precio = rnorm(100, 200000, 50000),
-#   Municipio = sample(c("Mun1", "Mun2", "Mun3", "Mun4"), 100, replace = TRUE)
-# )
-
-
-#
-
-
-
-
-
-
-
-# Definir la UI
-ui <- fluidPage(
-  titlePanel("Ejemplo de Gráficos Dinámicos en Shiny"),
-  
-  sidebarLayout(
-    sidebarPanel(
-      conditionalPanel(
-        condition = "input.tabselected == 6",
-        selectInput("x_axis_municipio", "Seleccione el eje X:",
-                    choices = list(
-                      "Zona" = "zona",
-                      "Tipo de Propiedad" = "tipo_prop",
-                      "Condición" = "Condicion")),
-        actionButton("update_municipio", "Actualizar Gráficos"),
-        selectInput("single_plot", "Seleccione el gráfico:",
-                    choices = list("Mun1", "Mun2", "Mun3", "Mun4"),
-                    selected = "Mun1")
-      )
-    ),
-    
-    mainPanel(
-      tabsetPanel(
-        id = "tabselected",
-        tabPanel("Municipio", value = 6,
-                 plotOutput("municipioPlot1"),
-                 plotOutput("singleMunicipioPlot")
-        )
-      )
-    )
-  )
-)
-
-# Definir la lógica del servidor
-server <- function(input, output) {
-  observeEvent(input$update_municipio, {
-    output$municipioPlot1 <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "Precio", fill = "Municipio") +
-        ggtitle("Precio por Municipio") +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-  })
-  
-  observeEvent(input$update_municipio, {
-    output$singleMunicipioPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_municipio <- input$single_plot
-      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-      ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "Precio", fill = "Municipio") +
-        ggtitle(paste("Precio en", selected_municipio)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-  })
-}
-
-# Ejecutar la aplicación Shiny
-shinyApp(ui = ui, server = server)
-
-
-``` 
 
 
 
@@ -637,3 +375,371 @@ shinyApp(ui = ui, server = server)
 
 
 ``` 
+
+
+
+
+
+# BIEN?
+```{r}
+
+
+# Colores personalizados para el gráfico de municipios
+colores_personalizados <- c(
+  "Municipio_A" = "red", "Municipio_B" = "blue", "Municipio_C" = "green",
+  "Municipio_CH" = "purple", "Municipio_D" = "orange", "Municipio_E" = "pink",
+  "Municipio_F" = "brown", "Municipio_G" = "cyan"
+)
+
+# UI
+ui <- fluidPage(    # Página en blanco
+  titlePanel("Análisis de Alquileres"),   # Título 
+  sidebarLayout(             # Definimos la estructura
+    sidebarPanel(            # Lo usamos para colocar los selectInput
+      conditionalPanel(      # Panel condicional
+        condition = "input.tabselected == 1",  # Este panel estara en la pestaña 1, que es la "Datos1" , donde se mostrara con dos botones que son "Seleccione el eje X:" y "Actualizar Gráfico"
+        selectInput("x_axis_datos1", "Seleccione el eje X:", # Boton con opciones seleccionables (que seran distintos ejes X) y el nombre de este boton.
+                    choices = list(        # Opciones a elegir (todas en relación al eje X)
+                      "Baños" = "baños",
+                      "Habitaciones" = "cant_habitaciones",
+                      "Disposición" = "disposicion",
+                      "Cuartos" = "cant_cuartos",
+                      "Garages" = "cant_de_est")),
+        actionButton("update_datos1", "Actualizar Gráficos") # Boton de acción para mostrar el gráfico
+      ),
+      conditionalPanel(  # Panel Condicional
+        condition = "input.tabselected == 2", # Este panel estara en la pestaña 2, que es la "Datos2" , donde se mostrara con dos botones que son "Seleccione el eje X:" y "Actualizar Gráfico"
+        selectInput("x_axis_datos2", "Seleccione el eje X:", # Boton con opciones seleccionables (que seran distintos ejes X) y el nombre de este boton.
+                    choices = list( # Opciones a seleccionar
+                                   "Metros Cuadrados por Construcción" = "m2_const", 
+                                   "Metros por Terraza" = "m2_terraza",
+                                   "Metros Cuadrados por Tierra" = "m2_totales")),
+        actionButton("update_datos2", "Actualizar Gráficos") # Boton de acción para mostrar el gráfico
+      ),
+      conditionalPanel(  # Panel Condicional
+        condition = "input.tabselected == 4", # Este panel estara en la pestaña 4, que es la "Gastos Comúnes" , donde se mostrara con dos botones que son "Seleccione el eje X para los gráficos de Gastos Comunes" y "Actualizar Gráfico"
+        selectInput("x_axis_gastos", "Seleccione el eje X para los gráficos de Gastos Comunes:", # Boton con opciones seleccionables (que seran distintos ejes X) y el nombre de este boton.
+                    choices = list( # Opciones a seleccionar
+                      "Tipo de Propiedad" = "tipo_prop",
+                      "Disposición" = "disposicion",
+                      "Condición" = "Condicion",
+                      "Municipio" = "Municipio")),
+        actionButton("update_gastos", "Actualizar Gráficos") # Boton de acción para mostrar el gráfico
+      ),
+      conditionalPanel( # Panel Condicional
+        condition = "input.tabselected == 6",  #  Este panel estara en la pestaña 6, que es la "Municipio" , donde se mostrara con dos botones que son "Seleccione el eje X:" y "Actualizar Gráfico"
+        selectInput("x_axis_municipio", "Seleccione el eje X:", #  Boton con opciones seleccionables (que seran distintos ejes X) y el nombre de este boton.
+                    choices = list( #  Opciones a seleccionar
+                      "Zona" = "zona",
+                      "Tipo de Propiedad" = "tipo_prop",
+                      "Condición" = "Condicion")),
+        actionButton("update_municipio", "Actualizar Gráficos"), # Boton de acción que muestra gráfico
+             selectInput("single_plot", "Seleccione el gráfico:",
+                     choices = unique(datos$Municipio),
+                     selected = unique(datos$Municipio)[1])
+      ),
+      
+    
+      conditionalPanel( # Panel Condicional
+        condition = "input.tabselected == 7",  #  Este panel estara en la pestaña 7, que es la "Básicos" , donde se mostrara con dos botones que son "Seleccione el eje X:" y "Actualizar Gráfico"
+        selectInput("x_axis_basicos", "Seleccione el eje X:", #  Boton con opciones seleccionables (que seran distintos ejes X) y el nombre de este boton.
+                    choices = list( #  Opciones a seleccionar
+                      "Municipio" = "Municipio",
+                      "Tipo de Propiedad" = "tipo_prop",
+                      "Condición" = "Condicion")),
+        actionButton("update_basicos", "Actualizar Gráficos") # Boton de acción para mostrar el gráfico
+      )
+    ), 
+    mainPanel( # Panel para las pestañas
+      tabsetPanel(id = "tabselected",               #  id para la selección de pestañas
+                  
+                  tabPanel("Datos1",                  # Nombre de la pestaña
+                           h2("Gráfico de Datos1"),   # Título de el gráfico dentro de esa pestaña
+                           plotOutput("barPlot"),     # Gráfico en esa pestaña
+                           value = 1                  # Le asociamos el valor de 1 para el gráfico y la reactividad
+                  ),
+                  tabPanel("Datos2",                  # Nombre de la pestaña
+                           h2("Gráfico de Datos2"),   # Título de el gráfico dentro de esa pestaña
+                           plotOutput("scatterPlot"), # Gráfico en esa pestaña
+                           value = 2                  # Le asociamos el valor de 2 para el gráfico y la reactividad
+                  ),
+                  tabPanel("Mapa",                    # Nombre de la pestaña
+                           h2("Gráfico de Mapa"),     # Título de el gráfico dentro de esa pestaña
+                           value = 3                  # Le asociamos el valor de 3 para el gráfico y la reactividad
+                  ), 
+                  tabPanel("Gastos Comunes",                # Nombre de la pestaña
+                           h2("Gráfico de Gastos Comunes"), # Título de el gráfico dentro de esa pestaña
+                           plotOutput("gastosPlot1"),       # Gráfico en esa pestaña
+                           value = 4                  # Le asociamos el valor de 4 para el gráfico y la reactividad
+                  ),
+                  tabPanel("Bernoulli",                     # Nombre de la pestaña
+                           h2("Gráfico de Bernoulli"),      # Título de el gráfico dentro de esa pestaña
+                           plotOutput("bernoulliPlot"),     # Gráfico en esa pestaña
+                           value = 5                 # Le asociamos el valor de 5 para el gráfico y la reactividad
+                  ),
+                  tabPanel("Municipio",                     # Nombre de la pestaña
+                           h2("Gráficos por Municipio"),# Título de el gráfico dentro de esa pestaña 
+                           value=6,
+                           plotOutput("municipioPlot1"),
+                           plotOutput("singleMunicipioPlot"),
+                  ),
+                                    tabPanel("Basicos",     # Nombre de la pestaña
+                           h2("Gráficos Básicos"),          # Título de el gráfico dentro de esa pestaña
+                           plotOutput("BasicosPlot"),       # Gráfico en esa pestaña
+                           value = 7                  # Le asociamos el valor de 7 para el gráfico y la reactividad
+                  )
+      )
+    )
+  )
+)
+#         tabPanel("Municipio", value = 6,
+#                  plotOutput("municipioPlot1"),
+#                  plotOutput("singleMunicipioPlot")
+
+
+
+# Server
+server <- function(input, output, session) {  # Definimos el server
+
+  observeEvent(input$update_datos1, { # Código que se activara cuando toquemos el boton de "update_datos1"
+    output$barPlot <- renderPlot({    # Gráfico en base al elemento llamado barPlot
+      x_axis <- input$x_axis_datos1   # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X
+      
+      # Acá separe en un if porque de los 5 ejes X que podemos variar, 4 son continuos y 1 es discreto, entonces si al tocar el boton de selección, la opción que elegimos es "Baños", "Habitaciones", "Cuartos", "Garages" entonces se usara un eje X continuo, en caso de que se seleccione  "Disposición" se usara un eje X discreto.
+      if (x_axis == "disposicion") { # Si en el boton seleccionamos la opción de " disposicion"
+        
+        # Gráfico sobre la cantidad asociada cada categoría de "Disposición"
+        p1 <- ggplot(datos, aes(x = disposicion)) + # Datos y ejes
+          geom_bar() +                              # Gráfico de barras
+          labs(x = "Disposición", y = "Cantidad")   # Nombre de los ejes
+
+        # Gráfico asociado a la media del precio de cada categoría de "Disposición"
+         Prueba20 <- datos %>%                      # Datos
+         group_by(disposicion) %>%                  # Agrupamos por disposición
+         summarise(media_precio = mean(precio))     # Resumimos con la media del precio
+         Prueba20                                   # Resultado
+        
+        p2 <- ggplot(Prueba20, aes(x = disposicion, y = media_precio)) +  # Datos y ejes 
+          geom_bar(stat = "identity") +                                   # Gráfico de barras         
+          labs(x = "Disposición", y = "Media Precio")                     # Nombre de los ejes
+
+        gridExtra::grid.arrange(p1, p2, nrow = 2)   # Hacemos una grilla para que se muestren los dos gráficos
+      } else { # Caso contrario (es decir, seleccionamos otra opción que no sea "disposicion")
+        datos_resumidos <- datos %>%    # Datos
+          group_by(across(all_of(x_axis))) %>% # Agrupación, para cada eje X se hara un grupo
+          summarise(media_precio = mean(precio, na.rm = TRUE), .groups = 'drop') # Resumido por la media del precio, para cada eje X se hara un resumen por precio
+        
+        
+         # Gráfico sobre la cantidad asociada cada categoría de los distintos ejes X
+        p1 <- ggplot(datos, aes_string(x = x_axis)) +   # Datos y ejes
+          geom_bar() +                                  # Gráfico de barras
+          scale_x_continuous(breaks = unique(datos[[x_axis]])) + # Escala x continua, los elementos del eje X seran los valores únicos en cada columna asociada a ese eje X
+          labs(x = x_axis, y = "Cantidad") # Nombres de los ejes
+        
+          # Gráfico asociado a la media del precio de cada categoría de los distintos ejes X
+        p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio")) + # Datos y ejes
+          geom_bar(stat = "identity") + # Gráfico de barras
+          scale_x_discrete(breaks = unique(datos_resumidos[[x_axis]])) + # Escala x discreta, los elementos del eje X seran los valores únicos en cada columna asociada a ese eje X
+          labs(x = x_axis, y = "Media Precio") # Nombres de los ejes
+
+        gridExtra::grid.arrange(p1, p2, nrow = 2) #  Hacemos una grilla para que se muestren los dos gráficos
+      }
+    })
+  })
+
+  observeEvent(input$update_datos2, {  # Código que se activara cuando toquemos el boton de "update_datos2"
+    output$scatterPlot <- renderPlot({ # Gráfico en base al elemento llamado scatterPlot
+      x_axis <- input$x_axis_datos2 # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X 
+      datos_2 <- datos %>% select(all_of(c(x_axis, "precio"))) # Seleccionamos todos los elementos del eje X definidos en x_axis y también obtenemos el precio de los datos originales y lo guardamos en el dataframe datos
+      ggplot(datos_2, aes_string(x = x_axis, y = "precio")) +  # Datos y ejes
+        geom_point() +                                         # Gráfico de puntos
+        labs(x = x_axis, y = "Precio") + # Nombres de los ejes
+        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8)) 
+      # Ajustamos el ángulo y el tamaño del texto de los elementos del eje X
+    })
+  })
+
+  observeEvent(input$update_gastos, {  # Código que se activara cuando toquemos el boton de "update_gastos"
+    output$gastosPlot1 <- renderPlot({ # Gráfico en base al elemento llamado gastosPlot1
+      x_axis <- input$x_axis_gastos    # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X 
+      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes")) + # Datos y ejes
+        geom_bar(stat="identity") +                                 # Gráfico de barras
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+      # Ajustamos el ángulo y el tamaño del texto de los elementos del eje X
+    })
+  })
+  
+  
+  observe({ # Inlcuimos un gráfico que sera solo para observar y no sera reactivo
+    output$bernoulliPlot <- renderPlot({ # Gráfico en base al elemento llamado bernoulliPlot
+      dum <- datos %>%                   # Datos donde solo seleccionamos las columnas que tienen de categorías 0 y 1
+        select("vista_al_mar", "vivienda_social", "Barbecue",                           "Living_Room", "Closet", "Patio", "Pool", "Garage",                     "Pet", "coneccion_cas", "Playroom", "Duplex",                           "calefaccion", "WiFi", "zona_barbacoa", "Gym", "balcon",                  "deposito", "Air_Conditioning", "jardin",                                "losa_radiante", "Solarium", "amueblado")
+      
+      calcular_y_unir <- function(df, col, resultado_final) { # Función
+       temp <- df %>%                                         # Datos
+        group_by(valor = .data[[col]]) %>%                    # Agrupamos por todas las columnas
+       summarise(Mean = mean(precio, na.rm = TRUE), .groups = "drop") # Resumimos con la media, ignorando los nulos
+       colnames(temp)[2] <- paste0(col, "_Media") 
+       # A cada columna del dataframe resultante le vamos a pegar la palabra "_Mean"
+       resultado_final <- left_join(resultado_final, temp, by = "valor",        relationship = "many-to-one") 
+# Hacemos un join con todos los resultados, teniendo la columna "valor" como columna común entre las tablas para unirlas
+       return(resultado_final) # Resultado
+        }
+
+      resultado_final <- data.frame(valor = c(0, 1)) #Dataframe inicial
+      columnas <- colnames(dum) # Nombres de las columnas
+      for (col in columnas) {  # Para cada elemento en las clolumnas
+        resultado_final <- calcular_y_unir(datos, col, resultado_final) # Aplicamos la función previamente definida
+      }
+      data_long <- resultado_final %>%  # Datos
+        pivot_longer(-valor, names_to = "variable", values_to = "value") # Pasamos los datos al formato largo con pivot_longer
+      ggplot(data_long, aes(x = variable, y = value, fill = as.factor(valor))) +  # Datos, ejes y color
+        geom_bar(stat = "identity", position = position_dodge(width = 0.5)) +     # Gráfico de barras
+        labs(x = "Variable", y = "Value", fill = "Value") +                       # Nombres de los ejes
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))                  
+       # Ajustamos el ángulo y el tamaño del texto de los elementos del eje X
+    })
+  })
+  
+  
+  
+
+  # observeEvent(input$update_municipio, { # Código que se activara cuando toquemos el boton de "update_municipio"
+  #   output$municipioPlot1 <- renderPlot({ # Gráfico en base al elemento llamado municipioPlot1
+  #     x_axis <- input$x_axis_municipio # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X 
+  #     ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) + # Datos, ejes y color 
+  #       geom_bar(stat = "identity", position = "dodge", width = 0.7) +          # Gráfico de barras
+  #       facet_grid(. ~ Municipio, scales = "free_x") +                          # Separamos en grillas con facet_grid
+  #       labs(x = x_axis, y = "Precio", fill = "Municipio") +                    # Nombres de los ejes
+  #       ggtitle("Precio por Municipio") +                                       # Título 
+  #       scale_fill_manual(values = colores_personalizados) +                    # Elegimos los Colores manualmente
+  #       theme(plot.title = element_text(hjust = 0.5),                           # Tamaño del título
+  #             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))   # Tamaño y ángulo de los elementos del eje X
+  #   })
+  # })
+  
+  
+  observeEvent(input$update_municipio, {
+    output$municipioPlot1 <- renderPlot({
+      x_axis <- input$x_axis_municipio
+      ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+        facet_grid(. ~ Municipio, scales = "free_x") +
+        labs(x = x_axis, y = "Precio", fill = "Municipio") +
+        ggtitle("Precio por Municipio") +
+        theme(plot.title = element_text(hjust = 0.5),
+              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    })
+
+    output$singleMunicipioPlot <- renderPlot({
+      x_axis <- input$x_axis_municipio
+      selected_municipio <- input$single_plot
+      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
+      ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+        labs(x = x_axis, y = "Precio", fill = "Municipio") +
+        ggtitle(paste("Precio en", selected_municipio)) +
+        theme(plot.title = element_text(hjust = 0.5),
+              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    })
+  })
+  
+  
+  
+  
+  
+  
+observeEvent(input$update_basicos, {   # Código que se activara cuando toquemos el boton de "update_basicos"
+    output$BasicosPlot <- renderPlot({ # Gráfico en base al elemento llamado BasicosPlot
+      x_axis <- input$x_axis_basicos   # Los valores de input que recibira el gráfico para ser reactivo son valores del eje X 
+      datos_resumidos <- datos %>%                   # Datos
+        group_by(across(all_of(x_axis))) %>%         # Agrupación, para cada eje X se hara un grupo
+        summarise(Cantidad = n(), .groups = 'drop')  # Resumido por la media del precio, para cada eje X se hara un resumen por precio 
+
+      ggplot(datos_resumidos, aes_string(x = x_axis, y = "Cantidad")) + # Datos y ejes
+        geom_bar(stat = "identity") +  # Gráfico de barras
+        labs(x_axis, y = "Cantidad") + # Nombres de los ejes
+        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))  
+      # Tamaño y ángulo de los elementos del eje X
+    })
+  })
+  
+  
+}
+
+# Resultados
+shinyApp(ui = ui, server = server)
+
+
+
+
+
+# 
+# 
+# 
+# 
+# ui <- fluidPage(
+#   titlePanel("Ejemplo de Gráficos Dinámicos en Shiny"),
+#   
+#   sidebarLayout(
+#     sidebarPanel(
+#       conditionalPanel(
+#         condition = "input$tabselected == 6",
+#         selectInput("x_axis_municipio", "Seleccione el eje X:",
+#                     choices = list(
+#                       "Zona" = "zona",
+#                       "Tipo de Propiedad" = "tipo_prop",
+#                       "Condición" = "Condicion")),
+#         actionButton("update_municipio", "Actualizar Gráficos"),
+#         selectInput("single_plot", "Seleccione el gráfico:",
+#                     choices = unique(datos$Municipio),
+#                     selected = unique(datos$Municipio)[1])
+#       )
+#     ),
+#     
+#     mainPanel(
+#       tabsetPanel(
+#         id = "tabselected",
+#         tabPanel("Municipio", value = 6,
+#                  plotOutput("municipioPlot1"),
+#                  plotOutput("singleMunicipioPlot")
+#         )
+#       )
+#     )
+#   )
+# )
+# 
+# # Definir la lógica del servidor
+# server <- function(input, output) {
+#   
+#   observeEvent(input$update_municipio, {
+#     output$municipioPlot1 <- renderPlot({
+#       x_axis <- input$x_axis_municipio
+#       ggplot(datos, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +
+#         geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+#         facet_grid(. ~ Municipio, scales = "free_x") +
+#         labs(x = x_axis, y = "Precio", fill = "Municipio") +
+#         ggtitle("Precio por Municipio") +
+#         theme(plot.title = element_text(hjust = 0.5),
+#               axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+#     })
+#     
+#     output$singleMunicipioPlot <- renderPlot({
+#       x_axis <- input$x_axis_municipio
+#       selected_municipio <- input$single_plot
+#       datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
+#       ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio", fill = "Municipio")) +
+#         geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+#         labs(x = x_axis, y = "Precio", fill = "Municipio") +
+#         ggtitle(paste("Precio en", selected_municipio)) +
+#         theme(plot.title = element_text(hjust = 0.5),
+#               axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+#     })
+#   })
+#   }
+# 
+# 
+# 
+
+
+```
