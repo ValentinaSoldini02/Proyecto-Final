@@ -1759,3 +1759,231 @@ grid.arrange(grafico12, grafico13, grafico14, grafico15, grafico16, grafico17, n
 
 # Hacer el filtro que nos recomendo la profe con los factores para que se vea mejor y no perder datos.
 ```
+
+
+
+
+(VALENTINA) sacaria este
+Pregunta 11) ¿Cómo cambia el precio según la cantidad de pisos que tiene el inmueble?
+
+```{r}
+#ARREGLAR
+# 
+
+
+# GRUPOS
+grupo_piso_1 <- datos_2 %>% # Datos
+  group_by(cant_de_piso) %>% # Agrupados por cantidad de pisos
+  summarise(media_precio = mean(precio_m2)) # Resumidos por cantidad
+#grupo_piso_1
+
+
+grupo_piso_2 <- datos_2 %>% # Datos
+   group_by(nro_de_piso) %>% #Agrupados por número de piso
+   summarise(media_precio = mean(precio_m2)) # Resumidos por media con respecto al precio
+#grupo_piso_2
+
+
+grupo_piso_3 <- datos_2 %>%   # Datos
+  group_by(apartamentos_por_piso) %>% # Agrupados por pisos por apartamentos
+  summarise(media_precio = mean(precio_m2)) # Resumido por cantidad
+#grupo_piso_3
+
+
+
+
+
+# Gráfico 1: Cantidad de pisos
+grafico12 <- ggplot(datos_2, aes(x = cant_de_piso)) +  
+  geom_bar() +
+  scale_x_continuous(breaks = unique(datos_2$cant_de_piso)) +
+  labs(title = "Cantidad de pisos")
+
+
+
+# Gráfico 2: Precio promedio por cantidad de pisos
+grafico13 <- ggplot(grupo_piso_1, aes(x = cant_de_piso, y = media_precio)) +  
+  geom_bar(stat = "identity") + 
+  scale_x_continuous(breaks = unique(grupo_piso_1$cant_de_piso)) +
+  labs(title = "Precio promedio por cantidad de pisos")
+
+
+
+# Gráfico 3: Número de piso
+grafico14 <- ggplot(datos_2, aes(x = nro_de_piso)) +  
+  geom_bar() +
+  scale_x_continuous(breaks = unique(datos_2$nro_de_piso)) +
+  labs(title = "Número de piso")
+
+# Gráfico 4: Precio promedio por número de piso
+grafico15 <- ggplot(grupo_piso_2, aes(x = nro_de_piso, y = media_precio)) +  
+  geom_bar(stat = "identity") + 
+  scale_x_continuous(breaks = unique(grupo_piso_2$nro_de_piso)) +
+  labs(title = "Precio promedio por número de piso")
+
+
+
+# Gráfico 5: Apartamentos por piso
+grafico16 <- ggplot(datos_2, aes(x = apartamentos_por_piso)) + 
+  geom_bar() +
+  scale_x_continuous(breaks = unique(datos_2$apartamentos_por_piso)) +
+  labs(title = "Apartamentos por piso")
+
+# Gráfico 6: Cantidad de apartamentos por piso
+grafico17 <- ggplot(grupo_piso_3, aes(x = apartamentos_por_piso, y = media_precio)) +  
+  geom_bar(stat = "identity") + 
+  scale_x_continuous(breaks = unique(grupo_piso_3$apartamentos_por_piso)) +
+  labs(title = "Cantidad de apartamentos por piso")
+
+
+
+
+# Panel 2x3
+grid.arrange(grafico12, grafico13, grafico14, grafico15, grafico16, grafico17, ncol = 2, nrow = 3)
+
+# Hacer el filtro que nos recomendo la profe con los factores para que se vea mejor y no perder datos.
+```
+
+Vemos que los inmuebles en general tienen una distribución similar según su cantidad de pisos, excepto en el caso de los inmuebles con 10 pisos que tienen una ocurrencia mucho más alta. En relación, vemos que en general la mayoría se mantiene en los 1000 dolares para cantidades de pisos variadas, y en algunas cantidades de pisos como son 2, 12, 13 la media del precio esta cerca de los 2000 dolares.
+
+En la distribución los números de piso 0 y 1, luego cuando los pisos van subiendo de número la frecuencia va disminuyendo (con algunas excepciones como son el número 4 y el 9). En relación al precio vemos que casi todos los números de piso tiene un precio similar (casi 1000\$) pero particularmente el piso con número 11 tiene un precio más elevado.
+
+La distribución de la cantidad muestra que en un piso en general es más común encontrarse con 2, 3 o 4 apartamentos. En relación al precio vemos que esos pisos que tienen 2, 3 o 4 apartamentos también son los que tienen el precio más alto.
+
+
+
+
+Pregunta 6) ¿Cómo se distribuyen los gastos comunes en relación al municipio, el tipo de propiedad y la condición de la propiedad?
+```{r}
+
+# Gráfico 1: Municipio y Gastos Comunes
+grafico9 <- ggplot(datos_2, aes(x = Municipio, y = Gastos_Comunes)) + 
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(title = "Gastos Comunes por Municipio")
+
+# Gráfico 2: Tipo de propiedad y Gastos Comunes
+grafico10 <- ggplot(datos_2, aes(x = tipo_prop, y = Gastos_Comunes)) +
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(title = "Gastos Comunes por Tipo de Propiedad")
+
+# Gráfico 3: Condición y Gastos Comunes
+grafico11 <- ggplot(datos_2, aes(x = condicion, y = Gastos_Comunes)) +
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(size = 6)) +
+  labs(title = "Gastos Comunes por Condición")
+
+# Crear la grilla de gráficos
+grid.arrange(grafico9, grafico10, grafico11, ncol = 1, nrow = 3)
+
+``` 
+
+La mayoría de gastos comúnes se dan en el municipio CH, donde recordemos estan la mayoría de los alquileres, y la minoría de gastos comunes se dan en el municipio F donde recordemos hay la menor cantidad de alquileres.
+
+La mayoría de gastos comúnes se dan en los apartamentos, y muy pocos en las Oficinas. En los otros tipos de alquileres practicamente no existen gastos comunes.
+
+En los alquileres que estan en Excelentes Condiciones los gastos comunes son más altos, similarmente ocurre con los que estan en Buena Condición. A mejor condición del alquiler, más altos seran los gastos comunes.
+
+
+La mayoría de los gastos comunes se registran en el municipio CH, donde también se encuentra la mayor concentración de alquileres. En contraste, el municipio F presenta la menor cantidad de gastos comunes, correspondiente a la menor cantidad de alquileres en esa área.
+
+En cuanto a los tipos de propiedad, los gastos comunes son predominantes en los apartamentos, mientras que son muy pocos en las oficinas. En los demás tipos de alquileres, los gastos comunes prácticamente no existen.
+
+Respecto a la condición de los alquileres, los gastos comunes son más altos en propiedades en Excelente Condición y también elevados en aquellas en Buena Condición. En general, a mejor condición del alquiler, mayores son los gastos comunes.
+
+
+Pregunta 5) ¿Cómo se distribuyen las condiciones de las viviendas por municipio?
+
+```{r}
+ 
+
+# Gráfico
+ggplot(datos_2, aes(x = condicion, y = precio_m2, fill = Municipio)) + # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Condición de la vivienda por Municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+
+
+
+``` 
+
+En el Municipio A y E estan predominantemente los apartamentos en Excelente Condición. En los municipios C y F es más común los apartamentos con Buena Condición. n los municipios CH y B hay un empate entre la cantidad de apartamentos con Excelente Condición y Buena Condición.
+
+
+Pregunta 4) ¿Cómo se distribuyen los tipos de inmuebles por municipio?
+
+ESTO PARA A MI (VALENTINA) SE PUEDE VER EN LA SHINY
+```{r}
+datos_2 <- datos_2 %>% filter(precio_m2 < 400)
+
+colores_personalizados <- c(
+  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   "Municipio_CH" = "purple",  "Municipio_D" = "orange",   "Municipio_E" = "pink",
+  "Municipio_F" = "brown",  "Municipio_G" = "cyan")
+
+# Gráfico
+ggplot(datos_2, aes(x = tipo_prop, y = precio_m2, fill = Municipio)) + # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Ajustar el ancho de las barras
+  facet_grid(. ~ Municipio, scales = "free_x") + # Usar facet_grid para crear una grilla por Municipio
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Tipo de alquiler por municipio") + # Título del gráfico
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Cambiar el ángulo y el tamaño del texto de los elementos del eje X
+
+```
+
+
+Pregunta 3) ¿Cambia el precio con respecto al municipio en que se ecuestre la propiedad
+```{r}
+
+datos_2 <- datos_2 %>% filter(precio_m2 < 400)
+
+
+
+# Elegimos los colores manualmente
+colores_personalizados <- c(
+  "Municipio_A" = "red",  "Municipio_B" = "blue",  "Municipio_C" = "green",                   "Municipio_CH" = "purple",  "Municipio_D" = "orange",   "Municipio_E" = "pink",
+  "Municipio_F" = "brown",  "Municipio_G" = "cyan")
+
+
+
+
+
+# Gráfico
+ggplot(datos_2, aes(x = zona, y = precio_m2, fill = Municipio)) +  # Datos, ejes y color
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  # Ancho y posición de las barras
+
+  facet_grid(. ~ Municipio, scales = "free_x") +
+  # Usar facet_grid para crear una grilla por Municipio
+
+  labs(x = "Zona", y = "Precio", fill = "Municipio") + # Etiquetas de los ejes y la leyenda
+  ggtitle("Precio por Zona y Municipio") + # Título
+  scale_fill_manual(values = colores_personalizados) + # Cambiar la paleta de colores
+
+  theme(plot.title = element_text(hjust = 0.5), # Centrar el título
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+# Centrar el título y modificar el texto de los elementos del eje X
+
+
+# Filtro para quitar los outliers
+
+``` 
+
+La respuesta es que si, los barrios ubicados en el municipio E, B y CH son los que tienen el precio promedio por metro cuadrado más alto. Dentro del municipio E el barrio más caro es Carrasco, dentro del municipio B el barrio más caro es Centro, dentro del municipio CH el barrio más caro es Pocitos.
+
+
+
+En general el tipo de alquiler más común varia según municipio, en los municipios A, C, D y G son más comunes los alquileres de Alquileres. En cambio en los municipios CH y E son más comunes los alquileres de casas, finalmente en el municipio B es más común el alquiler de Oficinas.
+
+La mayoría de los alquileres se encuentran en Buena Condición o el Excelente Condición. También hay una parte considerable de alquileres que son nuevos.
+
+La mayoría de los inmuebles estan en buena condición o excelente condición. Pocos de ellos estan en construcción, o con necesidad de mantenimiento o por ser renovados
