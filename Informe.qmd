@@ -68,7 +68,6 @@ Como se mencionó anteriormente, ciertas variables contenían valores nulos. Par
 
 Además, se recodificaron cariables para mejorar su análisis y para evaluar cómo algunas de las variables del modelo afectaban linealmente a la variable predictora, **precio_m2**
 
-
 ```{r, fig.cap="Municipios", label:fig-plot0}
 tabla_municipio <- data.frame(
   Municipio = c("Municipio A","Municipio B", "Municipio C", "Municipio CH", "Municipio D", "Municipio E", "Municipio F", "Municipio G"),
@@ -177,9 +176,6 @@ datos_2 <- datos_2 %>% # Datos
   ))
 ```
 
-
-
-
 ```{r}
 # Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
 reemplazar_direccion <- function(datos_2) {
@@ -263,6 +259,7 @@ datos_2$baños <- as.factor(datos_2$baños)
 ```
 
 Cual municipio es mas costoso para alquilar?
+
 ```{r}
 promedios3 <- datos_2 %>%
   group_by(Municipio) %>%
@@ -274,6 +271,7 @@ ggplot(promedios3, aes(x = fct_reorder(Municipio, promedio_precio_m2), y = prome
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
 En este gráfico se puede apreciar como el Municipio A tiene los precios por metro cuadrado pormedios mas altos, seguido por el Municipio E. Este gráfico es útil para ver que zonas de Montevideo son mas caras y cuáles son mas económicas, lo cual es valioso para los inquilinos al decidir en que área desean vivir según sus preferencias y presupuesto.
 
 A continuación, se presenta un gráfico que muestra la antigüedad de la propiedad y cómo varía el precio por metro cuadrado según el año de construcción. Se observa que, a medida que las propiedades son más nueveas, el precio por metro cuadrado tiende a aumentar.
@@ -307,6 +305,7 @@ ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
   theme_minimal()
 
 ```
+
 ```{r}
 datos_2 <- datos_2 %>%
   mutate(tipo_prop = case_when(
@@ -330,7 +329,8 @@ ggplot(promedios6, aes(x = tipo_prop, y = promedio_precio_m2)) +
   theme_minimal()
 ```
 
-Pregunta)  ¿Cómo se distribuyen la disposición de los alquileres y el según  precio por metro cuadrado promedio?
+Pregunta) ¿Cómo se distribuyen la disposición de los alquileres y el según precio por metro cuadrado promedio?
+
 ```{r}
 #Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
 
@@ -347,8 +347,7 @@ ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantid
   labs(x = "Disposición", y = "Precio promedio") +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 10))
 
-``` 
-
+```
 
 Pregunta 2) ¿Cómo se distribuye el tipo de propiedad de los alquileres y el precio promedio de el tipo de propiedad? ¿¿Cómo se distribuye las condiciones de los alquileres y el precio promedio según las condiciones de los alquileres?
 
@@ -365,9 +364,9 @@ ggplot(grupo_condicion, aes(x = fct_reorder(condicion, Cantidad), y = Cantidad))
   labs(x = "Condición", y = "Precio promedio") +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 10))
 
-``` 
-Al considerar la condición de los alquileres, se puede observar que la mayoría de las propiedades se encuentran en buenas condiciones. Esto es una buena señal para inquilinos que directamente se quieren trasladar a esa propiedad. En términos de precio promedio por metro cuadrado, los alquileres "En Construcción", "Para Estrenar" y en "Excelente Condición" son los más caros. 
+```
 
+Al considerar la condición de los alquileres, se puede observar que la mayoría de las propiedades se encuentran en buenas condiciones. Esto es una buena señal para inquilinos que directamente se quieren trasladar a esa propiedad. En términos de precio promedio por metro cuadrado, los alquileres "En Construcción", "Para Estrenar" y en "Excelente Condición" son los más caros.
 
 ```{r, eval=FALSE}
 #shiny 
@@ -382,9 +381,6 @@ selectInput(
   size = NULL
 )
 ```
-
-
-
 
 ```{r}
 
@@ -408,17 +404,8 @@ ggplot(data = datos_3) +
  theme(legend.position = "bottom")   
 
 ```
-Este grafico representa la relacion entre el precio por metro cuadrado (*precio_m2*) y el número de piso (*nro_de_piso*) de las propiedades, categorizando el precio por metro cuadrado en dos grupos: menor o igual a 13 y mayor a 13, también se categorizó el número de piso en dos grupos: menor o igual a 15 pisos y mayor a 15 pisos.
-Para los precios por metro cuadrado menor o igual a 13, se observa que son propiedades que tienen pisos bajos menores a 15.
-Para los precios por metro cuadrado mayores a 13, se observa que son propiedades que tienen pisos mayores a 15. 
-Por lo tanto, en pisos mas bajos, predominan los precios por metro cuadrado menores o iguales a 13.
-Por otro lado, para los pisos mas altos, los precios por metro cuadrado mayores a 13 son los más comunes.
-Esto sugiere que el número de piso podría tener una influencia en el precio por metro cuadrado, con pisos mas altos tendiendo a precios mayores por metro cuadrado en comparación con pisos más bajos.
 
-
-
-
-
+Este grafico representa la relacion entre el precio por metro cuadrado (*precio_m2*) y el número de piso (*nro_de_piso*) de las propiedades, categorizando el precio por metro cuadrado en dos grupos: menor o igual a 13 y mayor a 13, también se categorizó el número de piso en dos grupos: menor o igual a 15 pisos y mayor a 15 pisos. Para los precios por metro cuadrado menor o igual a 13, se observa que son propiedades que tienen pisos bajos menores a 15. Para los precios por metro cuadrado mayores a 13, se observa que son propiedades que tienen pisos mayores a 15. Por lo tanto, en pisos mas bajos, predominan los precios por metro cuadrado menores o iguales a 13. Por otro lado, para los pisos mas altos, los precios por metro cuadrado mayores a 13 son los más comunes. Esto sugiere que el número de piso podría tener una influencia en el precio por metro cuadrado, con pisos mas altos tendiendo a precios mayores por metro cuadrado en comparación con pisos más bajos.
 
 Pregunta 12) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
 
@@ -444,12 +431,10 @@ ggplot(promedios1, aes(x =  fct_reorder(cant_cuartos, promedio_precio_m2), y = p
   theme_minimal()
 ```
 
-
-
 Pregunta: Como afecta el incremeto del precio por metro cuadrado, al aumentar la cantidad de baños?
 
-A continuación se muestra un gráfico que ilustra cómo la cantidad de baños afecta el precio por metro cuadrado.
-En este análisis, la variable baños se recodifico en cinco grupos para facilitar su inetrpretación y análisis.
+A continuación se muestra un gráfico que ilustra cómo la cantidad de baños afecta el precio por metro cuadrado. En este análisis, la variable baños se recodifico en cinco grupos para facilitar su inetrpretación y análisis.
+
 ```{r}
 datos_2 <- datos_2 %>%
   mutate(baños = case_when(
@@ -471,12 +456,12 @@ ggplot(promedios1, aes(x = fct_reorder(baños,promedio_precio_m2), y = promedio_
   ggtitle("Precio por m2 según número de baños") +
   theme_minimal()
 ```
+
 Se observe que el precio se incrementa hasta la propiedad que tiene dos baños. Sin embargo, después de dos baños, el impacto en el precio es menor. Es decir, una propiedad con tres baños es mas cara que una con uno, pero es considerablemente más cara que una de dos baños. Parece que llega a un punto en el que la cantidad de baños no afecta el precio por metro cuadrado de una propiedad.
 
 Pregunta: Como afecta al incremeto del precio el aumento de la cantidad de estacionamientos?
 
 Similar al anterior razonamiento, los valores de la variable *cant_de_est* se recodificaron en cuatro grupos para una mejor interpretación.
-
 
 ```{r}
 datos_2 <- datos_2 %>%
@@ -499,8 +484,79 @@ ggplot(promedios2, aes(x = fct_reorder(cant_de_est,promedio_precio_m2), y = prom
   theme_minimal()
 ```
 
-De manera similar a lo observado anteriorente, el precio por metro cuadrado de la propiedad es mayor cuando la propiedad tiene al menos un estacionamiento.
-Sin embargo, el incremento en el precio no tan relevare al pasar de uno a dos estacionamientos. Curiosamente, las propiedades con tres estacionamientos son más caras que las que tienen dos, aunque la diferencia no es tan marcada como entre tener cero y uno.
+De manera similar a lo observado anteriorente, el precio por metro cuadrado de la propiedad es mayor cuando la propiedad tiene al menos un estacionamiento. Sin embargo, el incremento en el precio no tan relevare al pasar de uno a dos estacionamientos. Curiosamente, las propiedades con tres estacionamientos son más caras que las que tienen dos, aunque la diferencia no es tan marcada como entre tener cero y uno.
+
+
+
+
+Recodificamos ahora la cantidad de cantidad de habitaciones y la cantidad de cuartos
+
+```{r}
+
+datos_2 <- datos_2 %>%
+  mutate(cant_cuartos = case_when(
+    cant_cuartos == 0 ~ "0",
+    cant_cuartos == 1 ~ "1",
+    cant_cuartos == 2 ~ "2",
+    TRUE ~ "más de 3"
+  ))
+
+
+datos_2 <- datos_2 %>%
+  mutate(cant_habitaciones = case_when(
+    cant_habitaciones == 0 ~ "0",
+    cant_habitaciones == 1 ~ "1",
+    cant_habitaciones == 2 ~ "2",
+    TRUE ~ "más de 3"
+  ))
+
+
+
+
+
+
+promedios3 <- datos_2 %>%
+  group_by(cant_cuartos) %>%
+  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
+
+
+promedios4 <- datos_2 %>%
+  group_by(cant_habitaciones) %>%
+  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
+
+
+
+
+
+# Crear el gráfico
+ggplot(promedios3, aes(x = fct_reorder(cant_cuartos, 
+                       promedio_precio_m2), 
+                       y = promedio_precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Cantidad de cuartos", y = "Precio por m2") +
+  ggtitle("Precio por m2 según número de cuartos") +
+  theme_minimal()
+
+
+
+
+ggplot(promedios4, aes(x = fct_reorder(cant_habitaciones,  
+                       promedio_precio_m2), 
+                       y = promedio_precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Cantidad de habitaciones", y = "Precio por m2") +
+  ggtitle("Precio por m2 según número de habitaciones") +
+  theme_minimal()
+
+
+
+```
+
+
+
+
+
+
 
 ```{r}
 promedios4 <- datos_2 %>%
@@ -513,6 +569,7 @@ ggplot(promedios4, aes(x = fct_reorder(calefaccion,promedio_precio_m2), y = prom
   ggtitle("Impacto de la calefacción en el precio por m2") +
   theme_minimal()
 ```
+
 ```{r}
 promedios4 <- datos_2 %>%
   group_by(calefaccion) %>%
@@ -524,7 +581,6 @@ ggplot(promedios4, aes(x = calefaccion, y = promedio_precio_m2)) +
   ggtitle("Impacto de la calefacción en el precio por m2") +
   theme_minimal()
 ```
-
 
 ```{r}
 promedios5 <- datos_2 %>%
@@ -552,16 +608,11 @@ ggplot(datos_2, aes(x = Gastos_Comunes, y = precio_m2)) +
 
 ```
 
-En este gráfico, muestra una tendencia lineal, se puede decir que los gastos comunes son independientes con el precio por metro cuadrado. 
+En este gráfico, muestra una tendencia lineal, se puede decir que los gastos comunes son independientes con el precio por metro cuadrado.
 
 ## Modelo Predictivo
 
 Con el objetivo de identificar si las variables del modelo explican correctamente la variable de respuesta, en este caso *precio_m2*, se decidió hacer una exploración con ciertas variables. Para ello, se elaboraron gráficos lineales que anteriormente estan precentadas que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas afecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos.
-
-
-
-
-
 
 Analizar esto, hacer un histograma y no una densidad
 
@@ -577,7 +628,6 @@ median(datos_2$precio_m2)
 mean(datos_2$precio_m2)
 
 ```
-
 
 ```{r}
 mod <- lm(precio_m2 ~ Municipio + Gastos_Comunes + baños+ año_de_const + tipo_prop + vista_al_mar + cant_de_est , data = datos_2)
@@ -602,7 +652,6 @@ coef
 
 En el modélo se seleccionaron ciertas variables que en principios explicaban el crecimiento del precio por metro cuadrado, pero como se puede observar no es suficiente, ya que en conjunto todas las variables no son significativas para el modelo, es decir no explican correctamente a la variable de respuesta *precio_m2*, en la tabla se puede observar como ha algunos p valor que son muy grandes por lo tanto esas variables no son significativas.
 
-
 Error cuadratico medio:
 
 ```{r}
@@ -618,9 +667,8 @@ sqrt(mse_valor)
 library(MLmetrics)
 mape_valor <- MAPE(datos_2$precio_m2, predicciones)/100
 ```
-248 predice mal 
 
-
+248 predice mal
 
 ```{r}
 
@@ -642,14 +690,15 @@ vis_miss(datos_su)
 ```
 
 Multicolinealidad:
+
 ```{r}
 vif(mod)
 ```
 
 La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo.
 
-
 Homoscedasticidad:
+
 ```{r}
 ncvTest(mod)
 
@@ -662,7 +711,6 @@ shapiro.test(rstudent(mod))
 jarque.bera.test(na.omit(rstudent(mod)))
 ks.test(rstudent(mod), 'pnorm')
 ```
-
 
 Atípicos:
 
@@ -680,8 +728,6 @@ ggplot(mod, aes(x=yhat, y= res))+
 ```
 
 En este caso hay una presencia de 4 datos atipocos. Hay uno que es super notorio y la idea es eliminarlo, con los otros tres hay que ver que se va hacer.
-
-
 
 Bosques:
 
@@ -731,8 +777,8 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
   labs( x = "Variables originales", y = "Variables predichas") +
   theme_minimal()
 ```
-En este gráfico por más que los puntos esten bastantes dispersos al rededor de la línea roja siguen la linea creciente.
-Por lo que nos podemos dar cuenta, que las variables predictoras no predicen muy bien a las variables originales.
+
+En este gráfico por más que los puntos esten bastantes dispersos al rededor de la línea roja siguen la linea creciente. Por lo que nos podemos dar cuenta, que las variables predictoras no predicen muy bien a las variables originales.
 
 ```{r}
 
@@ -859,5 +905,20 @@ tabla_gt <- gt(tabla_variables) |>
     style = cell_text(size = pct(75)),
     locations = cells_column_labels()
   )
+
+```
+
+```{r}
+# max(datos_2$precio_m2)
+# max(datos_2$Gastos_Comunes)
+
+
+
+# Exportar Datos
+
+library(writexl)
+write_xlsx(datos_2, path = here("Datos","datos_limpios.xlsx"))
+
+
 
 ```

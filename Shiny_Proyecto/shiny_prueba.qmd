@@ -29,8 +29,10 @@ library(readxl)
 # DATOS
 #here()
 # Datos limpios sobre precio de casas
-datos <- read_excel(here("Shiny_Proyecto","app","datos_limpios.xlsx"))
+here()
+datos <- read_excel(here("Datos","datos_limpios.xlsx"))
 datos
+
 
 
 
@@ -512,6 +514,7 @@ server <- function(input, output, session) {  # Definimos el server
         p1 <- ggplot(datos, aes(x = disposicion)) + # Datos y ejes
           geom_bar() +                              # Gráfico de barras
           labs(x = "Disposición", y = "Cantidad")   # Nombre de los ejes
+          
 
         # Gráfico asociado a la media del precio de cada categoría de "Disposición"
          Prueba20 <- datos %>%                      # Datos
@@ -533,7 +536,7 @@ server <- function(input, output, session) {  # Definimos el server
          # Gráfico sobre la cantidad asociada cada categoría de los distintos ejes X
         p1 <- ggplot(datos, aes_string(x = x_axis)) +   # Datos y ejes
           geom_bar() +                                  # Gráfico de barras
-          scale_x_continuous(breaks = unique(datos[[x_axis]])) + # Escala x continua, los elementos del eje X seran los valores únicos en cada columna asociada a ese eje X
+          scale_x_discrete(breaks = unique(datos[[x_axis]])) + # Escala x continua, los elementos del eje X seran los valores únicos en cada columna asociada a ese eje X
           labs(x = x_axis, y = "Cantidad") # Nombres de los ejes
         
           # Gráfico asociado a la media del precio de cada categoría de los distintos ejes X
