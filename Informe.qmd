@@ -923,6 +923,6 @@ tabla_gt <- gt(tabla_variables) |>
 library(writexl)
 write_xlsx(datos_2, path = here("Datos","datos_limpios.xlsx"))
 
-
+datos_2
 
 ```

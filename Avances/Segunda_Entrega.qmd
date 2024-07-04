@@ -1242,6 +1242,10 @@ Vemos que parece haber una relación clara sobre la relación entre metros cuadr
 
 Lo más común es tener inmuebles al frente, aunque cuando vamos al precio, vemos que si bien los que estan al frente tiene un precio un poco más alto, en general todos estan en niveles similares. (Cerca de los 1000\$)
 
+
+
+
+
 # Modelo de regresión lineal multiple:
 
 ```{r, eval=FALSE}
