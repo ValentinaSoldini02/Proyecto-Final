@@ -498,14 +498,15 @@ ui <- fluidPage(
                     choices = list(
                       "Zona" = "zona",
                       "Tipo de Propiedad" = "tipo_prop",
-                      "Condición" = "Condicion")),
+                      "Condición" = "Condicion",
+                      "Disposicion"="disposicion")),
         selectInput("single_plot", "Seleccione el Municipio:",
                     choices = unique(datos$Municipio),
                     selected = unique(datos$Municipio)[1]),
         selectInput("zona_plot", "Seleccione la Zona:",
                     choices = NULL),  # Inicialmente vacío
         actionButton("update_municipio", "Actualizar Gráficos")
-      ),
+      ), 
       conditionalPanel(
         condition = "input.tabselected == 7",
         selectInput("x_axis_basicos", "Seleccione el eje X:",
