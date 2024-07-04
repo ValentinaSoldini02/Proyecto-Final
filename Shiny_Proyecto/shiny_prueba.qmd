@@ -30,8 +30,13 @@ library(readxl)
 #here()
 # Datos limpios sobre precio de casas
 here()
-datos <- read_excel(here("Datos","datos_limpios.xlsx"))
-datos
+#datos <- read_excel(here("Datos","datos_limpios.xlsx"))
+#datos
+
+
+datos <- read_excel(here("Avances","datos_2.xlsx"))
+
+
 
 
 
