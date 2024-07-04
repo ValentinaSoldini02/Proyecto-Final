@@ -27,6 +27,9 @@ library(dplyr)
 library(randomForest)
 library(modelr)
 library(knitr)
+library(rpart)
+library(rattle)
+library(rpart.plot)
 ```
 
 ## Introducción:
@@ -614,6 +617,22 @@ ggplot(datos_2, aes(x = Gastos_Comunes, y = precio_m2)) +
 
 En este gráfico, muestra una tendencia lineal, se puede decir que los gastos comunes son independientes con el precio por metro cuadrado.
 
+
+Analizar esto, hacer un histograma y no una densidad
+
+```{r}
+plot(hist(datos_2$precio_m2, 
+     main = "Histograma de Precio por Metro Cuadrado", 
+     xlab = "Precio por Metro Cuadrado", 
+     ylab = "Frecuencia", 
+     col = "lightblue", 
+     border = "black"))
+
+median(datos_2$precio_m2)
+mean(datos_2$precio_m2)
+
+```
+
 ## Modelo Predictivo
 
 Con el objetivo de identificar si las variables del modelo explican correctamente la variable de respuesta, en este caso *precio_m2*, se decidió hacer una exploración con ciertas variables. Para ello, se elaboraron gráficos lineales que anteriormente estan precentados que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas afecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos.
@@ -627,7 +646,6 @@ Una vez obtenido el modelo, se realizo el summary, y se obtuvieron estos resulta
 ```{r}
 mod <- lm(precio_m2 ~ Municipio + condicion + baños+ año_de_const + tipo_prop + vista_al_mar + cant_de_est + nro_de_piso , data = datos_2)
 
-<<<<<<< HEAD
 
 h <- summary(mod)
 
@@ -685,50 +703,235 @@ tabla_R2 <- gt(R2) |>
 tabla_R2
 ```
 
-Que 
+Que la significancia no se cumpla es decir que las variables no sean significativas y que el $R^2$ sea tan chico que las variables explicatibas no expliquen en absoluto a la variable de respiesta, es una mala señal. 
+
+Por ende, a continuacion se van a evaluar los cuatros supuetsos para identificar si un modelo predice bien o no.
+
+# Supuestos a cumplir
+
+Para poder obtener conclusiones confiables, el modelo debe cumplir con determinados supuestos
+
+-   no multicolinealidad: exacta ni aproximada, para asegurar que la matriz X sea de rango completo (conformable),
+
+-   linealidad: la relación entre variables expicativas y la respuesta debe ser aproximadamente lineal,
+
+-   homoscedasticidad: la varianza de los errores no depende de ninguna de las variables explicativas,
+
+-   normalidad: los errores del modelo deben presentar una distribución normal,
+
+-   atípicos/influyentes: si bien no es un supuesto en si mismo, es recomendable identificar observaciones atípicas e influyentes al modelo.
 
 
-
-=======
->>>>>>> 1dd926ac2436cb4dae4443a6af615f425e546d29
-Analizar esto, hacer un histograma y no una densidad
+Multicolinealidad:
 
 ```{r}
-plot(hist(datos_2$precio_m2, 
-     main = "Histograma de Precio por Metro Cuadrado", 
-     xlab = "Precio por Metro Cuadrado", 
-     ylab = "Frecuencia", 
-     col = "lightblue", 
-     border = "black"))
+vif(mod)
+```
+La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo.
 
-median(datos_2$precio_m2)
-mean(datos_2$precio_m2)
 
+## Homocedasticidad
+
+**ncvTest**
+
+-   **Hipótesis**:
+
+    -   **Hipótesis Nula (H0)**: La varianza de los residuos es constante (Homocedasticidad).
+
+    -   **Hipótesis Alternativa (H1)**: La varianza de los residuos no es constante (heterocedasticidad).
+
+-   **Procedimiento**:
+
+    -   El *ncvTest* examina la relación entre los valores ajustados (predicciones del modelo) y la varianza de los residuos.
+
+    -   Se ajusta un modelo de regresión para predecir los residuos en función de los valores ajustados.
+
+    -   Se calcula un estadístico de prueba basado en esta relación.
+
+    -   El estadístico de prueba sigue una distribución chi-cuadrado.
+
+    Un p-valor alto sugiere que no hay evidencia suficiente para rechazar la hipótesis nula, indicando Homocedasticidad.
+
+    -   Un p-valor bajo indica heteroscedasticidad.
+
+```{r}
+#| echo: false
+ncvTest <- ncvTest(mod)
+
+
+p_valor <- data.frame(
+  `p_valor` = 0.00)
+
+tabla_p_valor <- gt(p_valor) |>
+  cols_label(
+    p_valor = md("**p_valor**")
+  ) |>
+  tab_style(
+    style = cell_text(size = pct(75)),
+    locations = cells_column_labels()
+  )
+tabla_p_valor
 ```
 
+**Breusch-Pagan Test**
+
+-   **Hipótesis**:
+
+    -   **Hipótesis Nula (H0)**: La varianza de los residuos es constante y no depende de las variables independientes (Homocedasticidad).
+
+    -   **Hipótesis Alternativa (H1)**: La varianza de los residuos depende linealmente de las variables independientes (heteroscedasticidad).
+
+-   **Procedimiento**:
+
+    -   El test de *Breusch-Pagan* examina si la varianza de los residuos depende linealmente de las variables independientes del modelo original.
+
+    -   Se realiza una regresión auxiliar de los residuos al cuadrado contra las variables independientes originales.
+
+    -   Se calcula un estadístico de prueba basado en la regresión auxiliar.
+
+    -   El estadístico de prueba sigue una distribución chi-cuadrado.
+
+```{r, message=FALSE}
+breusch_pagan(mod) %>% kable()
+```
+
+Ambos p-valores son super pequeños, por lo tanto, hay problema de Heterocedasticidad. Se puede concluir que se rechaza la hipótesis nula que no es nuestro objetivo
+
+
+## Normalidad
+
+```{r,fig.cap="Normalidad de los residuos", label:fig-plot2, fig.dim=c(5,2.5)}
+#| echo: false 
+ggplot()+geom_density(aes(rstudent(mod)))+
+  ggtitle("Gráfico de densidad, residuos estudentizados")+
+  theme(panel.background = element_rect(fill = "white", color = NA))+
+  xlab("Residuos estudentizados")
+```
+
+La densidad de los residuos estudentizados no parecen comportarse como una normal. Por lo tanto nos indica que los residuos no se distribuyen normal.
+
+
+Se va a corrobar lo visto en el gráfico mediante tres métodos:
+
+-   **Shaphiro-Wilk**: se basa en la comparación de los cuantiles empíricos y teóricos bajo el supuesto de normalidad.
+
+-   **Jarque-Bera**: se basa en la comparación de los estadísticos de asimetría y kurtosis bajo el supuesto de normalidad.
+
+-   **Kolmogorov-Smirnov**: se basa en la máxima discrepacnoa entre la función de distribución empírica y la teórica bajo el supuesto de normalidad.
+
 ```{r}
-mod <- lm(precio_m2 ~ Municipio + condicion + baños+ año_de_const + tipo_prop + vista_al_mar + cant_de_est + nro_de_piso , data = datos_2)
+#| echo: false
+shapiro.test(rstudent(mod))
+jarque.bera.test(rstudent(mod))
+ks.test(rstudent(mod), 'pnorm')
 
-names(datos_2)
-summary(mod)
 
-
-coeficientes <- summary(mod)$coefficients
-estimador <- summary(mod)$coefficients[,1]
-error_standar <- summary(mod)$coefficients[,2]
-valor_t <- summary(mod)$coefficients[,3]
-p_valor <- summary(mod)$coefficients[,4]
-
-coef <- data.frame(
-  Estimador = estimador,
-  Error_Estandar = error_standar,
-  Valor_t = valor_t,
-  P_Valor = p_valor
+# Crear una tabla con los p-valores
+p_values_table <- data.frame(
+  Test = c("Shapiro-Wilk", "Jarque-Bera", "Kolmogorov-Smirnov"),
+  `P-Valor` = c(shapiro_p_value, jarque_bera_p_value, ks_p_value)
 )
-coef
+
+r_squared_table <- data.frame(
+  `Metric` = c("Shaphiro-Wilk", "Jarque-Bera", "Kolmogorov-Smirnov"),
+  `Value` = c())
+
+p_valor.normalidad <- data.frame(
+  `Método` = c("Shaphiro-Wilk", "Jarque-Bera", "Kolmogorov-Smirnov"),
+  `p-valor` = c(round(2.2e-16), round(2.2e-16), round(2.2e-16)))
+
+tabla_p_valor <- gt(p_valor.normalidad ) |>
+  tab_style(
+    style = cell_text(size = pct(75)),
+    locations = cells_column_labels()
+  )
+tabla_p_valor
 ```
 
-En el modélo se seleccionaron ciertas variables que en principios explicaban el crecimiento del precio por metro cuadrado, pero como se puede observar no es suficiente, ya que en conjunto todas las variables no son significativas para el modelo, es decir no explican correctamente a la variable de respuesta *precio_m2*, en la tabla se puede observar como ha algunos p valor que son muy grandes por lo tanto esas variables no son significativas.
+Los test Shaphiro-Wilk, Jarque-Bera, Kolmogorov-Smirnov tiene un p-valor menor que 0.05, por lo que se rechaza la hipótesis nula,los residuos se distribuyen normal.
+
+## Lineanidad
+
+A este se dio por hecho debido a que la forma en que se iba a mostrar era inleible.
+
+## Datos Atípicos
+
+```{r, fig.cap="Presencia de Atípicos", label:fig-plot4, fig.dim=c(5,3)}
+#| echo: false
+res <- rstudent(mod)
+yhat <- fitted(mod)
+
+#which(abs(res)>3)
+
+library(ggplot2)
+ggplot(mod, aes(x=yhat, y= res))+
+  geom_point()+
+  geom_hline(yintercept = -3,color="darkblue")+
+  geom_hline(yintercept = 3,color="darkblue")+
+  ylab("Residuos estudentizados")+
+  xlab("Predicción")+
+  ggtitle("Gráfico de dispersión, residuos y predicciones")
+```
+
+Existen cuatro observación que podría tomarse como dato atípico.
+
+
+Debido a que casi ningún supuesto se cumplio, optampos por utilizar otros metodos de prediccion, que son el método de árboles y bosques:
+
+## Árboles de decisión:
+
+Los modelos basados en árboles consisten en una secuancia de particiones anidadas que dividen el espacio de los predictores donde en cada partición se usa un modelo para predecir la respuesta.
+
+
+
+```{r}
+
+media_años <- round(mean(datos_2$año_de_const[datos_2$año_de_const != 0], na.rm = TRUE))
+datos_2$año_de_const[datos_2$año_de_const == 0] <- media_años
+
+# Definir los reemplazos y los valores de reemplazo
+reemplazos <- c(3, 10, 15, 90, 39, 95, 60, 966)
+valores_reemplazo <- c(2003, 2010, 2015, 1990, 1939, 1995, 1960, 1966)
+
+# Aplicar las reglas de reemplazo
+for (i in seq_along(reemplazos)) {
+  datos_2$año_de_const[datos_2$año_de_const == reemplazos[i]] <- valores_reemplazo[i]
+}
+
+# Convertir año_de_const a tipo numérico
+datos_2$año_de_const <- as.numeric(datos_2$año_de_const)
+
+
+# Separo la muestra en entrenamiento y testeo
+inTrain <- sample(1:nrow(datos_2), nrow(datos_2)*.7)
+train.set <- datos_2[inTrain,]
+test.set <- datos_2[-inTrain,]
+
+
+tree_ab <- rpart(precio_m2 ~ Municipio + año_de_const,
+                 data = train.set,
+                 control = rpart.control(minsplit = 5, # número mínimo de observaciones que deben existir en un nodo para ser dividido
+                                         cp = 0.001, # parámetro de complejidad
+                                         maxdepth = 30)) 
+prp(tree_ab, 
+    faclen = 0,           # No abreviar los nombres de las variables
+    cex = 0.8,            # Tamaño del texto
+    extra = 101,          # Mostrar tanto el número de observaciones como la proporción de la clase
+    box.palette = "RdBu", # Colores de los nodos
+    nn = TRUE) 
+
+
+fancy <- fancyRpartPlot(tree_ab, cex = 0.5)
+
+
+fancyRpartPlot(tree_ab)
+
+dev.off()
+pdf(tf <- tempfile(fileext = ".pdf"))
+
+
+```
+
 
 Error cuadratico medio:
 
@@ -767,45 +970,7 @@ datos_su <- datos_2[, c("Gastos_Comunes", "cant_de_est", "tipo_prop", "vista_al_
 vis_miss(datos_su)
 ```
 
-Multicolinealidad:
 
-```{r}
-vif(mod)
-```
-
-La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo.
-
-Homoscedasticidad:
-
-```{r}
-ncvTest(mod)
-
-```
-
-Test de normalidad:
-
-```{r}
-shapiro.test(rstudent(mod))
-jarque.bera.test(na.omit(rstudent(mod)))
-ks.test(rstudent(mod), 'pnorm')
-```
-
-Atípicos:
-
-```{r}
-res <- rstudent(mod)
-yhat <- fitted(mod)
-
-which(abs(res)>3)
-
-library(ggplot2)
-ggplot(mod, aes(x=yhat, y= res))+
-  geom_point()+
-  geom_hline(yintercept = -3,color="darkblue")+
-  geom_hline(yintercept = 3,color="darkblue")
-```
-
-En este caso hay una presencia de 4 datos atipocos. Hay uno que es super notorio y la idea es eliminarlo, con los otros tres hay que ver que se va hacer.
 
 Bosques:
 
@@ -858,54 +1023,7 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
 
 En este gráfico por más que los puntos esten bastantes dispersos al rededor de la línea roja siguen la linea creciente. Por lo que nos podemos dar cuenta, que las variables predictoras no predicen muy bien a las variables originales.
 
-```{r}
 
-media_años <- round(mean(datos_2$año_de_const[datos_2$año_de_const != 0], na.rm = TRUE))
-datos_2$año_de_const[datos_2$año_de_const == 0] <- media_años
-
-# Definir los reemplazos y los valores de reemplazo
-reemplazos <- c(3, 10, 15, 90, 39, 95, 60, 966)
-valores_reemplazo <- c(2003, 2010, 2015, 1990, 1939, 1995, 1960, 1966)
-
-# Aplicar las reglas de reemplazo
-for (i in seq_along(reemplazos)) {
-  datos_2$año_de_const[datos_2$año_de_const == reemplazos[i]] <- valores_reemplazo[i]
-}
-
-# Convertir año_de_const a tipo numérico
-datos_2$año_de_const <- as.numeric(datos_2$año_de_const)
-
-library(rpart)
-library(rattle)
-# Separo la muestra en entrenamiento y testeo
-inTrain <- sample(1:nrow(datos_2), nrow(datos_2)*.7)
-train.set <- datos_2[inTrain,]
-test.set <- datos_2[-inTrain,]
-
-library(rpart.plot)
-tree_ab <- rpart(precio_m2 ~ Municipio + año_de_const,
-                 data = train.set,
-                 control = rpart.control(minsplit = 5, # número mínimo de observaciones que deben existir en un nodo para ser dividido
-                                         cp = 0.001, # parámetro de complejidad
-                                         maxdepth = 30)) 
-prp(tree_ab, 
-    faclen = 0,           # No abreviar los nombres de las variables
-    cex = 0.8,            # Tamaño del texto
-    extra = 101,          # Mostrar tanto el número de observaciones como la proporción de la clase
-    box.palette = "RdBu", # Colores de los nodos
-    nn = TRUE) 
-
-
-fancy <- fancyRpartPlot(tree_ab, cex = 0.5)
-
-pdf(tf <- tempfile(fileext = ".pdf"))
-fancyRpartPlot(tree_ab)
-dev.off()
-cat(tf)
-
-```
-
-En este paso se trato de ver en que condiciones estaba cada municipio. Creo que noquedo muy bien, pero es un intento de arbol
 
 Metadatos :
 
