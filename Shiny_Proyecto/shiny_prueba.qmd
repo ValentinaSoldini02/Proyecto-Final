@@ -449,6 +449,7 @@ shinyApp(ui = ui, server = server)
 
 # IDEA
 ```{r}
+##
 # Colores personalizados para el gráfico de municipios
 colores_personalizados <- c(
   "Municipio_A" = "red", "Municipio_B" = "blue", "Municipio_C" = "green",
