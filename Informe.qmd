@@ -258,6 +258,11 @@ datos_2$deposito <- as.factor(datos_2$deposito)
 datos_2$baños <- as.factor(datos_2$baños)
 ```
 
+
+
+# Visualización
+
+
 Cual municipio es mas costoso para alquilar?
 
 ```{r}
@@ -441,8 +446,7 @@ datos_2 <- datos_2 %>%
     baños == 0 ~ "0",
     baños == 1 ~ "1",
     baños == 2 ~ "2",
-    baños == 3 ~ "3",
-    TRUE ~ "mas de 3"
+    TRUE ~ "mas de 2"
   ))
 
 promedios1 <- datos_2 %>%
@@ -489,7 +493,7 @@ De manera similar a lo observado anteriorente, el precio por metro cuadrado de l
 
 
 
-Recodificamos ahora la cantidad de cantidad de habitaciones y la cantidad de cuartos
+Recodificamos ahora la cantidad de cantidad de habitaciones y la cantidad de cuartos. Vemos que en general, el tener 2 cuartos o 2 habitaciones hace que el precio promedio por metro cuadrado sea mayor, esto también se cumple para los alquileres con 3 o más cuartos / habitaciones.
 
 ```{r}
 
