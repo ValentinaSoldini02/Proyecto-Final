@@ -556,10 +556,75 @@ En este gráfico, muestra una tendencia lineal, se puede decir que los gastos co
 
 ## Modelo Predictivo
 
-Con el objetivo de identificar si las variables del modelo explican correctamente la variable de respuesta, en este caso *precio_m2*, se decidió hacer una exploración con ciertas variables. Para ello, se elaboraron gráficos lineales que anteriormente estan precentadas que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas afecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos.
+Con el objetivo de identificar si las variables del modelo explican correctamente la variable de respuesta, en este caso *precio_m2*, se decidió hacer una exploración con ciertas variables. Para ello, se elaboraron gráficos lineales que anteriormente estan precentados que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas afecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos.
+
+Una vez hecho este analisis, se paso a crear el modelo de regrecion lineal. Este modelo se creo a partir de las variables que mas afectaba el cambio en el precio por metro cuadrado. Es asi, que se eligieron las variables: *Municipio*,  *condicion*, *baños*, *año_de_const*, *tipo_prop*, *vista_al_mar*, *cant_de_est*, *nro_de_piso*, a pesar de que se redujo la cantidad de variables comparando con todas las variables que hay en el set de datos, se interpretó que asi se iba a poder ver un poco mejor que nos quieren mostrar las diferentes variables.
+
+*precio_m2* = $\beta0$ + *Municipio*$\beta1$ +  *condicion*$\beta2$ + *baños*$\beta3$ + *año_de_const*$\beta4$ + *tipo_prop*$\beta5$ + *vista_al_mar*$\beta6$ + *cant_de_est*$\beta7$ + *nro_de_piso*$\beta8$
+
+Una vez obtenido el modelo, se realizo el summary, y se obtuvieron estos resultados:
+
+```{r}
+mod <- lm(precio_m2 ~ Municipio + condicion + baños+ año_de_const + tipo_prop + vista_al_mar + cant_de_est + nro_de_piso , data = datos_2)
 
 
+h <- summary(mod)
 
+
+coeficientes <- h$coefficients
+estimador <- h$coefficients[,1]
+error_standar <- h$coefficients[,2]
+valor_t <- h$coefficients[,3]
+p_valor <- h$coefficients[,4]
+
+
+coef <- data.frame(
+  Coeficientes = rownames(coeficientes),
+  Estimador = round(estimador, 2),
+  Error_Estandar = round(error_standar, 2),
+  Valor_t = round(valor_t, 2),
+  P_Valor = round(p_valor, 2)
+)
+
+tabla_coef <- gt(coef) |>
+  cols_label(
+    Coeficientes = md("**Coeficientes**"),
+    Estimador = md("**Estimador**"),
+    Error_Estandar = md("**Error_Estandar**"),
+    Valor_t = md("**Valor_t**"),
+    P_Valor = md("**P_Valor**")
+  ) |>
+  tab_style(
+    style = cell_text(size = pct(75)),
+    locations = cells_column_labels()
+  )
+
+tabla_gt
+```
+
+Por lo que se puede observar es que casi todos los coeficientes nos dan un p-valor mayor a 0.05 porque lo que significa que no son significativas al modelo. 
+
+Luego por otro lado, analizando el $R^2$ nos podemos dar cuenta que las variables explicativas no explican correctamente a la variable de respuesta ya que el $R^2$ dio muy bajo
+
+```{r}
+r_cuadrado <- h$r.squared
+
+
+R2 <- data.frame(
+  `R2` = c(round(r_cuadrado, 2)))
+
+tabla_R2 <- gt(R2) |>
+  cols_label(
+    R2 = md("**R2**")
+  ) |>
+  tab_style(
+    style = cell_text(size = pct(75)),
+    locations = cells_column_labels()
+  )
+tabla_R2
+```
+
+Que 
 
 
 
@@ -580,8 +645,9 @@ mean(datos_2$precio_m2)
 
 
 ```{r}
-mod <- lm(precio_m2 ~ Municipio + Gastos_Comunes + baños+ año_de_const + tipo_prop + vista_al_mar + cant_de_est , data = datos_2)
+mod <- lm(precio_m2 ~ Municipio + condicion + baños+ año_de_const + tipo_prop + vista_al_mar + cant_de_est + nro_de_piso , data = datos_2)
 
+names(datos_2)
 summary(mod)
 
 
