@@ -1121,3 +1121,16 @@ tabla_gt <- gt(tabla_variables) |>
 ```
 
 
+<<<<<<< HEAD
+=======
+
+
+# Exportar Datos
+
+library(writexl)
+write_xlsx(datos_2, path = here("Datos","datos_limpios.xlsx"))
+
+datos_2
+
+```
+>>>>>>> 4b119f6a2e4b82e237af4eae4e1dacff700ed820
