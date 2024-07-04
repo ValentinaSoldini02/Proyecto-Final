@@ -360,14 +360,23 @@ ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantid
 Pregunta 2) ¿Cómo se distribuye el tipo de propiedad de los alquileres y el precio promedio de el tipo de propiedad? ¿¿Cómo se distribuye las condiciones de los alquileres y el precio promedio según las condiciones de los alquileres?
 
 ```{r}
+datos_2 <- datos_2 %>%
+  mutate(condicion = case_when(
+    condicion == "Under construction" ~ "Bajo construccion",
+    condicion == "Brand new" ~ "A estrenar",
+    condicion == "Excellent condition" ~ "Excelente condición",
+    condicion == "Renovated" ~ "Renovado",
+    TRUE ~ "Otros"
+  ))
+
+
 # Grupo de Precio promedio por condición de la vivienda
 grupo_condicion <- datos_2 %>%
   group_by(condicion) %>%
-  summarise(Cantidad = mean(precio_m2))
-
+  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
 # Gráfico de Precio promedio por condición de la vivienda
-ggplot(grupo_condicion, aes(x = fct_reorder(condicion, Cantidad), y = Cantidad)) +
+ggplot(grupo_condicion, aes(x = fct_reorder(condicion, promedio_precio_m2), y = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
   labs(x = "Condición", y = "Precio promedio") +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 10))
@@ -678,7 +687,7 @@ tabla_coef <- gt(coef) |>
     locations = cells_column_labels()
   )
 
-tabla_gt
+tabla_coef
 ```
 
 Por lo que se puede observar es que casi todos los coeficientes nos dan un p-valor mayor a 0.05 porque lo que significa que no son significativas al modelo. 
@@ -706,6 +715,35 @@ tabla_R2
 Que la significancia no se cumpla es decir que las variables no sean significativas y que el $R^2$ sea tan chico que las variables explicatibas no expliquen en absoluto a la variable de respiesta, es una mala señal. 
 
 Por ende, a continuacion se van a evaluar los cuatros supuetsos para identificar si un modelo predice bien o no.
+
+```{r}
+predicciones <- predict(mod, newdata = datos_2)
+
+# Calcular el Error Cuadrático Medio 
+library(Metrics)
+mse_valor <- mse(datos_2$precio_m2, predicciones)
+sqrt(mse_valor)
+
+
+
+p_valor.raiz.cuadrada.SE <- data.frame(
+  `Raiz cuadrada de SE` = c(sqrt(mse_valor)))
+
+tabla_p_valor.raiz.cuadrada.SE <- gt(p_valor.raiz.cuadrada.SE) |>
+  cols_label(
+    Raiz.cuadrada.de.SE = md("**Raíz cuadrada de SE**")
+  )|>
+  tab_style(
+    style = cell_text(size = pct(75)),
+    locations = cells_column_labels()
+  )
+tabla_p_valor.raiz.cuadrada.SE
+
+```
+
+La raíz cuadrada del error cuadrático medio indica, en promedio, que las predicciones estan desviadas por 15.90 dólares del valor real del precio por metro cuadrado, lo cual significa que las predicciones estan bastante mal.
+
+
 
 # Supuestos a cumplir
 
@@ -826,15 +864,7 @@ jarque.bera.test(rstudent(mod))
 ks.test(rstudent(mod), 'pnorm')
 
 
-# Crear una tabla con los p-valores
-p_values_table <- data.frame(
-  Test = c("Shapiro-Wilk", "Jarque-Bera", "Kolmogorov-Smirnov"),
-  `P-Valor` = c(shapiro_p_value, jarque_bera_p_value, ks_p_value)
-)
 
-r_squared_table <- data.frame(
-  `Metric` = c("Shaphiro-Wilk", "Jarque-Bera", "Kolmogorov-Smirnov"),
-  `Value` = c())
 
 p_valor.normalidad <- data.frame(
   `Método` = c("Shaphiro-Wilk", "Jarque-Bera", "Kolmogorov-Smirnov"),
@@ -884,8 +914,8 @@ Los modelos basados en árboles consisten en una secuancia de particiones anidad
 
 
 
-```{r}
-
+```{r, fig.dim=c(6,6)}
+set.seed(50)
 media_años <- round(mean(datos_2$año_de_const[datos_2$año_de_const != 0], na.rm = TRUE))
 datos_2$año_de_const[datos_2$año_de_const == 0] <- media_años
 
@@ -902,80 +932,56 @@ for (i in seq_along(reemplazos)) {
 datos_2$año_de_const <- as.numeric(datos_2$año_de_const)
 
 
+inTrain <- sample(1:nrow(datos_2), nrow(datos_2) * 0.7)
+train.set <- datos_2[inTrain, ]
+test.set <- datos_2[-inTrain, ]
+
+
 # Separo la muestra en entrenamiento y testeo
-inTrain <- sample(1:nrow(datos_2), nrow(datos_2)*.7)
-train.set <- datos_2[inTrain,]
-test.set <- datos_2[-inTrain,]
-
-
-tree_ab <- rpart(precio_m2 ~ Municipio + año_de_const,
+tree_ab <- rpart(precio_m2 ~ disposicion + año_de_const,
                  data = train.set,
-                 control = rpart.control(minsplit = 5, # número mínimo de observaciones que deben existir en un nodo para ser dividido
-                                         cp = 0.001, # parámetro de complejidad
+                 control = rpart.control(minsplit = 5,  # número mínimo de observaciones que deben existir en un nodo para ser dividido
+                                         cp = 0.001,  # parámetro de complejidad
                                          maxdepth = 30)) 
+
+# Visualización del árbol de decisión
 prp(tree_ab, 
     faclen = 0,           # No abreviar los nombres de las variables
-    cex = 0.8,            # Tamaño del texto
+    cex = 0.50,           # Tamaño del texto
     extra = 101,          # Mostrar tanto el número de observaciones como la proporción de la clase
     box.palette = "RdBu", # Colores de los nodos
     nn = TRUE) 
 
+# Visualización con fancyRpartPlot
+#fancyRpartPlot(tree_ab, cex = 0.65)
 
-fancy <- fancyRpartPlot(tree_ab, cex = 0.5)
 
 
-fancyRpartPlot(tree_ab)
 
-dev.off()
-pdf(tf <- tempfile(fileext = ".pdf"))
+#fancy <- fancyRpartPlot(tree_ab, cex = 0.65)
+
+
+
 
 
 ```
 
-
+El árbol de decisión muetsra que el año de construcción y la siposición de las propiedades son factores importantes para predecir el precio por metro cuadrado. Las propiedades más recientes tienden a tener un precio más alto, y la disposición también juega un papel importante, especialmente en las propiedades más nuevas.
+  
+ 
+El árbol de decisión muestra que el año de construcción y la disposición de las propiedades son factores importantes para predecir el precio por metro cuadrado. Las propiedades más recientes tienden a tener un precio más alto, y la disposición también juega un papel significativo, especialmente en las propiedades más nuevas. 
 Error cuadratico medio:
-
-```{r}
-predicciones <- predict(mod, newdata = datos_2)
-
-# Calcular el Error Cuadrático Medio 
-library(Metrics)
-mse_valor <- mse(datos_2$precio_m2, predicciones)
-sqrt(mse_valor)
-
-# MAPE:
-
-library(MLmetrics)
-mape_valor <- MAPE(datos_2$precio_m2, predicciones)/100
-```
-
-248 predice mal
-
-```{r}
-
-#Sub datos:
-
-# A la columna direccion la quitamos porque estaba la columna municipio y es a lo que nosotros nos queremos enfocar. Por ptro lado, tambien sacamos la columna losa_radiante porque habia otra columna que es calefaccion y nos parecio repetitiva.
-# Tenemos un problema y es que hay algunas variables que estan correlacionadas entre si, y a alguna de ellas, en nuestra opinion son importantes para predecir el precio de las propiedades. En este casa voamos a sacar la variable Apartments_per_Floor. La variable baños y cant_de_est tambien se saco.
-#Tambien le voy a quitar la zona porque vamos a trabajar por municipios
-
-
-datos_sub <- datos_2[, c("Gastos_Comunes", "cant_de_est", "tipo_prop", "vista_al_mar", "calefaccion", "Municipio", "baños", "precio_m2"), drop = FALSE]
-names(datos)
-
-library(naniar)
-
-datos_su <- datos_2[, c("Gastos_Comunes", "cant_de_est", "tipo_prop", "vista_al_mar", "calefaccion", "Municipio", "baños", "precio_m2"), drop = FALSE]
-
-vis_miss(datos_su)
-```
-
 
 
 Bosques:
 
+Para hacer este análisis se quitaron las variables dirección y zona ya que daban problemas y por otro lado estaba municipio que lo que se evaluo en todo el trabajo.
+
 ```{r}
-names(datos_sub)
+
+datos_sub <- datos_2  |> 
+  select(-direccion, -zona)
+
 set.seed(50)
 intrain <- sample(x = 1:nrow(datos_sub), size =
 nrow(datos_sub)*.7)
@@ -983,11 +989,10 @@ training <- datos_sub[intrain,]
 testing <- datos_sub[-intrain,]
 # ajustamos modelo lineal simple
 rf <- randomForest(precio_m2 ~ .,data= training)
-names(datos_2)
 ```
 
 ```{r}
-
+set.seed(50)
 pred <- predict(rf, newdata = training)
 results <- data.frame(
   Actual = training$precio_m2,
@@ -1003,8 +1008,17 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
   labs( x = "Variables originales", y = "Variables predichas") +
   theme_minimal()
 
+```
 
 
+En la gráfica, se muestra una comparación entre las variables originales y las variables predichas utilizando un modelo de random forest. Las predicciones serían perfectas si todos los puntos cayeran sobre la línea roja
+
+En este paso se utilizo el conjunto de entrenamiento en el que se esta utilizando únicamente el 30% de los datos.
+
+Las observaciones dispersas alrededor de la línea roja indica que hay cierta variabilidad entre los valores originales y las predicciones. Esta predicción no es tan mala ya que la mayoria de los datos se encuentran bastante cerca de la línea roja. También se aprecia que las observaviones siguen la misma tendencia que dicha línea, esto significa que a medida que crecen las variables originales las predicciones también, por lo que es una buena señal.
+
+```{r}
+set.seed(50)
 pred <- predict(rf, newdata = testing)
 results <- data.frame(
   Actual = testing$precio_m2,
@@ -1020,9 +1034,11 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
   labs( x = "Variables originales", y = "Variables predichas") +
   theme_minimal()
 ```
+Como en el gráfico anterior se muetsra la comparación entre las variables originales y las variables predichas usando el método de random forest, pero esta vez aplicándolo al conjunto de datos "testing" que son un 70% de los datos.
 
-En este gráfico por más que los puntos esten bastantes dispersos al rededor de la línea roja siguen la linea creciente. Por lo que nos podemos dar cuenta, que las variables predictoras no predicen muy bien a las variables originales.
+Con respecto a la dispersión alrededor de la línea roja, en comparación al gráfico anterior, usando el conjunto de entrenamiento, se observa una mayor disperción de las observaciones alrededor de la línea roja. Esto sugiere que el modelo tiene más disficultad para predecir correctamente.
 
+La mayor dispersión y el alejamiento de algunos puntos de la líena roja indican que el modelo no está generalizado bien a datos nuevos y desconocidos. Este es un indicio de que el modelo podria estar sobreajustando al conjunto de datos de entrenamiento.
 
 
 Metadatos :
@@ -1104,10 +1120,9 @@ tabla_gt <- gt(tabla_variables) |>
 
 ```
 
-```{r}
-# max(datos_2$precio_m2)
-# max(datos_2$Gastos_Comunes)
 
+<<<<<<< HEAD
+=======
 
 
 # Exportar Datos
@@ -1118,3 +1133,4 @@ write_xlsx(datos_2, path = here("Datos","datos_limpios.xlsx"))
 datos_2
 
 ```
+>>>>>>> 4b119f6a2e4b82e237af4eae4e1dacff700ed820
