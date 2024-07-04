@@ -313,6 +313,9 @@ ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
   theme_minimal()
 
 ```
+Por lo tanto, las propiedades más antiguas tienden a ser más económicas, mientras que las propiedades más recientes tienden a ser más caras. Este patrón es consistente con la idea de que las propiedades más nuevas tienen características y otras comodidades, mejor infraestructura y probablemnete esten ubicadas en lugares mas deseables.
+
+
 
 ```{r}
 datos_2 <- datos_2 %>%
@@ -330,7 +333,7 @@ promedios6 <- datos_2 %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
 # Crear el gráfico
-ggplot(promedios6, aes(x = tipo_prop, y = promedio_precio_m2)) +
+ggplot(promedios6, aes(x = fct_reorder(tipo_prop,promedio_precio_m2) y = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
   labs(x = "Tipo de propiedad", y = "Promedio del precio por m2") +
   ggtitle("Promedio del precio por m2 según el tipo de propiedad") +
@@ -356,8 +359,11 @@ ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantid
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 10))
 
 ```
+No hay una diferencia muy notoria con respecto al precio por metro cuadrado en cuanto a la dispocicion en que se encuentra las diferentes propiedades.
 
-Pregunta 2) ¿Cómo se distribuye el tipo de propiedad de los alquileres y el precio promedio de el tipo de propiedad? ¿¿Cómo se distribuye las condiciones de los alquileres y el precio promedio según las condiciones de los alquileres?
+
+
+Pregunta: ¿Cómo se distribuye el precio promedio según las condiciones de los alquileres?
 
 ```{r}
 datos_2 <- datos_2 %>%
@@ -517,7 +523,21 @@ datos_2 <- datos_2 %>%
     TRUE ~ "más de 3"
   ))
 
+promedios3 <- datos_2 %>%
+  group_by(cant_cuartos) %>%
+  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
+# Crear el gráfico
+ggplot(promedios3, aes(x = fct_reorder(cant_cuartos, 
+                       promedio_precio_m2), 
+                       y = promedio_precio_m2)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Cantidad de cuartos", y = "Precio por m2") +
+  ggtitle("Precio por m2 según número de cuartos") +
+  theme_minimal()
+```
+
+```{r}
 datos_2 <- datos_2 %>%
   mutate(cant_habitaciones = case_when(
     cant_habitaciones == 0 ~ "0",
@@ -528,32 +548,9 @@ datos_2 <- datos_2 %>%
 
 
 
-
-
-
-promedios3 <- datos_2 %>%
-  group_by(cant_cuartos) %>%
-  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
-
-
 promedios4 <- datos_2 %>%
   group_by(cant_habitaciones) %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
-
-
-
-
-
-# Crear el gráfico
-ggplot(promedios3, aes(x = fct_reorder(cant_cuartos, 
-                       promedio_precio_m2), 
-                       y = promedio_precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Cantidad de cuartos", y = "Precio por m2") +
-  ggtitle("Precio por m2 según número de cuartos") +
-  theme_minimal()
-
-
 
 
 ggplot(promedios4, aes(x = fct_reorder(cant_habitaciones,  
@@ -563,16 +560,7 @@ ggplot(promedios4, aes(x = fct_reorder(cant_habitaciones,
   labs(x = "Cantidad de habitaciones", y = "Precio por m2") +
   ggtitle("Precio por m2 según número de habitaciones") +
   theme_minimal()
-
-
-
 ```
-
-
-
-
-
-
 
 ```{r}
 promedios4 <- datos_2 %>%
@@ -1117,20 +1105,8 @@ tabla_gt <- gt(tabla_variables) |>
     style = cell_text(size = pct(75)),
     locations = cells_column_labels()
   )
-
+tabla_gt
 ```
 
 
-<<<<<<< HEAD
-=======
 
-
-# Exportar Datos
-
-library(writexl)
-write_xlsx(datos_2, path = here("Datos","datos_limpios.xlsx"))
-
-datos_2
-
-```
->>>>>>> 4b119f6a2e4b82e237af4eae4e1dacff700ed820
