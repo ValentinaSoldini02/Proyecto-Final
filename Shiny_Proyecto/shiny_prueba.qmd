@@ -157,11 +157,11 @@ conditionalPanel(
                            plotOutput("barPlot"),
                            value = 1
                   ),
-                  tabPanel("Datos2",
-                           h2("Gráfico de Datos2"),
-                           plotOutput("scatterPlot"),
-                           value = 2
-                  ),
+                  # tabPanel("Datos2",
+                  #          h2("Gráfico de Datos2"),
+                  #          plotOutput("scatterPlot"),
+                  #          value = 2
+                  # ),
                   tabPanel("Mapa",
                            h2("Gráfico de Mapa"),
                            value = 3
@@ -361,6 +361,7 @@ datos_4 <- datos_2 %>%
 datos_4
 
 
+library(ggmosaic)
 
 
 ```
