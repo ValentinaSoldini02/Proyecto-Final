@@ -30,9 +30,10 @@ library(knitr)
 library(rpart)
 library(rattle)
 library(rpart.plot)
+library(paletteer)
 ```
 
-## Introducción:
+# Introducción:
 
 El mercado inmobiliario ha sido ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan un alquiler una propiedad. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios de las propiedades teniendo en cuenta diferentes aspectos. Para realizar este análisis, plenteamos las diferentes preguntas de investigación:
 
@@ -44,7 +45,7 @@ El mercado inmobiliario ha sido ha sido de gran importancia durante muchos años
 
 Estas preguntas guiarán nuestro analisis para comprender mejor los factores que afectan los precios en el mercado inmobiliario y proporcionar una herramienta útil para los distintos agentes, ya sean compradores, vendedores, inversores y agentes inmobiliarios.
 
-## Datos
+# Datos
 
 Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**, consiste en una plataforma web que reúne la comunidad Data Science, con más de 536 mil miembros activos en 194 países. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes caracteristicas internas y externas de la propiedad.
 
@@ -57,50 +58,57 @@ datos <- read_csv(here("houses.csv"))
 
 ```
 
-## Análisis exploratorio de los datos
+# Análisis exploratorio de los datos
 
 Para responder adecuadamente las preguntas planteadas, se inició con una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados, valores atípocos y valores nulos. Además, se decidió eliminar las variables *Furnished...32*, *Furnished...42*, y *Floors*. Las dos primeras variables fueron eliminadas debido a la existencia de una tercera que contenía la misma información. La columna *Floors* se eliminó ya que no aportaba información relevante, contenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.
 
-Otra modificación realizada fue la agrupación d elas zonas de Montevideo en municipios. Se creó una variable adicional *Municipio* que contiene todas las zonas de Montevido separadas por municipios, se puede observar en la Tabla 1 que zonas corresponden a cada municipio. Adicionalmente, se convirtió la variable *precio* por *precio_m2* (precio por metros cuadrados) para facilitar el análisis de los datos.
+Otra modificación realizada fue la agrupación de las zonas de Montevideo en municipios. Se creó una variable adicional *Municipio* que contiene todas las zonas de Montevideo separadas por municipios, se puede observar en la Tabla 1 que zonas corresponden a cada municipio. Adicionalmente, se convirtió la variable *precio* por *precio_m2* (precio por metros cuadrados) para facilitar el análisis de los datos.
 
 Como se mencionó anteriormente, ciertas variables contenían valores nulos. Para abordar este problema, se emplearon diferentes métodos según las características de cada variable:
 
--   **dierección**: Se asignó el nombre de la zona correspondiente a la propiedad.
--   **precio_m2**: Se calculó la media de toda la columna de dicha variable y se coloco este valor en las filas donde habia un dato faltante.
--   **concición**: Se asignó la categoria más frecuente. Lo mismo se realizó con la variable *disposición*
+-   **dirección**: Se asignó el nombre de la zona correspondiente a la propiedad.
+-   **precio_m2**: Se calculó la media de toda la columna de dicha variable y se coloco este valor en las filas donde había un dato faltante.
+-   **concisión**: Se asignó la categoría más frecuente. Lo mismo se realizó con la variable *disposición*
 
-Además, se recodificaron cariables para mejorar su análisis y para evaluar cómo algunas de las variables del modelo afectaban linealmente a la variable predictora, **precio_m2**
+Para las variables que se mencionó que se calculo la media de toda la columna y se coloco ese dato en las filas con datos faltantes. Se tomo la media ya que tiene una capacidad para reflejar la tendencia central del conjunto de datos en su totalidad, incluyendo la influencia de los valores extremos. Este enfoque proporciona una estimación consistente y efectiva para la preparación de ks datos antes de su análisis detallado.
+
+Además, se re-codificaron variables para mejorar su análisis y para evaluar cómo algunas de las variables del modelo afectaban linealmente a la variable predictora, **precio_m2**
+
+Por otro lado, a los datos duplicados se eliminaron teniendo en cuenta que las  coincidencias únicas que tienen las filas, ya que no tenemos una fecha de snapshot de Mercado Libre.
 
 ```{r, fig.cap="Municipios", label:fig-plot0}
 tabla_municipio <- data.frame(
-  Municipio = c("Municipio A","Municipio B", "Municipio C", "Municipio CH", "Municipio D", "Municipio E", "Municipio F", "Municipio G"),
+  Municipio = c("Municipio A","Municipio B", "Municipio C", "" ,"Municipio CH", "Municipio D", "Municipio E", "Municipio F", "", "Municipio G"),
   Columna2 = c("Cerro, La Teja, Paso de la Arena, Belvedere, Nuevo París, Prado",
   "Cordón, Parque Rodó, Palermo, Barrio Sur, Ciudad Vieja, Centro, Aguada, La Comercial", 
-  "Aguada, Arroyo Seco, Atahualpa, Bella Vista, Brazo Oriental, Capurro, Goes, Jacinto Vera, La Comercial, Mercado Modelo, Reducto, Villa Muñoz", 
+  "Aguada, Arroyo Seco, Atahualpa, Bella Vista, Brazo Oriental, Capurro, Goes, Jacinto Vera,", 
+  "La Comercial, Mercado Modelo, Reducto, Villa Muñoz", 
   "Tres Cruces, La Blanqueada, Parque Batlle, Villa Dolores, Buceo, Pocitos, Punta Carretas",
   "Piedras Blancas, Villa Española, Unión, Bolivar, Cerrito",
   "Malvín Norte, Malvín, Carrasco Norte, Carrasco, Punta Gorda, Buceo, La Blanqueada",
-  "Maroñas, Flor de Maroñas, Villa Española, Ituzaingó, Jardines del Hipódromo, Piedras Blancas",
+  "Maroñas, Flor de Maroñas, Villa Española, Ituzaingó, Jardines del Hipódromo,",
+  "Piedras Blancas",
   "Lezica, Peñarol, Nuevo París, Sayago, Conciliación, Colón"))
 
 
 Municipios <- gt(tabla_municipio) |>
+  tab_spanner(label = md("**Zonas**"), columns = everything()) |>
   cols_label(
-    Columna2 = md("**Zonas**"),
     Municipio = md("**Municipio**")
   ) |>
   tab_style(
-    style = cell_text(size = pct(75)),
+    style = cell_text(size = pct(70)),
     locations = cells_column_labels()
   )
+
+Municipios
+
 ```
-
-## Limpieza
-
-
 
 
 ```{r}
+## Limpieza
+
 # ORDENANDO LOS DATOS:
 
 #Eliminando los datos atipicos
@@ -153,32 +161,28 @@ datos_2 <-
 # Datos sin duplicados
 datos_2 <- datos_2[!duplicated(datos_2), ]
 
+datos_2 <- datos_2 |>
+  filter(!(zona == "Montevideo"))
 
-#utilizamos las coincidencias unicas que tienen las filas, ya que no tenemos una fecha de snapshot de mercado libre.
-# diagrama de cajas solo de las numericas
-# agregar el grafico de 0 y 1
 ```
 
 
 ```{r}
 datos_2 <- datos_2 %>%
   mutate(zona = case_when(
-    zona %in% c("Carrasco Barrios con Seguridad") ~ "Carrasco",
-    zona %in% c("Carrasco Este") ~ "Carrasco",
-    zona %in% c("Golf") ~ "Punta Carretas",
-    zona %in% c("Parque Miramar") ~ "Carrasco",
-    zona %in% c("Peñarol Lavalleja") ~ "Peñarol",
-    zona %in% c("Pocitos Nuevo") ~ "Pocitos",
-    zona %in% c("Prado Nueva Savona") ~ "Prado",
-    zona %in% c("Puerto Buceo") ~ "Buceo",
-    zona %in% c("Villa Biarritz") ~ "Punta Carretas",
+    zona == "Carrasco Barrios con Seguridad" ~ "Carrasco",
+    zona == "Carrasco Este" ~ "Carrasco",
+    zona == "Golf" ~ "Punta Carretas",
+    zona == "Parque Miramar" ~ "Carrasco",
+    zona == "Peñarol Lavalleja" ~ "Peñarol",
+    zona == "Pocitos Nuevo" ~ "Pocitos",
+    zona == "Prado Nueva Savona" ~ "Prado",
+    zona == "Puerto Buceo" ~ "Buceo",
+    zona == "Villa Biarritz" ~ "Punta Carretas",
+    TRUE ~ zona  # Mantiene los valores originales para los que no cumplen las condiciones anteriores
   ))
-
-
-
                    
                    
-
 # Cambiando la zona por municipios
 
 datos_2 <- datos_2 %>% # Datos
@@ -199,18 +203,10 @@ datos_2 <- datos_2 %>% # Datos
     zona %in% c("Maroñas", "Flor de Maroñas", "Villa Española", "Ituzaingó", "Jardines del Hipódromo", "Piedras Blancas","Punta Rieles") ~ "Municipio_F",
 
     zona %in% c("Lezica", "Peñarol", "Nuevo París", "Sayago", "Conciliación", "Colón") ~ "Municipio_G",
-
-    TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
-  ))
-
-
-
-
-
-
-
+    TRUE ~ zona  ))
 
 ```
+
 
 ```{r}
 # Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
@@ -254,11 +250,11 @@ detector_nulos <- function(datos_2){ # Función
   # De este DataFrame filtramos solo las columnas que tengan una cantidad total de valores nulos mayor a 0
 }
 
-detector_nulos(datos_2)
 
 ```
 
-**Análisis Exploratorio para Determinar las variables que más Influyen en el Precio por metro cuadrado:**
+
+## Determinar que variables Influyen más en el Precio por metro cuadrado:
 
 A continuación, se presentarán algunas visualizaciones para responder las preguntas planteadas.
 
@@ -294,12 +290,7 @@ datos_2$deposito <- as.factor(datos_2$deposito)
 datos_2$baños <- as.factor(datos_2$baños)
 ```
 
-
-
-# Visualización
-
-
-Cual municipio es mas costoso para alquilar?
+**¿Cual es el municipio más costoso para alquilar?**
 
 ```{r}
 promedios3 <- datos_2 %>%
@@ -308,12 +299,16 @@ promedios3 <- datos_2 %>%
 
 ggplot(promedios3, aes(x = fct_reorder(Municipio, promedio_precio_m2), y = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
+  scale_fill_paletteer_d("RColorBrewer::RdYlBu") +
   labs(x = "Municipio", y = "Precio por m2") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
 ```
 
 En este gráfico se puede apreciar como el Municipio A tiene los precios por metro cuadrado pormedios mas altos, seguido por el Municipio E. Este gráfico es útil para ver que zonas de Montevideo son mas caras y cuáles son mas económicas, lo cual es valioso para los inquilinos al decidir en que área desean vivir según sus preferencias y presupuesto.
+
+**¿Cómo varía el precio por metro cuadrado según el año de construcción de la propiedad?**
 
 A continuación, se presenta un gráfico que muestra la antigüedad de la propiedad y cómo varía el precio por metro cuadrado según el año de construcción. Se observa que, a medida que las propiedades son más nueveas, el precio por metro cuadrado tiende a aumentar.
 
@@ -346,9 +341,11 @@ ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
   theme_minimal()
 
 ```
-Por lo tanto, las propiedades más antiguas tienden a ser más económicas, mientras que las propiedades más recientes tienden a ser más caras. Este patrón es consistente con la idea de que las propiedades más nuevas tienen características y otras comodidades, mejor infraestructura y probablemnete esten ubicadas en lugares mas deseables.
+Este patrón es consistente con la idea de que las propiedades más nuevas tienen características y otras comodidades, mejor infraestructura y probablemnete esten ubicadas en lugares mas deseables.
 
+\newpage
 
+**¿Que tipo de propiedad presenta los alquileres las más elevados?**
 
 ```{r}
 datos_2 <- datos_2 %>%
@@ -366,14 +363,17 @@ promedios6 <- datos_2 %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
 # Crear el gráfico
-ggplot(promedios6, aes(x = fct_reorder(tipo_prop,promedio_precio_m2) y = promedio_precio_m2)) +
+ggplot(promedios6, aes(x = fct_reorder(tipo_prop,promedio_precio_m2), y = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
   labs(x = "Tipo de propiedad", y = "Promedio del precio por m2") +
   ggtitle("Promedio del precio por m2 según el tipo de propiedad") +
   theme_minimal()
 ```
 
-Pregunta) ¿Cómo se distribuyen la disposición de los alquileres y el según precio por metro cuadrado promedio?
+Como se puede observar en promedio el tipo de propiedad que son mas costosas son las oficinas seguido por los apartamento. En este análisis también se re-codificaron ciertas observaciones para poder analizar mejor los datos.
+
+
+**¿Cómo es la distribución de los alquileres en función del precio promedio por metro cuadrado?**
 
 ```{r}
 #Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
@@ -396,7 +396,7 @@ No hay una diferencia muy notoria con respecto al precio por metro cuadrado en c
 
 
 
-Pregunta: ¿Cómo se distribuye el precio promedio según las condiciones de los alquileres?
+**¿Cómo se distribuye el precio promedio de los alquileres según las condiciones?**
 
 ```{r}
 datos_2 <- datos_2 %>%
@@ -422,21 +422,11 @@ ggplot(grupo_condicion, aes(x = fct_reorder(condicion, promedio_precio_m2), y = 
 
 ```
 
-Al considerar la condición de los alquileres, se puede observar que la mayoría de las propiedades se encuentran en buenas condiciones. Esto es una buena señal para inquilinos que directamente se quieren trasladar a esa propiedad. En términos de precio promedio por metro cuadrado, los alquileres "En Construcción", "Para Estrenar" y en "Excelente Condición" son los más caros.
+Al considerar la condición de los alquileres, se puede observar que la mayoría de las propiedades se encuentran en buenas condiciones. Esto es una buena señal para inquilinos que directamente se quieren trasladar a esa propiedad. En términos de precio promedio por metro cuadrado, los alquileres "En Construcción", "Para Estrenar" y en "Excelente Condición" son los más costosos.
 
-```{r, eval=FALSE}
-#shiny 
-selectInput(
-  inputId,
-  label,
-  choices,
-  selected = NULL,
-  multiple = TRUE,
-  selectize = TRUE,
-  width = NULL,
-  size = NULL
-)
-```
+\newpage
+
+**¿Cómo varía el precio por metro cuadrado según la cantidad de pisos de la propiedad?**
 
 ```{r}
 
@@ -461,9 +451,21 @@ ggplot(data = datos_3) +
 
 ```
 
-Este grafico representa la relacion entre el precio por metro cuadrado (*precio_m2*) y el número de piso (*nro_de_piso*) de las propiedades, categorizando el precio por metro cuadrado en dos grupos: menor o igual a 13 y mayor a 13, también se categorizó el número de piso en dos grupos: menor o igual a 15 pisos y mayor a 15 pisos. Para los precios por metro cuadrado menor o igual a 13, se observa que son propiedades que tienen pisos bajos menores a 15. Para los precios por metro cuadrado mayores a 13, se observa que son propiedades que tienen pisos mayores a 15. Por lo tanto, en pisos mas bajos, predominan los precios por metro cuadrado menores o iguales a 13. Por otro lado, para los pisos mas altos, los precios por metro cuadrado mayores a 13 son los más comunes. Esto sugiere que el número de piso podría tener una influencia en el precio por metro cuadrado, con pisos mas altos tendiendo a precios mayores por metro cuadrado en comparación con pisos más bajos.
+Este grafico representa la relacion entre el precio por metro cuadrado (*precio_m2*) y el número de piso (*nro_de_piso*) de las propiedades.
 
-Pregunta 12) ¿Cómo afecta al inmueble el tener cierta cantidad de comodidades como son Baños, Garages, Cuartos y Habitaciones en el precio?
+Re-caracterizando el precio promedio por metro cuadrado en dos grupos: 
+  - Menor o igual a 13 dólares y mayor a 13 dólares, 
+  
+También se re-categorizó el número de piso en dos grupos:
+  - Menor o igual a 15 pisos y mayor a 15 pisos. 
+  
+Para los precios por metro cuadrado menor o igual a 13 dólares, se observa que son propiedades que tienen pisos bajos menores a 15. Para los precios por metro cuadrado mayores a 13 dólares, se observa que son propiedades que tienen pisos mayores a 15.
+
+Por lo tanto, en pisos mas bajos, predominan los precios por metro cuadrado menores o iguales a 13 dólares. Por otro lado, para los pisos mas altos, los precios por metro cuadrado mayores a 13 dólares son los más comunes.
+
+Esto sugiere que el número de piso podría tener una influencia en el precio por metro cuadrado, con pisos mas altos tendiendo a precios mayores por metro cuadrado en comparación con pisos más bajos.
+
+**¿Cómo influye en el precio del inmueble la cantidad de cuartos en una propiedad?**
 
 ```{r}
 
@@ -487,9 +489,11 @@ ggplot(promedios1, aes(x =  fct_reorder(cant_cuartos, promedio_precio_m2), y = p
   theme_minimal()
 ```
 
-Pregunta: Como afecta el incremeto del precio por metro cuadrado, al aumentar la cantidad de baños?
+\newpage
 
-A continuación se muestra un gráfico que ilustra cómo la cantidad de baños afecta el precio por metro cuadrado. En este análisis, la variable baños se recodifico en cinco grupos para facilitar su inetrpretación y análisis.
+**¿Como afecta el incremeto del precio por metro cuadrado el aumentar en la cantidad de baños?**
+
+A continuación se muestra un gráfico que ilustra cómo la cantidad de baños afecta el precio por metro cuadrado. En este análisis, la variable baños se re-codifico en cinco grupos para facilitar su inetrpretación y análisis.
 
 ```{r}
 datos_2 <- datos_2 %>%
@@ -497,7 +501,8 @@ datos_2 <- datos_2 %>%
     baños == 0 ~ "0",
     baños == 1 ~ "1",
     baños == 2 ~ "2",
-    TRUE ~ "mas de 2"
+    baños == 2 ~ "3",
+    TRUE ~ "mas de 3"
   ))
 
 promedios1 <- datos_2 %>%
@@ -514,9 +519,9 @@ ggplot(promedios1, aes(x = fct_reorder(baños,promedio_precio_m2), y = promedio_
 
 Se observe que el precio se incrementa hasta la propiedad que tiene dos baños. Sin embargo, después de dos baños, el impacto en el precio es menor. Es decir, una propiedad con tres baños es mas cara que una con uno, pero es considerablemente más cara que una de dos baños. Parece que llega a un punto en el que la cantidad de baños no afecta el precio por metro cuadrado de una propiedad.
 
-Pregunta: Como afecta al incremeto del precio el aumento de la cantidad de estacionamientos?
+**¿Como afecta al incremeto del precio el aumento de la cantidad de estacionamientos?**
 
-Similar al anterior razonamiento, los valores de la variable *cant_de_est* se recodificaron en cuatro grupos para una mejor interpretación.
+Similar al anterior razonamiento, los valores de la variable *cant_de_est* se re-codificaron en cuatro grupos para una mejor interpretación.
 
 ```{r}
 datos_2 <- datos_2 %>%
@@ -541,10 +546,10 @@ ggplot(promedios2, aes(x = fct_reorder(cant_de_est,promedio_precio_m2), y = prom
 
 De manera similar a lo observado anteriorente, el precio por metro cuadrado de la propiedad es mayor cuando la propiedad tiene al menos un estacionamiento. Sin embargo, el incremento en el precio no tan relevare al pasar de uno a dos estacionamientos. Curiosamente, las propiedades con tres estacionamientos son más caras que las que tienen dos, aunque la diferencia no es tan marcada como entre tener cero y uno.
 
+Ellos siguientes sod gráficos se  re-codificó ahora la cantidad de cantidad de habitaciones y la cantidad de cuartos. Se obsevra que en general, el tener 2 cuartos o 2 habitaciones hace que el precio promedio por metro cuadrado sea mayor, esto también se cumple para los alquileres con 3 o más cuartos / habitaciones.
 
+**¿La cantidad de cuertos que posee la propiedad influye en el precio por metro cuadrado?**
 
-
-Recodificamos ahora la cantidad de cantidad de habitaciones y la cantidad de cuartos. Vemos que en general, el tener 2 cuartos o 2 habitaciones hace que el precio promedio por metro cuadrado sea mayor, esto también se cumple para los alquileres con 3 o más cuartos / habitaciones.
 
 ```{r}
 
@@ -569,6 +574,8 @@ ggplot(promedios3, aes(x = fct_reorder(cant_cuartos,
   ggtitle("Precio por m2 según número de cuartos") +
   theme_minimal()
 ```
+
+**¿La cantidad de habitaciones que posee la propiedad modifica el precio por metro cuadrado?**
 
 ```{r}
 datos_2 <- datos_2 %>%
@@ -595,6 +602,8 @@ ggplot(promedios4, aes(x = fct_reorder(cant_habitaciones,
   theme_minimal()
 ```
 
+**¿El hecho de que las propiedades cuenten con calefacción impacta en el precio por metro cuadrado?**
+
 ```{r}
 promedios4 <- datos_2 %>%
   group_by(calefaccion) %>%
@@ -607,17 +616,7 @@ ggplot(promedios4, aes(x = fct_reorder(calefaccion,promedio_precio_m2), y = prom
   theme_minimal()
 ```
 
-```{r}
-promedios4 <- datos_2 %>%
-  group_by(calefaccion) %>%
-  summarise(promedio_precio_m2 = median(precio_m2, na.rm = TRUE))
-
-ggplot(promedios4, aes(x = calefaccion, y = promedio_precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Calefacción", y = "Impacto en el precio por m2") +
-  ggtitle("Impacto de la calefacción en el precio por m2") +
-  theme_minimal()
-```
+**¿El tener vista al mar influye en el precio por metro cuadrado de las propiedades?**
 
 ```{r}
 promedios5 <- datos_2 %>%
@@ -629,6 +628,11 @@ ggplot(promedios5, aes(x = vista_al_mar, y = promedio_precio_m2)) +
   labs(x = "Vista al mar", y = "Precio por m2") +
   theme_minimal()
 ```
+
+Analizando los anteriores dos gráficos se puede ver como las propiedades tienen un aumento del precio por metro cuadrado cuando tienen vista al mar y cuando tienen calefacción. Esto es importante a tener en cuenta cuando un inquilino esta interesado en alguna propiedad.
+
+
+**¿El incremento en los gastos comunes adecta negarivamente el precio por metro cuadrado de la propiedad?**
 
 ```{r}
 media_gastos <- mean(datos_2$Gastos_Comunes[datos_2$Gastos_Comunes != 0], na.rm = TRUE)
@@ -645,29 +649,13 @@ ggplot(datos_2, aes(x = Gastos_Comunes, y = precio_m2)) +
 
 ```
 
-En este gráfico, muestra una tendencia lineal, se puede decir que los gastos comunes son independientes con el precio por metro cuadrado.
+En este gráfico, muestra una tendencia lineal, se puede decir que los gastos comunes son independientes con el precio por metro cuadrado.También se puede decir que son independientes con el tamaño de la propiedad, ya que generalmente las propiedades con mas metros cuadrados son mas costosas y no necesariamente pagan mas gastos comunes.
 
+# Modelo Predictivo
 
-Analizar esto, hacer un histograma y no una densidad
+Con el objetivo de identificar si las variables del modelo explican correctamente la variable de respuesta, en este caso *precio_m2*, se decidió hacer una exploración con ciertas variables. Para ello, se elaboraron gráficos lineales que anteriormente están presentados que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas afecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos.
 
-```{r}
-plot(hist(datos_2$precio_m2, 
-     main = "Histograma de Precio por Metro Cuadrado", 
-     xlab = "Precio por Metro Cuadrado", 
-     ylab = "Frecuencia", 
-     col = "lightblue", 
-     border = "black"))
-
-median(datos_2$precio_m2)
-mean(datos_2$precio_m2)
-
-```
-
-## Modelo Predictivo
-
-Con el objetivo de identificar si las variables del modelo explican correctamente la variable de respuesta, en este caso *precio_m2*, se decidió hacer una exploración con ciertas variables. Para ello, se elaboraron gráficos lineales que anteriormente estan precentados que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas afecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos.
-
-Una vez hecho este analisis, se paso a crear el modelo de regrecion lineal. Este modelo se creo a partir de las variables que mas afectaba el cambio en el precio por metro cuadrado. Es asi, que se eligieron las variables: *Municipio*,  *condicion*, *baños*, *año_de_const*, *tipo_prop*, *vista_al_mar*, *cant_de_est*, *nro_de_piso*, a pesar de que se redujo la cantidad de variables comparando con todas las variables que hay en el set de datos, se interpretó que asi se iba a poder ver un poco mejor que nos quieren mostrar las diferentes variables.
+Una vez hecho este análisis, se paso a crear el modelo de regresion lineal. Este modelo se creo a partir de las variables que mas afectaba el cambio en el precio por metro cuadrado. Es así, que se eligieron las variables: *Municipio*,  *condicion*, *baños*, *año_de_const*, *tipo_prop*, *vista_al_mar*, *cant_de_est*, *nro_de_piso*, a pesar de que se redujo la cantidad de variables comparando con todas las variables que hay en el set de datos, se interpretó que así se iba a poder ver un poco mejor que quieren mostrar las diferentes variables.
 
 *precio_m2* = $\beta0$ + *Municipio*$\beta1$ +  *condicion*$\beta2$ + *baños*$\beta3$ + *año_de_const*$\beta4$ + *tipo_prop*$\beta5$ + *vista_al_mar*$\beta6$ + *cant_de_est*$\beta7$ + *nro_de_piso*$\beta8$
 
@@ -711,31 +699,7 @@ tabla_coef <- gt(coef) |>
 tabla_coef
 ```
 
-Por lo que se puede observar es que casi todos los coeficientes nos dan un p-valor mayor a 0.05 porque lo que significa que no son significativas al modelo. 
-
-Luego por otro lado, analizando el $R^2$ nos podemos dar cuenta que las variables explicativas no explican correctamente a la variable de respuesta ya que el $R^2$ dio muy bajo
-
-```{r}
-r_cuadrado <- h$r.squared
-
-
-R2 <- data.frame(
-  `R2` = c(round(r_cuadrado, 2)))
-
-tabla_R2 <- gt(R2) |>
-  cols_label(
-    R2 = md("**R2**")
-  ) |>
-  tab_style(
-    style = cell_text(size = pct(75)),
-    locations = cells_column_labels()
-  )
-tabla_R2
-```
-
-Que la significancia no se cumpla es decir que las variables no sean significativas y que el $R^2$ sea tan chico que las variables explicatibas no expliquen en absoluto a la variable de respiesta, es una mala señal. 
-
-Por ende, a continuacion se van a evaluar los cuatros supuetsos para identificar si un modelo predice bien o no.
+Por lo que se puede observar es que casi todos los coeficientes dan un p-valor mayor a 0.05 porque lo que significa que no son significativas al modelo. 
 
 ```{r}
 predicciones <- predict(mod, newdata = datos_2)
@@ -762,29 +726,51 @@ tabla_p_valor.raiz.cuadrada.SE
 
 ```
 
-La raíz cuadrada del error cuadrático medio indica, en promedio, que las predicciones estan desviadas por 15.90 dólares del valor real del precio por metro cuadrado, lo cual significa que las predicciones estan bastante mal.
+La raíz cuadrada del error cuadrático medio (ECM) indica, en promedio, que las predicciones están desviadas por 15.90 dólares del valor real del precio por metro cuadrado, lo cual significa que las predicciones están bastante mal.
+
+Luego por otro lado, se analizó el $R^2$, se puede interpretar que las variables explicativas no explican correctamente a la variable de respuesta ya que el $R^2$ dio muy bajo
+
+```{r}
+r_cuadrado <- h$r.squared
 
 
+R2 <- data.frame(
+  `R2` = c(round(r_cuadrado, 2)))
+
+tabla_R2 <- gt(R2) |>
+  cols_label(
+    R2 = md("**R2**")
+  ) |>
+  tab_style(
+    style = cell_text(size = pct(75)),
+    locations = cells_column_labels()
+  )
+tabla_R2
+```
+
+Que la significancia no se cumpla es decir que las variables no sean significativas y que el $R^2$ sea tan chico que las variables explicativas no expliquen en absoluto a la variable de respuesta, es una mala señal. 
+
+Por ende, a continuación se van a evaluar los cuatros supuestos para identificar si un modelo predice bien o no.
 
 # Supuestos a cumplir
 
 Para poder obtener conclusiones confiables, el modelo debe cumplir con determinados supuestos
 
--   no multicolinealidad: exacta ni aproximada, para asegurar que la matriz X sea de rango completo (conformable),
+  - no multicolinealidad: exacta ni aproximada, para asegurar que la matriz X sea de rango completo (conformable),
 
--   linealidad: la relación entre variables expicativas y la respuesta debe ser aproximadamente lineal,
+  - linealidad: la relación entre variables expicativas y la respuesta debe ser aproximadamente lineal,
 
--   homoscedasticidad: la varianza de los errores no depende de ninguna de las variables explicativas,
+  - homoscedasticidad: la varianza de los errores no depende de ninguna de las variables explicativas,
 
--   normalidad: los errores del modelo deben presentar una distribución normal,
+  - normalidad: los errores del modelo deben presentar una distribución normal,
 
--   atípicos/influyentes: si bien no es un supuesto en si mismo, es recomendable identificar observaciones atípicas e influyentes al modelo.
+  - atípicos/influyentes: si bien no es un supuesto en si mismo, es recomendable identificar observaciones atípicas e influyentes al modelo.
 
 
-Multicolinealidad:
+## Multicolinealidad:
 
 ```{r}
-vif(mod)
+vif <- vif(mod)
 ```
 La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo.
 
@@ -793,25 +779,25 @@ La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que
 
 **ncvTest**
 
--   **Hipótesis**:
+   **Hipótesis**:
 
-    -   **Hipótesis Nula (H0)**: La varianza de los residuos es constante (Homocedasticidad).
+  - **Hipótesis Nula (H0)**: La varianza de los residuos es constante (Homocedasticidad).
 
-    -   **Hipótesis Alternativa (H1)**: La varianza de los residuos no es constante (heterocedasticidad).
+  - **Hipótesis Alternativa (H1)**: La varianza de los residuos no es constante (heterocedasticidad).
 
--   **Procedimiento**:
+   **Procedimiento**:
 
-    -   El *ncvTest* examina la relación entre los valores ajustados (predicciones del modelo) y la varianza de los residuos.
+  - El *ncvTest* examina la relación entre los valores ajustados (predicciones del modelo) y la varianza de los residuos.
 
-    -   Se ajusta un modelo de regresión para predecir los residuos en función de los valores ajustados.
+  - Se ajusta un modelo de regresión para predecir los residuos en función de los valores ajustados.
 
-    -   Se calcula un estadístico de prueba basado en esta relación.
+  - Se calcula un estadístico de prueba basado en esta relación.
 
-    -   El estadístico de prueba sigue una distribución chi-cuadrado.
+  - El estadístico de prueba sigue una distribución chi-cuadrado.
 
     Un p-valor alto sugiere que no hay evidencia suficiente para rechazar la hipótesis nula, indicando Homocedasticidad.
 
-    -   Un p-valor bajo indica heteroscedasticidad.
+  - Un p-valor bajo indica heteroscedasticidad.
 
 ```{r}
 #| echo: false
@@ -834,21 +820,21 @@ tabla_p_valor
 
 **Breusch-Pagan Test**
 
--   **Hipótesis**:
+   **Hipótesis**:
 
-    -   **Hipótesis Nula (H0)**: La varianza de los residuos es constante y no depende de las variables independientes (Homocedasticidad).
+  - **Hipótesis Nula (H0)**: La varianza de los residuos es constante y no depende de las variables independientes (Homocedasticidad).
 
-    -   **Hipótesis Alternativa (H1)**: La varianza de los residuos depende linealmente de las variables independientes (heteroscedasticidad).
+  - **Hipótesis Alternativa (H1)**: La varianza de los residuos depende linealmente de las variables independientes (heteroscedasticidad).
 
--   **Procedimiento**:
+   **Procedimiento**:
 
-    -   El test de *Breusch-Pagan* examina si la varianza de los residuos depende linealmente de las variables independientes del modelo original.
+  - El test de *Breusch-Pagan* examina si la varianza de los residuos depende linealmente de las variables independientes del modelo original.
 
-    -   Se realiza una regresión auxiliar de los residuos al cuadrado contra las variables independientes originales.
+  - Se realiza una regresión auxiliar de los residuos al cuadrado contra las variables independientes originales.
 
-    -   Se calcula un estadístico de prueba basado en la regresión auxiliar.
+  - Se calcula un estadístico de prueba basado en la regresión auxiliar.
 
-    -   El estadístico de prueba sigue una distribución chi-cuadrado.
+  - El estadístico de prueba sigue una distribución chi-cuadrado.
 
 ```{r, message=FALSE}
 breusch_pagan(mod) %>% kable()
@@ -872,17 +858,17 @@ La densidad de los residuos estudentizados no parecen comportarse como una norma
 
 Se va a corrobar lo visto en el gráfico mediante tres métodos:
 
--   **Shaphiro-Wilk**: se basa en la comparación de los cuantiles empíricos y teóricos bajo el supuesto de normalidad.
+  - **Shaphiro-Wilk**: se basa en la comparación de los cuantiles empíricos y teóricos bajo el supuesto de normalidad.
 
--   **Jarque-Bera**: se basa en la comparación de los estadísticos de asimetría y kurtosis bajo el supuesto de normalidad.
+  - **Jarque-Bera**: se basa en la comparación de los estadísticos de asimetría y kurtosis bajo el supuesto de normalidad.
 
--   **Kolmogorov-Smirnov**: se basa en la máxima discrepacnoa entre la función de distribución empírica y la teórica bajo el supuesto de normalidad.
+  - **Kolmogorov-Smirnov**: se basa en la máxima discrepacnoa entre la función de distribución empírica y la teórica bajo el supuesto de normalidad.
 
 ```{r}
 #| echo: false
-shapiro.test(rstudent(mod))
-jarque.bera.test(rstudent(mod))
-ks.test(rstudent(mod), 'pnorm')
+shapiro.test <- shapiro.test(rstudent(mod))
+jarque.bera.test <- jarque.bera.test(rstudent(mod))
+ks.test <- ks.test(rstudent(mod), 'pnorm')
 
 
 
@@ -899,11 +885,11 @@ tabla_p_valor <- gt(p_valor.normalidad ) |>
 tabla_p_valor
 ```
 
-Los test Shaphiro-Wilk, Jarque-Bera, Kolmogorov-Smirnov tiene un p-valor menor que 0.05, por lo que se rechaza la hipótesis nula,los residuos se distribuyen normal.
+Los test Shaphiro-Wilk, Jarque-Bera, Kolmogorov-Smirnov tiene un p-valor menor que 0.05, por lo que se rechaza la hipótesis nula, los residuos se distribuyen normal.
 
 ## Lineanidad
 
-A este se dio por hecho debido a que la forma en que se iba a mostrar era inleible.
+A este se dio por hecho debido a que la forma en que se iba a mostrar era ilegible.
 
 ## Datos Atípicos
 
@@ -927,13 +913,11 @@ ggplot(mod, aes(x=yhat, y= res))+
 Existen cuatro observación que podría tomarse como dato atípico.
 
 
-Debido a que casi ningún supuesto se cumplio, optampos por utilizar otros metodos de prediccion, que son el método de árboles y bosques:
+Debido a que casi ningún supuesto se cumplió, se optó por utilizar otros métodos de prediccion, que son el método de árboles y bosques:
 
 ## Árboles de decisión:
 
-Los modelos basados en árboles consisten en una secuancia de particiones anidadas que dividen el espacio de los predictores donde en cada partición se usa un modelo para predecir la respuesta.
-
-
+Los modelos basados en árboles consisten en una secuencia de particiones anidadas que dividen el espacio de los predictores donde en cada partición se usa un modelo para predecir la respuesta.
 
 ```{r, fig.dim=c(6,6)}
 set.seed(50)
@@ -988,13 +972,8 @@ prp(tree_ab,
 ```
 
 El árbol de decisión muetsra que el año de construcción y la siposición de las propiedades son factores importantes para predecir el precio por metro cuadrado. Las propiedades más recientes tienden a tener un precio más alto, y la disposición también juega un papel importante, especialmente en las propiedades más nuevas.
-  
- 
-El árbol de decisión muestra que el año de construcción y la disposición de las propiedades son factores importantes para predecir el precio por metro cuadrado. Las propiedades más recientes tienden a tener un precio más alto, y la disposición también juega un papel significativo, especialmente en las propiedades más nuevas. 
-Error cuadratico medio:
 
-
-Bosques:
+## Bosques:
 
 Para hacer este análisis se quitaron las variables dirección y zona ya que daban problemas y por otro lado estaba municipio que lo que se evaluo en todo el trabajo.
 
@@ -1036,7 +1015,7 @@ En la gráfica, se muestra una comparación entre las variables originales y las
 
 En este paso se utilizo el conjunto de entrenamiento en el que se esta utilizando únicamente el 30% de los datos.
 
-Las observaciones dispersas alrededor de la línea roja indica que hay cierta variabilidad entre los valores originales y las predicciones. Esta predicción no es tan mala ya que la mayoria de los datos se encuentran bastante cerca de la línea roja. También se aprecia que las observaviones siguen la misma tendencia que dicha línea, esto significa que a medida que crecen las variables originales las predicciones también, por lo que es una buena señal.
+Las observaciones dispersas alrededor de la línea roja indica que hay cierta variabilidad entre los valores originales y las predicciones. Esta predicción no es tan mala ya que la mayoría de los datos se encuentran bastante cerca de la línea roja. También se aprecia que las observaciones siguen la misma tendencia que dicha línea, esto significa que a medida que crecen las variables originales las predicciones también, por lo que es una buena señal.
 
 ```{r}
 set.seed(50)
@@ -1085,18 +1064,23 @@ tabla_variables <- data.frame(
 tabla_variables[1,] <- c("direccion", "Character", "Ubicación donde se encuentra la propiedad")
 tabla_variables[2,] <- c("nro_de_piso", "Character", "Número de piso de la propiedad")
 tabla_variables[3,] <- c("tipo_prop", "Character", "Tipo de poropiedad, como apartamento, oficina, casa")
-tabla_variables[4,] <- c("Condicion", "Character", "Condición en la que esta la vivienda, es una variable que se separa en categorias (Excelente, Buena, Renovada)")
-tabla_variables[5,] <- c("disposicion", "Character", "En que posición se encuentra la propiedad separada en categorías (interior, frente, fondo)")
-tabla_variables[6,] <- c("m2_terraza", "Numérica", "Metros cuadrado de la terraza")
-tabla_variables[7,] <- c("cant_cuartos", "Numérica", "Cantidad de dormitoros de la propiedad")
-tabla_variables[8,] <- c("vivienda_social", "Dummy", "Si la propiedad esta destinada para vivienda social, variable de si y no")
-tabla_variables[9,] <- c("Closet", "Dummy", "Espacio de guardaropas en la propiedad, variable de si y no")
-tabla_variables[10,] <- c("Garage", "Dummy", "Garage en la propiedad, variable de si y no")
-tabla_variables[11,] <- c("Playroom", "Dummy", "Sala de juegos en la propiedad, variable de si y no")
-tabla_variables[12,] <- c("WiFi", "Dummy", "Conección a wifi en la propiedad, variable de si y no")
-tabla_variables[13,] <- c("balcon", "Dummy", "Balcon en la propiedad, variable de si y no")
-tabla_variables[14,] <- c("jardin", "Dummy", "Jardin en la propiedad, variable de si y no ")
-tabla_variables[15,] <- c("amueblado", "Dummy", "La propiedad viene con los muebles incluidos a la hora de ser alquilado, variable de si y no ")
+tabla_variables[4,] <- c("Condicion", "Character", "Condición en la que esta la vivienda, es una variable que se)")
+tabla_variables[5,] <- c("", "", "separa en categorias (Excelente, Buena, Renovada")
+tabla_variables[6,] <- c("disposicion", "Character", "En que posición se encuentra la propiedad separada en")
+tabla_variables[6,] <- c("", "", "categorías (interior, frente, fondo)")
+
+tabla_variables[7,] <- c("m2_terraza", "Numérica", "Metros cuadrado de la terraza")
+tabla_variables[8,] <- c("cant_cuartos", "Numérica", "Cantidad de dormitoros de la propiedad")
+tabla_variables[9,] <- c("vivienda_social", "Dummy", "Si la propiedad esta destinada para vivienda social,")
+tabla_variables[9,] <- c("", "", "variable de si y no")
+tabla_variables[10,] <- c("Closet", "Dummy", "Espacio de guardaropas en la propiedad, variable de si y no")
+tabla_variables[11,] <- c("Garage", "Dummy", "Garage en la propiedad, variable de si y no")
+tabla_variables[12,] <- c("Playroom", "Dummy", "Sala de juegos en la propiedad, variable de si y no")
+tabla_variables[13,] <- c("WiFi", "Dummy", "Conección a wifi en la propiedad, variable de si y no")
+tabla_variables[14,] <- c("balcon", "Dummy", "Balcon en la propiedad, variable de si y no")
+tabla_variables[15,] <- c("jardin", "Dummy", "Jardin en la propiedad, variable de si y no ")
+tabla_variables[16,] <- c("amueblado", "Dummy", "La propiedad viene con los muebles incluidos a la hora de")
+tabla_variables[16,] <- c("", "", "ser alquilado, variable de si y no")
 tabla_variables[16,] <- c("Updated", "Fecha", "Última fecha que fue actualizado el listado")
 tabla_variables[17,] <- c("Apartments_per_Floor", "Numérica", "Número de apartamentos por piso en el edificio")
 tabla_variables[18,] <- c("zona", "Character", "En que zona de Montevideo se encuentra la propiedad")
@@ -1112,8 +1096,11 @@ tabla_variables[27,] <- c("deposito", "Dummy", "Área de almacenaiento o depósi
 tabla_variables[28,] <- c("losa_radiante", "Dummy", "Losa radiante en la propiedad, variable de si y no ")
 tabla_variables[29,] <- c("precio_m2", "Numérica", "El precio de la propiedad por metros cuadrados")
 tabla_variables[30,] <- c("Common_Expenses", "Numérica", "Gastos comunes asociados a la propiedad, en dolares")
-tabla_variables[31,] <- c("cant_de_piso", "Numérica", "Núemero total de piso en el edificio")
-tabla_variables[32,] <- c("condicion", "Character", "En que condición se encuentra el apartamento searado en caregorías(Good condicion, 	Excellent condicion, 	Brand new)")
+tabla_variables[31,] <- c("cant_de_piso", "Numérica", "Núemero total
+                          de piso en el edificio")
+tabla_variables[32,] <- c("condicion", "Character", "En que condición se 
+                          encuentra el apartamento searado en caregorías
+                          (Good condicion, 	Excellent condicion, 	Brand new)")
 tabla_variables[33,] <- c("cant_habitaciones", "Numérica", "Cantidad de habitaciones en la propiedad")
 tabla_variables[34,] <- c("año_de_const", "Numérica", "En que año fue construida la propiedad")
 tabla_variables[35,] <- c("vista_al_mar", "Dummy", "Propiedad con vista al mar o no, variable de si y no")
@@ -1125,6 +1112,7 @@ tabla_variables[40,] <- c("Gym", "Dummy", "Propiedad con gym, variable de si y n
 tabla_variables[41,] <- c("Air_condicioning", "Dummy", "Propiedad con aire acondicionado, variable de si y no")
 tabla_variables[42,] <- c("Solarium", "Dummy", "Propiedad con solarium, variable de si y no")
 
+ 
 
 library(gt)
 # Resultado
@@ -1143,3 +1131,7 @@ tabla_gt
 
 
 
+```{r}
+#write_xlsx(df, "ruta/del/archivo.xlsx")
+
+```

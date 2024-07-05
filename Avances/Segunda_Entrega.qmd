@@ -2243,3 +2243,16 @@ max(datos$precio)
 
 ```
 
+```{r, eval=FALSE}
+#shiny 
+selectInput(
+  inputId,
+  label,
+  choices,
+  selected = NULL,
+  multiple = TRUE,
+  selectize = TRUE,
+  width = NULL,
+  size = NULL
+)
+```
