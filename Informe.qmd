@@ -97,6 +97,9 @@ Municipios <- gt(tabla_municipio) |>
 
 ## Limpieza
 
+
+
+
 ```{r}
 # ORDENANDO LOS DATOS:
 
@@ -150,16 +153,38 @@ datos_2 <-
 # Datos sin duplicados
 datos_2 <- datos_2[!duplicated(datos_2), ]
 
+
 #utilizamos las coincidencias unicas que tienen las filas, ya que no tenemos una fecha de snapshot de mercado libre.
 # diagrama de cajas solo de las numericas
 # agregar el grafico de 0 y 1
+```
+
+
+```{r}
+datos_2 <- datos_2 %>%
+  mutate(zona = case_when(
+    zona %in% c("Carrasco Barrios con Seguridad") ~ "Carrasco",
+    zona %in% c("Carrasco Este") ~ "Carrasco",
+    zona %in% c("Golf") ~ "Punta Carretas",
+    zona %in% c("Parque Miramar") ~ "Carrasco",
+    zona %in% c("Peñarol Lavalleja") ~ "Peñarol",
+    zona %in% c("Pocitos Nuevo") ~ "Pocitos",
+    zona %in% c("Prado Nueva Savona") ~ "Prado",
+    zona %in% c("Puerto Buceo") ~ "Buceo",
+    zona %in% c("Villa Biarritz") ~ "Punta Carretas",
+  ))
+
+
+
+                   
+                   
 
 # Cambiando la zona por municipios
 
 datos_2 <- datos_2 %>% # Datos
   mutate(Municipio = case_when( # Casos donde a cada barrio le vamos a asociar un municipio
     
-    zona %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo París","Prado")  ~ "Municipio_A",
+    zona %in% c("Cerro","La Teja","Paso de la Arena","Belvedere","Nuevo París","Prado","Paso Molino")  ~ "Municipio_A",
 
     zona %in% c("Cordón","Parque Rodó","Palermo","Barrio Sur","Ciudad Vieja","Centro","Aguada","La Comercial") ~ "Municipio_B",
 
@@ -171,12 +196,20 @@ datos_2 <- datos_2 %>% # Datos
 
     zona %in% c("Malvín Norte","Malvín", "Carrasco Norte", "Carrasco", "Punta Gorda", "Buceo", "La Blanqueada") ~ "Municipio_E",
 
-    zona %in% c("Maroñas", "Flor de Maroñas", "Villa Española", "Ituzaingó", "Jardines del Hipódromo", "Piedras Blancas") ~ "Municipio_F",
+    zona %in% c("Maroñas", "Flor de Maroñas", "Villa Española", "Ituzaingó", "Jardines del Hipódromo", "Piedras Blancas","Punta Rieles") ~ "Municipio_F",
 
     zona %in% c("Lezica", "Peñarol", "Nuevo París", "Sayago", "Conciliación", "Colón") ~ "Municipio_G",
 
     TRUE ~ "Otro" # Por si hay barrios que no estén en la lista
   ))
+
+
+
+
+
+
+
+
 ```
 
 ```{r}
