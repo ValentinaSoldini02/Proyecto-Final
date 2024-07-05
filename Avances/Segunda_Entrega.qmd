@@ -487,7 +487,20 @@ datos <- datos %>% # Datos
 
 
 datos
+
+
+
 ```
+
+
+```{r}
+
+turro
+
+
+```  
+
+
 
 # Visualización
 
@@ -845,7 +858,7 @@ select("vista_al_mar","vivienda_social","Barbecue","Living_Room","Closet","Patio
 calcular_y_unir <- function(df, col, resultado_final) { # Función
   temp <- df %>%       # Datos
     group_by(valor = .data[[col]]) %>% # Agrupamos por todas las columnas
-    summarise(Mean = mean(precio, na.rm = TRUE), .groups = "drop")
+    summarise(Mean = mean(precio_m2, na.rm = TRUE), .groups = "drop")
   # Resumimos con la media, ignorando los nulos
 
   colnames(temp)[2] <- paste0(col, "_Media") # A cada columna del dataframe resultante le vamos a pegar la palabra "_Mean"
@@ -906,6 +919,68 @@ funcion_dum(resultado_final)
 En este gráfico mostramos distintas variables que representan elementos de confort que puede tener un alquiler o no tener, como son WiFi, Barbacoa, Jardin, Aire Acondicionado, etc. Estas variables toman valores de 0 y 1 donde el 0 representa que el alquiler no posee ese bien y el 1 representa que el alquiler si posee ese bien. Estamos gráficando el precio promedio para cada una de esas variables y comparando como difiere el precio en caso de tener o no tener un bien. Vemos que en bienes como lo son: Aire Acondicionado, Amueblamiento, Barbacoa, Calefacción, Closet, Deposito, Garage, Jardin, Living, Losa Radiante, Patio, Habitación de juegos, Piscina, Vista al Mar y Barbacoa, el precio es más alto al tener que al no tener. En cambio, en el caso de Balcon, Conexión a Gas, Duplex, Gimansio, Equipo para mascotas, Centro de Bronceado, WiFi o en el caso de ser una vivienda social, el precio es más alto al no tener que al tener.
 
 Pregunta 10) ¿Cómo influyen elementos relativos a los pisos como son el número de pisos, la cantidad de apartamentos en un piso o la cantidad de pisos en todo el edificio del inmueble al precio de alquiler?
+```` {r}
+mmguevo
+
+
+```
+
+
+
+Mosaico con los datos de 0  y 1
+```{r}
+
+datos_3 <- datos_3 %>%
+  mutate(precio_m2_rec = case_when(
+    precio_m2 >= 13 ~ "Precio m2 menor 13",
+    TRUE ~ "Precio m2 mayor 13"
+  ))
+datos_3
+#mean(datos_2$precio_m2)
+# la media es 13.90797 ~ 14
+
+
+datos_3 <- datos_3 %>%
+  mutate(precio_m2 = case_when(
+    precio_m2 <= 13 ~ "Precio m2 menor 13",
+    precio_m2 > 13 ~ "Precio m2 mayor 13",
+
+   # TRUE ~ "Precio m2 mayor 13"
+  ))
+datos_3
+
+
+datos_3 %>% filter(precio_m2_rec != "Precio m2 menor 13")
+
+max(datos_3$precio_m2)
+datos_3
+
+```
+
+
+
+
+
+```{r}
+
+dum <- datos %>%
+select("vista_al_mar","vivienda_social","Barbecue","Living_Room","Closet","Patio","Pool","Garage","Pet","coneccion_cas","Playroom","Duplex","calefaccion","WiFi","zona_barbacoa","Gym","balcon","deposito","Air_Conditioning","jardin","losa_radiante","Solarium","amueblado")
+
+
+mean(datos$precio_m2)
+
+
+``` 
+
+
+
+
+
+
+
+
+
+
 
 ```{r, echo: false}
 
@@ -1167,7 +1242,169 @@ Recodificar estas variables.
 
 En relación a los baños lo más común es que los inmuebles tengan un baño, luego el tener 2 o 3 es menos común. Similarmente ocurre con la cantidad de estacionamientos (garages) donde lo más común es el que el inmueble tenga un garage o ninguno. En relación al número de cuartos y de habitaciones el patrón que se repite es tener 2 o 3 en el caso de habitaciones y 1 o 2 en el caso de cuartos. Pero vemos que siempre para todos estos elementos, se cumple la relación intuitiva de que a más número de baños, estacionamientos, habitaciones o cuartos, el precio del inmueble es más elevado.
 
+
+
+```{r}
+
+mmguevo
+
+```
+
 ### Mosaico
+
+```{r}
+
+#datos_2
+max(datos_2$precio_m2)
+min(datos_2$precio_m2)
+mean(datos_2$precio_m2)
+
+
+
+
+datos_4 <- datos_2 %>%
+  mutate(precio_m2_rec = case_when(
+    precio_m2 >= 13 ~ "Precio m2 mayor a 13",
+    precio_m2 < 13 ~  "Precio m2 menor a 13"))
+
+datos_4
+
+
+
+# datos_4 <- datos_2 %>%
+#   mutate(precio_m2_rec = case_when(
+#     (precio_m2 >= 0 & precio_m2 < 5) ~ "Precio m2 entre 0 y 5",
+#     (precio_m2 >= 5 & precio_m2 < 10) ~ "Precio m2 entre 5 y 10",
+#     (precio_m2 >= 10 & precio_m2 < 15) ~ "Precio m2 entre 10 y 15",
+#     (precio_m2 >= 15 & precio_m2 < 20) ~ "Precio m2 entre 15 y 20",
+#   ))
+# 
+# datos_4
+
+
+
+
+
+
+
+
+colnames(dum)
+
+library(ggmosaic)
+
+
+ggplot(data = datos_4) +
+ geom_mosaic(aes(x = product(precio_m2_rec, losa_radiante), fill= precio_m2_rec)) +
+ labs(title='Comparación del precio por metro cuadrado y el número de piso', x = "x", y = "Precio por metro cuadrado")+
+ theme(legend.position = "bottom")   
+
+
+
+colnames(dum)
+# Condicionantes: vista_al_mar, Living_Room, Pool, Gym, Air_Conditioning, Solarium, Closet, vivienda_social (negativamtente), Garage (poco), Playroom,  balcon (poco), jardin, amueblado, Barbecue,   Patio (un poco si pero negativo), Pet (un poco si pero negativo), Duplex (negativamente),  zona_barbacoa, deposito (negativamente),  losa_radiante
+
+# No Condicionantes: conexion_cas, WiFi,
+
+
+
+
+# 
+# [1] "vista_al_mar"     "vivienda_social"  "Barbecue"        
+#  [4] "Living_Room"      "Closet"           "Patio"           
+#  [7] "Pool"             "Garage"           "Pet"             
+# [10] "coneccion_cas"    "Playroom"         "Duplex"          
+# [13] "calefaccion"      "WiFi"             "zona_barbacoa"   
+# [16] "Gym"              "balcon"           "deposito"        
+# [19] "Air_Conditioning" "jardin"           "losa_radiante"   
+# [22] "Solarium"         "amueblado"   
+
+
+
+
+# Elejidas: conexion_cas, WiFi, Air_Conditioning, Pool, Gym, Duplex, deposito
+
+# No condicionan
+ggplot(data = datos_4) +
+ geom_mosaic(aes(x = product(precio_m2_rec, conexion_gas), fill= precio_m2_rec)) +
+ labs(title='Comparación del precio por metro cuadrado y el número de piso', x = "x", y = "Precio por metro cuadrado")+
+ theme(legend.position = "bottom")   
+
+
+ggplot(data = datos_4) +
+ geom_mosaic(aes(x = product(precio_m2_rec, WiFi), fill= precio_m2_rec)) +
+ labs(title='Comparación del precio por metro cuadrado y el número de piso', x = "x", y = "Precio por metro cuadrado")+
+ theme(legend.position = "bottom")   
+
+
+
+# Condicionan negativamente
+ggplot(data = datos_4) +
+ geom_mosaic(aes(x = product(precio_m2_rec, Duplex), fill= precio_m2_rec)) +
+ labs(title='Comparación del precio por metro cuadrado y el número de piso', x = "x", y = "Precio por metro cuadrado")+
+ theme(legend.position = "bottom")   
+
+
+ggplot(data = datos_4) +
+ geom_mosaic(aes(x = product(precio_m2_rec, Pet), fill= precio_m2_rec)) +
+ labs(title='Comparación del precio por metro cuadrado y el número de piso', x = "x", y = "Precio por metro cuadrado")+
+ theme(legend.position = "bottom")   
+
+
+
+# Condicinan Positivamente
+ggplot(data = datos_4) +
+ geom_mosaic(aes(x = product(precio_m2_rec, Pool), fill= precio_m2_rec)) +
+ labs(title='Comparación del precio por metro cuadrado y el número de piso', x = "x", y = "Precio por metro cuadrado")+
+ theme(legend.position = "bottom")   
+
+
+ggplot(data = datos_4) +
+ geom_mosaic(aes(x = product(precio_m2_rec, Gym), fill= precio_m2_rec)) +
+ labs(title='Comparación del precio por metro cuadrado y el número de piso', x = "x", y = "Precio por metro cuadrado")+
+ theme(legend.position = "bottom")   
+
+
+
+
+
+```
+
+```{r}
+
+ggplot(datos_4, aes(x = factor(WiFi), y = precio_m2)) +
+  geom_bar(stat="identity",width = 0.2, height = 0, alpha = 0.7) +
+  labs(title = "Distribución de Precio por Metro Cuadrado por Categoría",
+       x = "Categoría (0 y 1)",
+       y = "Precio por metro cuadrado")
+
+
+max(datos_4$precio_m2)
+```
+
+
+
+
+```{r}
+
+crear_grafico_mosaico <- function(variable1) {
+      ggplot(datos_4) +
+    geom_mosaic(aes_string(x = sprintf("product(precio_m2_rec, %s)", variable1), fill = precio_m2_rec)) +
+   labs(title='Comparación del precio por metro cuadrado y el número de piso', x = "Número de piso", y = "Precio por metro cuadrado")+
+ theme(legend.position = "bottom")
+}
+
+
+
+crear_grafico_mosaico(vista_al_mar)
+
+
+datos_4
+```
+
+
+
+
+
 
 ```{r}
 
