@@ -134,7 +134,7 @@ colores_personalizados <- c(
   "Municipio_CH" = "purple", "Municipio_D" = "orange", "Municipio_E" = "pink",
   "Municipio_F" = "brown", "Municipio_G" = "cyan"
 )
-
+#
 # UI
 ui <- fluidPage(
   titlePanel("Análisis de Alquileres"),
