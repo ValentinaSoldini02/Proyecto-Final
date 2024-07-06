@@ -21,6 +21,9 @@ library(here)
 library(readxl)
 library(ggmosaic)
 library(paletteer)
+library(leaflet)
+library(leaflet.extras)
+library(sf)
 ```
 
 
@@ -40,6 +43,37 @@ datos
 
 #datos <- read.csv(here("houses.csv"))
 #datos
+
+
+#DATOS PARA EL MAPA CON LATITUD Y LONGITUD
+datos_mapa <- read.csv(here("Shiny_Proyecto", "app", "datoss.csv"))
+shape <- st_read(here("Shiny_Proyecto", "app", "sig_municipios.shp"))
+shape <- st_transform(shape, "+init=epsg:4326")
+
+#Crear tabla para añadir la media de precio por metros cuadrados de los alquileres y la cantidad de alquileres de cada municipio
+
+tabla<- datos_mapa %>%
+  group_by(Municipio)%>%
+  summarise(total=n()) 
+
+tabla_2<- datos_mapa %>%
+  group_by(Municipio)%>%
+  select(precio_m2) %>%
+  summarise(medias=mean(precio_m2))
+
+shape <- shape %>%
+  left_join(tabla, by=c("MUNICIPIO"= "Municipio"))#Le añadimos la tabla al shapefile, para poder trabajar mas adelante con estos datos y lograr visualizarlos en un mapa de calor
+
+shape<- shape %>%
+  left_join(tabla_2, by= c("MUNICIPIO"= "Municipio"))
+
+
+nam_municipios <- unique(datos_mapa$Municipio)
+color_municipio <- c('#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf')
+pal<- colorFactor(color_municipio, domain= nam_municipios)
+
+paletaseq<- c('#fff7ec','#fee8c8','#fdd49e','#fdbb84','#fc8d59','#ef6548','#d7301f','#990000')
+color_pal <- colorNumeric(paletaseq, domain= tabla$total)
 
 ```
 
@@ -209,7 +243,15 @@ conditionalPanel(
                       "Tipo de Propiedad" = "tipo_prop",
                       "Condición" = "Condicion")),
         actionButton("update_basicos", "Actualizar Gráficos")
-      )
+      ),
+     conditionalPanel(
+       condition = "input.tabselected== 3",
+       selectInput("change_mapa", "Seleccionar mapa:",
+              choices= list(
+                "Ubicacion de alquileres en Montevideo"= "mapa1",
+                "Cantidad de alquileres por Municipio"= "mapa2"))
+       )
+
     ),
     mainPanel(
       tabsetPanel(id = "tabselected",
@@ -225,6 +267,7 @@ conditionalPanel(
                   # ),
                   tabPanel("Mapa",
                            h2("Gráfico de Mapa"),
+                           leafletOutput("mapa", width="100%", height= "600px"),
                            value = 3
                   ),
                   tabPanel("Gastos Comunes",
@@ -371,7 +414,42 @@ observeEvent(input$update_bernoulli, {
 
   
   
+ output$mapa <- renderLeaflet({
+  if(input$change_mapa== "mapa1"){
+    leaflet() %>% addTiles() %>% 
+      setView(-56.18816, -34.90328, 10)%>%
+      addCircles( data= datos_mapa, lat =~as.numeric(oc_lat),
+                  lng= ~as.numeric(oc_lng), color= ~pal(Municipio), label= ~Municipio,
+                  fillOpacity = 0.5) %>%
+      addPolygons(data= shape, 
+                  fillColor = ~pal(MUNICIPIO),
+                  weight = 0.5,
+                  label= ~MUNICIPIO) %>%
+      addLegend(data= datos_mapa, "bottomleft", pal= pal,
+                values= ~Municipio, title= "Municipios", opacity= 1,
+                group= "Leyenda"
+      ) %>%
+      addLayersControl(overlayGroups = c("Leyenda"),
+                       options= layersControlOptions(collapsed=TRUE))
+  }
+  else if(input$change_mapa== "mapa2"){
+    leaflet() %>% addTiles() %>% 
+      setView(-56.18816, -34.90328, 10)%>%
+      addPolygons(data= shape, 
+                  fillColor = ~color_pal(total),
+                  fillOpacity = 1,
+                  weight = 0.5,
+                  label= ~medias,
+                  popup= ~MUNICIPIO) %>%
+      addLegend(data=shape, "bottomleft", pal=color_pal,
+                values= ~total, title="Cantidad", opacity=1,
+                group="Leyenda") %>%
+      addLayersControl(overlayGroups = c("Leyenda"),
+                       options=layersControlOptions(collapsed=TRUE))
+  }
   
+  
+}) 
     
     
     
