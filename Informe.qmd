@@ -6,6 +6,7 @@ execute:
   warning: false
   message : false
 author: "Diego Da Rosa, Valentina Soldini, Nahuel Bizoso"
+date: "`r Sys.Date()`"
 editor: visual
 toc: true
 ---
@@ -31,23 +32,26 @@ library(rpart)
 library(rattle)
 library(rpart.plot)
 library(paletteer)
+library(RColorBrewer)
+library(ggmosaic)
 ```
+
+\newpage
 
 # Introducción:
 
-El mercado inmobiliario ha sido ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan un alquiler una propiedad. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, caracteristicas de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios de las propiedades teniendo en cuenta diferentes aspectos. Para realizar este análisis, plenteamos las diferentes preguntas de investigación:
+El mercado inmobiliario ha sido ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan un alquiler una propiedad. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, características de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios en dólares de las propiedades teniendo en cuenta diferentes aspectos. Para realizar este análisis, planteemos las diferentes preguntas de investigación:
 
 -   ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
 -   ¿En que municipio hay más alquileres?
 -   ¿Cuál es la variable que más influye en el precio?
--   ¿Influye cuán peligroso es la zona para alquilar la propiedad y disminuye el precio? Mejorará el modelo?
 -   ¿Hay alguna variable que debería de eliminarse al modelo?
 
-Estas preguntas guiarán nuestro analisis para comprender mejor los factores que afectan los precios en el mercado inmobiliario y proporcionar una herramienta útil para los distintos agentes, ya sean compradores, vendedores, inversores y agentes inmobiliarios.
+Estas preguntas guiarán nuestro análisis para comprender mejor los factores que afectan los precios en el mercado inmobiliario y proporcionar una herramienta útil para los distintos agentes, ya sean compradores, vendedores, inversores y agentes inmobiliarios. La variable de interés de este proyecto es *precio_m2*
 
 # Datos
 
-Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**, consiste en una plataforma web que reúne la comunidad Data Science, con más de 536 mil miembros activos en 194 países. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes caracteristicas internas y externas de la propiedad.
+Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**, consiste en una plataforma web que reúne la comunidad Data Science, con más de 536 mil miembros activos en 194 países. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes características internas y externas de la propiedad. 
 
 Puedes encontrar el dataset en el siguiente enlace: [Precio de alquiler de casas en Montevideo Dataset](https://www.kaggle.com/datasets/lasm1984/house-rental-price-in-montevideo?select=houses.csv)
 
@@ -76,7 +80,8 @@ Además, se re-codificaron variables para mejorar su análisis y para evaluar c�
 
 Por otro lado, a los datos duplicados se eliminaron teniendo en cuenta que las  coincidencias únicas que tienen las filas, ya que no tenemos una fecha de snapshot de Mercado Libre.
 
-```{r, fig.cap="Municipios", label:fig-plot0}
+```{r}
+#| tbl-cap: "Qué Municipio le corresponde a cada zona"
 tabla_municipio <- data.frame(
   Municipio = c("Municipio A","Municipio B", "Municipio C", "" ,"Municipio CH", "Municipio D", "Municipio E", "Municipio F", "", "Municipio G"),
   Columna2 = c("Cerro, La Teja, Paso de la Arena, Belvedere, Nuevo París, Prado",
@@ -292,18 +297,18 @@ datos_2$baños <- as.factor(datos_2$baños)
 
 **¿Cual es el municipio más costoso para alquilar?**
 
-```{r}
+```{r, fig.cap="Relación entre el Precio por Metro cuadrado y Municipios", label:fig-plot0}
 promedios3 <- datos_2 %>%
   group_by(Municipio) %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
-ggplot(promedios3, aes(x = fct_reorder(Municipio, promedio_precio_m2), y = promedio_precio_m2)) +
+ggplot(promedios3, aes(x = fct_reorder(Municipio, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  scale_fill_paletteer_d("RColorBrewer::RdYlBu") +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
   labs(x = "Municipio", y = "Precio por m2") +
+  ggtitle("Relación entre Municipios y precio por m2") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
 ```
 
 En este gráfico se puede apreciar como el Municipio A tiene los precios por metro cuadrado pormedios mas altos, seguido por el Municipio E. Este gráfico es útil para ver que zonas de Montevideo son mas caras y cuáles son mas económicas, lo cual es valioso para los inquilinos al decidir en que área desean vivir según sus preferencias y presupuesto.
@@ -314,7 +319,7 @@ A continuación, se presenta un gráfico que muestra la antigüedad de la propie
 
 Para llevar a cabo este análisis, fue necesario acotar ciertos datos y eliminar algunos valores atípicos que distorcionaban la visualización.
 
-```{r}
+```{r, fig.cap="Relación entre año de construcción y precio por m2", label:fig-plot1}
 datos_filtrados <- datos_2 %>%
   filter(precio_m2 <= 400)
 
@@ -325,7 +330,6 @@ datos_filtrados$año_de_const[datos_filtrados$año_de_const == 0] <- media_años
 reemplazos <- c(3, 10, 15, 90, 39, 95, 60)
 valores_reemplazo <- c(2003, 2010, 2015, 1990, 1939, 1995, 1960)
 
-# Aplicar las reglas de reemplazo
 for (i in seq_along(reemplazos)) {
   datos_filtrados$año_de_const[datos_filtrados$año_de_const == reemplazos[i]] <- valores_reemplazo[i]
 }
@@ -333,9 +337,10 @@ for (i in seq_along(reemplazos)) {
 # Convertir año_de_const a tipo numérico
 datos_filtrados$año_de_const <- as.numeric(datos_filtrados$año_de_const)
 
-# Gráfico de dispersión para visualizar la relación entre año de construcción y precio por m2
-ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2)) +
+
+ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2, color = precio_m2)) +
   geom_point(alpha = 0.7) +
+  scale_color_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
   labs(x = "Año de construcción de la propiedad", y = "Precio por m2") +
   ggtitle("Relación entre año de construcción y precio por m2") +
   theme_minimal()
@@ -347,7 +352,7 @@ Este patrón es consistente con la idea de que las propiedades más nuevas tiene
 
 **¿Que tipo de propiedad presenta los alquileres las más elevados?**
 
-```{r}
+```{r, fig.cap="Relación entre el precio por m2 y el tipo de propiedad", label:fig-plot2}
 datos_2 <- datos_2 %>%
   mutate(tipo_prop = case_when(
     tipo_prop == "Apartment" ~ "Apartamento",
@@ -357,48 +362,51 @@ datos_2 <- datos_2 %>%
     TRUE ~ "Otros"
   ))
 
-# Calcular el promedio del precio por metro cuadrado para cada tipo de propiedad
+
 promedios6 <- datos_2 %>%
   group_by(tipo_prop) %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
-# Crear el gráfico
-ggplot(promedios6, aes(x = fct_reorder(tipo_prop,promedio_precio_m2), y = promedio_precio_m2)) +
+
+ggplot(promedios6, aes(x = fct_reorder(tipo_prop, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
   labs(x = "Tipo de propiedad", y = "Promedio del precio por m2") +
   ggtitle("Promedio del precio por m2 según el tipo de propiedad") +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 Como se puede observar en promedio el tipo de propiedad que son mas costosas son las oficinas seguido por los apartamento. En este análisis también se re-codificaron ciertas observaciones para poder analizar mejor los datos.
 
+\newpage
 
 **¿Cómo es la distribución de los alquileres en función del precio promedio por metro cuadrado?**
 
-```{r}
-#Pregunta 1) ¿Cómo se distribuyen los municipios y el precio promedio de alquiler por municipio? ¿Cómo se distribuyen la disposición de los alquileres y el precio promedio según la disposición de los alquileres?
+```{r, fig.cap="Relación entre el precio por m2 y la disposición de la propiedad", label:fig-plot3}
 
 
-# Gráfico Grupo de Precio promedio por disposición
 grupo_disposicion <- datos_2 %>%
   group_by(disposicion) %>%
   summarise(Cantidad = mean(precio_m2, na.rm = TRUE))
 
 
-# Gráfico de Precio promedio por disposición
-ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantidad)) +
+
+ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantidad, fill = Cantidad)) +
   geom_bar(stat = "identity") +
-  labs(x = "Disposición", y = "Precio promedio") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 10))
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Cantidad") +
+  labs(x = "Disposición", y = "Cantidad") +
+  ggtitle("Cantidad por disposición de la propiedad") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
 No hay una diferencia muy notoria con respecto al precio por metro cuadrado en cuanto a la dispocicion en que se encuentra las diferentes propiedades.
 
-
+\newpage
 
 **¿Cómo se distribuye el precio promedio de los alquileres según las condiciones?**
 
-```{r}
+```{r, fig.cap="Relación entre el precio por m2 y la condición de la propiedad", label:fig-plot4}
 datos_2 <- datos_2 %>%
   mutate(condicion = case_when(
     condicion == "Under construction" ~ "Bajo construccion",
@@ -409,17 +417,18 @@ datos_2 <- datos_2 %>%
   ))
 
 
-# Grupo de Precio promedio por condición de la vivienda
 grupo_condicion <- datos_2 %>%
   group_by(condicion) %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
-# Gráfico de Precio promedio por condición de la vivienda
-ggplot(grupo_condicion, aes(x = fct_reorder(condicion, promedio_precio_m2), y = promedio_precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Condición", y = "Precio promedio") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 10))
 
+ggplot(grupo_condicion, aes(x = fct_reorder(condicion, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
+  geom_bar(stat = "identity") +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
+  labs(x = "Condición", y = "Precio promedio") +
+  ggtitle("Promedio del precio por m2 y la condición de la propiedad") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 10)) +
+  theme_minimal()
 ```
 
 Al considerar la condición de los alquileres, se puede observar que la mayoría de las propiedades se encuentran en buenas condiciones. Esto es una buena señal para inquilinos que directamente se quieren trasladar a esa propiedad. En términos de precio promedio por metro cuadrado, los alquileres "En Construcción", "Para Estrenar" y en "Excelente Condición" son los más costosos.
@@ -428,7 +437,7 @@ Al considerar la condición de los alquileres, se puede observar que la mayoría
 
 **¿Cómo varía el precio por metro cuadrado según la cantidad de pisos de la propiedad?**
 
-```{r}
+```{r, fig.cap="Relación entre el precio por m2 y la nro. de piso de la propiedad", label:fig-plot5}
 
 datos_2$precio_m2 <- as.numeric(datos_2$precio_m2)
 
@@ -443,11 +452,14 @@ datos_3 <- datos_3 %>%
     TRUE ~ "Precio m2 mayor 13"
   ))
 
-library(ggmosaic)
+
 ggplot(data = datos_3) +
- geom_mosaic(aes(x = product(precio_m2, nro_de_piso), fill= precio_m2)) +
- labs(title='Comparación del precio por metro cuadrado y el número de piso', x = "Número de piso", y = "Precio por metro cuadrado")+
- theme(legend.position = "bottom")   
+  geom_mosaic(aes(x = product(precio_m2, nro_de_piso), fill = precio_m2)) +
+  scale_fill_brewer(palette = "RdYlBu", name = "Precio por m2") +
+  labs(title = 'Comparación del precio por metro cuadrado y el número de piso',
+       x = "Número de piso", y = "Precio por metro cuadrado") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
 
 ```
 
@@ -467,7 +479,7 @@ Esto sugiere que el número de piso podría tener una influencia en el precio po
 
 **¿Cómo influye en el precio del inmueble la cantidad de cuartos en una propiedad?**
 
-```{r}
+```{r, fig.cap="Relación entre el precio por m2 y la cantidad de cuertos de la propiedad", label:fig-plot6}
 
 datos_2 <- datos_2 %>%
   mutate(cant_cuartos = case_when(
@@ -481,13 +493,15 @@ promedios1 <- datos_2 %>%
   group_by(cant_cuartos) %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
-
-ggplot(promedios1, aes(x =  fct_reorder(cant_cuartos, promedio_precio_m2), y = promedio_precio_m2)) +
+ggplot(promedios1, aes(x = fct_reorder(cant_cuartos, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  labs(x = "Cant. cuartos", y = "Precio por m2") +
-  ggtitle("Precio por m2 según cant. de cuartos") +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") + 
+  labs(x = "Cantidad de cuartos", y = "Precio por m2") +
+  ggtitle("Precio por m2 según cantidad de cuartos") +
   theme_minimal()
 ```
+Como se puede observar, la cantidad de cuartos no afecta demasiado el cambio en el precio por metro cuadrado. Puede sonar un poco extraño ya que en la realidad cuantos mas cuartos es mas costosa la propiedad, por lo tanto es un poco contradictorio con la realidad.
+
 
 \newpage
 
@@ -495,7 +509,7 @@ ggplot(promedios1, aes(x =  fct_reorder(cant_cuartos, promedio_precio_m2), y = p
 
 A continuación se muestra un gráfico que ilustra cómo la cantidad de baños afecta el precio por metro cuadrado. En este análisis, la variable baños se re-codifico en cinco grupos para facilitar su inetrpretación y análisis.
 
-```{r}
+```{r, fig.cap="Relación entre el precio por m2 y el número de baños de la propiedad", label:fig-plot7}
 datos_2 <- datos_2 %>%
   mutate(baños = case_when(
     baños == 0 ~ "0",
@@ -510,8 +524,9 @@ promedios1 <- datos_2 %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
 
-ggplot(promedios1, aes(x = fct_reorder(baños,promedio_precio_m2), y = promedio_precio_m2)) +
+ggplot(promedios1, aes(x = fct_reorder(baños, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +  # Utilizar la paleta de colores RdYlBu
   labs(x = "Baños", y = "Precio por m2") +
   ggtitle("Precio por m2 según número de baños") +
   theme_minimal()
@@ -523,7 +538,7 @@ Se observe que el precio se incrementa hasta la propiedad que tiene dos baños. 
 
 Similar al anterior razonamiento, los valores de la variable *cant_de_est* se re-codificaron en cuatro grupos para una mejor interpretación.
 
-```{r}
+```{r, fig.cap="Relación entre el precio por m2 y la cantidad de estacionamientos de la propiedad", label:fig-plot8}
 datos_2 <- datos_2 %>%
   mutate(cant_de_est = case_when(
     cant_de_est == 0 ~ "0",
@@ -536,11 +551,12 @@ promedios2 <- datos_2 %>%
   group_by(cant_de_est) %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
-# Crear el gráfico
-ggplot(promedios2, aes(x = fct_reorder(cant_de_est,promedio_precio_m2), y = promedio_precio_m2)) +
+
+ggplot(promedios2, aes(x = fct_reorder(cant_de_est, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +  # Utilizar la paleta de colores RdYlBu
   labs(x = "Cantidad de estacionamientos", y = "Precio por m2") +
-  ggtitle("Precio por m2 según número de estacionamientos") +
+  ggtitle("Precio por m2 según la cantidad de estacionamientos") +
   theme_minimal()
 ```
 
@@ -548,36 +564,11 @@ De manera similar a lo observado anteriorente, el precio por metro cuadrado de l
 
 Ellos siguientes sod gráficos se  re-codificó ahora la cantidad de cantidad de habitaciones y la cantidad de cuartos. Se obsevra que en general, el tener 2 cuartos o 2 habitaciones hace que el precio promedio por metro cuadrado sea mayor, esto también se cumple para los alquileres con 3 o más cuartos / habitaciones.
 
-**¿La cantidad de cuertos que posee la propiedad influye en el precio por metro cuadrado?**
-
-
-```{r}
-
-datos_2 <- datos_2 %>%
-  mutate(cant_cuartos = case_when(
-    cant_cuartos == 0 ~ "0",
-    cant_cuartos == 1 ~ "1",
-    cant_cuartos == 2 ~ "2",
-    TRUE ~ "más de 3"
-  ))
-
-promedios3 <- datos_2 %>%
-  group_by(cant_cuartos) %>%
-  summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
-
-# Crear el gráfico
-ggplot(promedios3, aes(x = fct_reorder(cant_cuartos, 
-                       promedio_precio_m2), 
-                       y = promedio_precio_m2)) +
-  geom_bar(stat = "identity") +
-  labs(x = "Cantidad de cuartos", y = "Precio por m2") +
-  ggtitle("Precio por m2 según número de cuartos") +
-  theme_minimal()
-```
+\newpage
 
 **¿La cantidad de habitaciones que posee la propiedad modifica el precio por metro cuadrado?**
 
-```{r}
+```{r, fig.cap="Relación entre el precio por m2 y la cantidad de habitaciones de la propiedad", label:fig-plot10}
 datos_2 <- datos_2 %>%
   mutate(cant_habitaciones = case_when(
     cant_habitaciones == 0 ~ "0",
@@ -593,59 +584,70 @@ promedios4 <- datos_2 %>%
   summarise(promedio_precio_m2 = mean(precio_m2, na.rm = TRUE))
 
 
-ggplot(promedios4, aes(x = fct_reorder(cant_habitaciones,  
-                       promedio_precio_m2), 
-                       y = promedio_precio_m2)) +
+ggplot(promedios4, aes(x = fct_reorder(cant_habitaciones, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +  # Utilizar la paleta de colores RdYlBu
   labs(x = "Cantidad de habitaciones", y = "Precio por m2") +
-  ggtitle("Precio por m2 según número de habitaciones") +
+  ggtitle("Precio por m2 según la cantidad de habitaciones") +
   theme_minimal()
 ```
 
+\newpage
+
 **¿El hecho de que las propiedades cuenten con calefacción impacta en el precio por metro cuadrado?**
 
-```{r}
+```{r, fig.cap="Relación entre el precio por m2 y la calefacción de la propiedad", label:fig-plot11}
 promedios4 <- datos_2 %>%
   group_by(calefaccion) %>%
   summarise(promedio_precio_m2 = median(precio_m2, na.rm = TRUE))
 
-ggplot(promedios4, aes(x = fct_reorder(calefaccion,promedio_precio_m2), y = promedio_precio_m2)) +
+ggplot(promedios4, aes(x = fct_reorder(calefaccion, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  labs(x = "Calefacción", y = "Impacto en el precio por m2") +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
+  labs(x = "Calefacción", y = "Impacto en el precio por m2") + 
   ggtitle("Impacto de la calefacción en el precio por m2") +
   theme_minimal()
 ```
 
+\newpage
+
 **¿El tener vista al mar influye en el precio por metro cuadrado de las propiedades?**
 
-```{r}
+```{r, fig.cap="Relación entre el precio por m2 y la vista al mar de la propiedad", label:fig-plot12}
+
 promedios5 <- datos_2 %>%
   group_by(vista_al_mar) %>%
   summarise(promedio_precio_m2 = median(precio_m2, na.rm = TRUE))
 
-ggplot(promedios5, aes(x = vista_al_mar, y = promedio_precio_m2)) +
+
+ggplot(promedios5, aes(x = vista_al_mar, y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
+  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
   labs(x = "Vista al mar", y = "Precio por m2") +
+  ggtitle("Relación entre vista al mar y precio por m2") +
   theme_minimal()
+
 ```
 
 Analizando los anteriores dos gráficos se puede ver como las propiedades tienen un aumento del precio por metro cuadrado cuando tienen vista al mar y cuando tienen calefacción. Esto es importante a tener en cuenta cuando un inquilino esta interesado en alguna propiedad.
 
+\newpage
 
 **¿El incremento en los gastos comunes adecta negarivamente el precio por metro cuadrado de la propiedad?**
 
-```{r}
+```{r, fig.cap="Relación entre el precio por m2 y los gatos comunes de la propiedad", label:fig-plot13}
 media_gastos <- mean(datos_2$Gastos_Comunes[datos_2$Gastos_Comunes != 0], na.rm = TRUE)
 
 # Reemplazar los valores cero con la media calculada
 datos_2$Gastos_Comunes[datos_2$Gastos_Comunes == 0] <- round(media_gastos)
 
 
-ggplot(datos_2, aes(x = Gastos_Comunes, y = precio_m2)) +
-  geom_point(alpha = 0.7) +
-  labs(x = "Gastos Comunes", y = "Precio por m2") +
-  ggtitle("Relación entre Gastos Comunes y precio por m2") +
-  theme_minimal()
+ggplot(datos_2, aes(x = Gastos_Comunes, y = precio_m2, color = precio_m2)) +
+  geom_point(alpha = 0.7) +  # Establece la transparencia de los puntos
+  scale_color_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +  # Aplica la paleta de colores RdYlBu y define la leyenda
+  labs(x = "Gastos Comunes", y = "Precio por m2") +  # Etiqueta de los ejes
+  ggtitle("Relación entre Gastos Comunes y precio por m2") +  # Título del gráfico
+  theme_minimal() 
 
 ```
 
@@ -662,6 +664,7 @@ Una vez hecho este análisis, se paso a crear el modelo de regresion lineal. Est
 Una vez obtenido el modelo, se realizo el summary, y se obtuvieron estos resultados:
 
 ```{r}
+#| tbl-cap: "Summary"
 mod <- lm(precio_m2 ~ Municipio + condicion + baños+ año_de_const + tipo_prop + vista_al_mar + cant_de_est + nro_de_piso , data = datos_2)
 
 
@@ -702,12 +705,13 @@ tabla_coef
 Por lo que se puede observar es que casi todos los coeficientes dan un p-valor mayor a 0.05 porque lo que significa que no son significativas al modelo. 
 
 ```{r}
+#| tbl-cap: "Raíz cuadrada de SE"
 predicciones <- predict(mod, newdata = datos_2)
 
 # Calcular el Error Cuadrático Medio 
 library(Metrics)
 mse_valor <- mse(datos_2$precio_m2, predicciones)
-sqrt(mse_valor)
+raiz.cuadrada <- sqrt(mse_valor)
 
 
 
@@ -731,6 +735,7 @@ La raíz cuadrada del error cuadrático medio (ECM) indica, en promedio, que las
 Luego por otro lado, se analizó el $R^2$, se puede interpretar que las variables explicativas no explican correctamente a la variable de respuesta ya que el $R^2$ dio muy bajo
 
 ```{r}
+#| tbl-cap: "R2"
 r_cuadrado <- h$r.squared
 
 
@@ -800,7 +805,7 @@ La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que
   - Un p-valor bajo indica heteroscedasticidad.
 
 ```{r}
-#| echo: false
+#| tbl-cap: "p-valor"
 ncvTest <- ncvTest(mod)
 
 
@@ -845,7 +850,7 @@ Ambos p-valores son super pequeños, por lo tanto, hay problema de Heterocedasti
 
 ## Normalidad
 
-```{r,fig.cap="Normalidad de los residuos", label:fig-plot2, fig.dim=c(5,2.5)}
+```{r,fig.cap="Normalidad de los residuos", label:fig-plot14}
 #| echo: false 
 ggplot()+geom_density(aes(rstudent(mod)))+
   ggtitle("Gráfico de densidad, residuos estudentizados")+
@@ -865,7 +870,7 @@ Se va a corrobar lo visto en el gráfico mediante tres métodos:
   - **Kolmogorov-Smirnov**: se basa en la máxima discrepacnoa entre la función de distribución empírica y la teórica bajo el supuesto de normalidad.
 
 ```{r}
-#| echo: false
+#| tbl-cap: "Normalidad"
 shapiro.test <- shapiro.test(rstudent(mod))
 jarque.bera.test <- jarque.bera.test(rstudent(mod))
 ks.test <- ks.test(rstudent(mod), 'pnorm')
@@ -893,14 +898,13 @@ A este se dio por hecho debido a que la forma en que se iba a mostrar era ilegib
 
 ## Datos Atípicos
 
-```{r, fig.cap="Presencia de Atípicos", label:fig-plot4, fig.dim=c(5,3)}
+```{r, fig.cap="Presencia de Atípicos", label:fig-plot15}
 #| echo: false
 res <- rstudent(mod)
 yhat <- fitted(mod)
 
 #which(abs(res)>3)
 
-library(ggplot2)
 ggplot(mod, aes(x=yhat, y= res))+
   geom_point()+
   geom_hline(yintercept = -3,color="darkblue")+
@@ -919,7 +923,7 @@ Debido a que casi ningún supuesto se cumplió, se optó por utilizar otros mét
 
 Los modelos basados en árboles consisten en una secuencia de particiones anidadas que dividen el espacio de los predictores donde en cada partición se usa un modelo para predecir la respuesta.
 
-```{r, fig.dim=c(6,6)}
+```{r, fig.cap="Árbol", label:fig-plot16, fig.dim=c(6,6)}
 set.seed(50)
 media_años <- round(mean(datos_2$año_de_const[datos_2$año_de_const != 0], na.rm = TRUE))
 datos_2$año_de_const[datos_2$año_de_const == 0] <- media_años
@@ -991,7 +995,7 @@ testing <- datos_sub[-intrain,]
 rf <- randomForest(precio_m2 ~ .,data= training)
 ```
 
-```{r}
+```{r, fig.cap="Conjunto de entrenamiento", label:fig-plot17}
 set.seed(50)
 pred <- predict(rf, newdata = training)
 results <- data.frame(
@@ -1006,7 +1010,8 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
   geom_point() +
   geom_abline(slope = 1, intercept = 0, color = "red") +
   labs( x = "Variables originales", y = "Variables predichas") +
-  theme_minimal()
+  theme_minimal()+
+  ggtitle("Predicción de las variables originales con datos de entrenamiento")
 
 ```
 
@@ -1017,7 +1022,7 @@ En este paso se utilizo el conjunto de entrenamiento en el que se esta utilizand
 
 Las observaciones dispersas alrededor de la línea roja indica que hay cierta variabilidad entre los valores originales y las predicciones. Esta predicción no es tan mala ya que la mayoría de los datos se encuentran bastante cerca de la línea roja. También se aprecia que las observaciones siguen la misma tendencia que dicha línea, esto significa que a medida que crecen las variables originales las predicciones también, por lo que es una buena señal.
 
-```{r}
+```{r, fig.cap="Predicción de variables originales", label:fig-plot18}
 set.seed(50)
 pred <- predict(rf, newdata = testing)
 results <- data.frame(
@@ -1032,18 +1037,21 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
   geom_point() +
   geom_abline(slope = 1, intercept = 0, color = "red") +
   labs( x = "Variables originales", y = "Variables predichas") +
-  theme_minimal()
+  theme_minimal()+
+  ggtitle("Predicción de las variables originales con datos desconocidos")
 ```
-Como en el gráfico anterior se muetsra la comparación entre las variables originales y las variables predichas usando el método de random forest, pero esta vez aplicándolo al conjunto de datos "testing" que son un 70% de los datos.
+Como en el gráfico anterior se muestra la comparación entre las variables originales y las variables predichas usando el método de random forest, pero esta vez aplicándolo al conjunto de datos "testing" que son un 70% de los datos.
 
-Con respecto a la dispersión alrededor de la línea roja, en comparación al gráfico anterior, usando el conjunto de entrenamiento, se observa una mayor disperción de las observaciones alrededor de la línea roja. Esto sugiere que el modelo tiene más disficultad para predecir correctamente.
+Con respecto a la dispersión alrededor de la línea roja, en comparación al gráfico anterior, usando el conjunto de entrenamiento, se observa una mayor dispersión de las observaciones alrededor de la línea roja. Esto sugiere que el modelo tiene más dificultad para predecir correctamente.
 
-La mayor dispersión y el alejamiento de algunos puntos de la líena roja indican que el modelo no está generalizado bien a datos nuevos y desconocidos. Este es un indicio de que el modelo podria estar sobreajustando al conjunto de datos de entrenamiento.
+La mayor dispersión y el alejamiento de algunos puntos de la línea roja indican que el modelo no está generalizado bien a datos nuevos y desconocidos. Este es un indicio de que el modelo podría estar sobre ajustando al conjunto de datos de entrenamiento.
 
+\newpage
 
-Metadatos :
+# Metadatos
 
 ```{r}
+#| tbl-cap: "Metadatos"
 # Creamos variables del tipo character
 nombre_variable <- character()
 tipo_variable <- character()
@@ -1064,53 +1072,55 @@ tabla_variables <- data.frame(
 tabla_variables[1,] <- c("direccion", "Character", "Ubicación donde se encuentra la propiedad")
 tabla_variables[2,] <- c("nro_de_piso", "Character", "Número de piso de la propiedad")
 tabla_variables[3,] <- c("tipo_prop", "Character", "Tipo de poropiedad, como apartamento, oficina, casa")
-tabla_variables[4,] <- c("Condicion", "Character", "Condición en la que esta la vivienda, es una variable que se)")
+tabla_variables[4,] <- c("Condicion", "Character", "Condición en la que esta la vivienda, es una variable que se")
 tabla_variables[5,] <- c("", "", "separa en categorias (Excelente, Buena, Renovada")
 tabla_variables[6,] <- c("disposicion", "Character", "En que posición se encuentra la propiedad separada en")
-tabla_variables[6,] <- c("", "", "categorías (interior, frente, fondo)")
+tabla_variables[7,] <- c("", "", "categorías (interior, frente, fondo)")
 
-tabla_variables[7,] <- c("m2_terraza", "Numérica", "Metros cuadrado de la terraza")
-tabla_variables[8,] <- c("cant_cuartos", "Numérica", "Cantidad de dormitoros de la propiedad")
-tabla_variables[9,] <- c("vivienda_social", "Dummy", "Si la propiedad esta destinada para vivienda social,")
-tabla_variables[9,] <- c("", "", "variable de si y no")
-tabla_variables[10,] <- c("Closet", "Dummy", "Espacio de guardaropas en la propiedad, variable de si y no")
-tabla_variables[11,] <- c("Garage", "Dummy", "Garage en la propiedad, variable de si y no")
-tabla_variables[12,] <- c("Playroom", "Dummy", "Sala de juegos en la propiedad, variable de si y no")
-tabla_variables[13,] <- c("WiFi", "Dummy", "Conección a wifi en la propiedad, variable de si y no")
-tabla_variables[14,] <- c("balcon", "Dummy", "Balcon en la propiedad, variable de si y no")
-tabla_variables[15,] <- c("jardin", "Dummy", "Jardin en la propiedad, variable de si y no ")
-tabla_variables[16,] <- c("amueblado", "Dummy", "La propiedad viene con los muebles incluidos a la hora de")
-tabla_variables[16,] <- c("", "", "ser alquilado, variable de si y no")
-tabla_variables[16,] <- c("Updated", "Fecha", "Última fecha que fue actualizado el listado")
-tabla_variables[17,] <- c("Apartments_per_Floor", "Numérica", "Número de apartamentos por piso en el edificio")
-tabla_variables[18,] <- c("zona", "Character", "En que zona de Montevideo se encuentra la propiedad")
-tabla_variables[19,] <- c("baños", "Numérica", "Cuántos cuartos hay en la propiedad")
-tabla_variables[20,] <- c("m2_totales", "Numérica", "Metros cuadrados de la propiedad, en dolares")
-tabla_variables[21,] <- c("cant_de_est", "Numérica", "Cantidad de estacionamientos que tiene disponible la propiedad")
-tabla_variables[22,] <- c("Barbecue", "Dummy", "Barbacoa en la propiedad, variable de si y no ")
-tabla_variables[23,] <- c("Patio", "Dummy", "Patio en la propiedad, variable de si y no ")
-tabla_variables[24,] <- c("Pet", "Dummy", "Si se aceptan perros o no")
-tabla_variables[25,] <- c("Duplex", "Numérica", "Si es un duplex o no, duplex es una propiedad que esta encima de otra y generalmente son dos")
-tabla_variables[26,] <- c("zona_barbacoa", "Dummy", "Si hay una zona de barbacoa en el edificio de la propiedad, variable de si y no ")
-tabla_variables[27,] <- c("deposito", "Dummy", "Área de almacenaiento o depósito en la propiedad, variable de si y no ")
-tabla_variables[28,] <- c("losa_radiante", "Dummy", "Losa radiante en la propiedad, variable de si y no ")
-tabla_variables[29,] <- c("precio_m2", "Numérica", "El precio de la propiedad por metros cuadrados")
-tabla_variables[30,] <- c("Common_Expenses", "Numérica", "Gastos comunes asociados a la propiedad, en dolares")
-tabla_variables[31,] <- c("cant_de_piso", "Numérica", "Núemero total
+tabla_variables[8,] <- c("m2_terraza", "Numérica", "Metros cuadrado de la terraza")
+tabla_variables[9,] <- c("cant_cuartos", "Numérica", "Cantidad de dormitoros de la propiedad")
+tabla_variables[10,] <- c("vivienda_social", "Dummy", "Si la propiedad esta destinada para vivienda social,")
+tabla_variables[11,] <- c("", "", "variable de si y no")
+tabla_variables[12,] <- c("Closet", "Dummy", "Espacio de guardaropas en la propiedad, variable de si y no")
+tabla_variables[13,] <- c("Garage", "Dummy", "Garage en la propiedad, variable de si y no")
+tabla_variables[14,] <- c("Playroom", "Dummy", "Sala de juegos en la propiedad, variable de si y no")
+tabla_variables[15,] <- c("WiFi", "Dummy", "Conección a wifi en la propiedad, variable de si y no")
+tabla_variables[16,] <- c("balcon", "Dummy", "Balcon en la propiedad, variable de si y no")
+tabla_variables[17,] <- c("jardin", "Dummy", "Jardin en la propiedad, variable de si y no ")
+tabla_variables[18,] <- c("amueblado", "Dummy", "La propiedad viene con los muebles incluidos a la hora de")
+tabla_variables[19,] <- c("", "", "ser alquilado, variable de si y no")
+tabla_variables[20,] <- c("Updated", "Fecha", "Última fecha que fue actualizado el listado")
+tabla_variables[21,] <- c("Apartments_per_Floor", "Numérica", "Número de apartamentos por piso en el edificio")
+tabla_variables[22,] <- c("zona", "Character", "En que zona de Montevideo se encuentra la propiedad")
+tabla_variables[23,] <- c("baños", "Numérica", "Cuántos cuartos hay en la propiedad")
+tabla_variables[24,] <- c("m2_totales", "Numérica", "Metros cuadrados de la propiedad, en dolares")
+tabla_variables[25,] <- c("cant_de_est", "Numérica", "Cantidad de estacionamientos que tiene disponible")
+tabla_variables[26,] <- c("", "", "la propiedad")
+tabla_variables[27,] <- c("Barbecue", "Dummy", "Barbacoa en la propiedad, variable de si y no ")
+tabla_variables[28,] <- c("Patio", "Dummy", "Patio en la propiedad, variable de si y no ")
+tabla_variables[29,] <- c("Pet", "Dummy", "Si se aceptan perros o no")
+tabla_variables[30,] <- c("Duplex", "Numérica", "Si es un duplex o no, duplex es una propiedad que esta")
+tabla_variables[31,] <- c("", "", "encima de otra y generalmente son dos")
+tabla_variables[32,] <- c("zona_barbacoa", "Dummy", "Si hay una zona de barbacoa en el edificio de la propiedad,")
+tabla_variables[33,] <- c("", "", "variable de si y no")
+tabla_variables[34,] <- c("deposito", "Dummy", "Área de almacenaiento o depósito en la propiedad, variable de si y no ")
+tabla_variables[35,] <- c("", "", "variable de si y no")
+tabla_variables[36,] <- c("losa_radiante", "Dummy", "Losa radiante en la propiedad, variable de si y no ")
+tabla_variables[37,] <- c("precio_m2", "Numérica", "El precio de la propiedad por metros cuadrados")
+tabla_variables[38,] <- c("Common_Expenses", "Numérica", "Gastos comunes asociados a la propiedad, en dolares")
+tabla_variables[39,] <- c("cant_de_piso", "Numérica", "Núemero total
                           de piso en el edificio")
-tabla_variables[32,] <- c("condicion", "Character", "En que condición se 
-                          encuentra el apartamento searado en caregorías
-                          (Good condicion, 	Excellent condicion, 	Brand new)")
-tabla_variables[33,] <- c("cant_habitaciones", "Numérica", "Cantidad de habitaciones en la propiedad")
-tabla_variables[34,] <- c("año_de_const", "Numérica", "En que año fue construida la propiedad")
-tabla_variables[35,] <- c("vista_al_mar", "Dummy", "Propiedad con vista al mar o no, variable de si y no")
-tabla_variables[36,] <- c("Living_Room", "Dummy", "Propiedad con living o no")
-tabla_variables[37,] <- c("Pool", "Numérica", "Pool en la propiedad")
-tabla_variables[38,] <- c("coneccion_cas", "Dummy", "Propiedad cuenta con conección a gas directa o no, variable de si y no")
-tabla_variables[39,] <- c("calefaccion", "Dummy", "Propiedad con calefacción, variable de si y no")
-tabla_variables[40,] <- c("Gym", "Dummy", "Propiedad con gym, variable de si y no")
-tabla_variables[41,] <- c("Air_condicioning", "Dummy", "Propiedad con aire acondicionado, variable de si y no")
-tabla_variables[42,] <- c("Solarium", "Dummy", "Propiedad con solarium, variable de si y no")
+tabla_variables[40,] <- c("cant_habitaciones", "Numérica", "Cantidad de habitaciones en la propiedad")
+tabla_variables[41,] <- c("año_de_const", "Numérica", "En que año fue construida la propiedad")
+tabla_variables[42,] <- c("vista_al_mar", "Dummy", "Propiedad con vista al mar o no, variable de si y no")
+tabla_variables[43,] <- c("Living_Room", "Dummy", "Propiedad con living o no")
+tabla_variables[44,] <- c("Pool", "Numérica", "Pool en la propiedad")
+tabla_variables[45,] <- c("coneccion_gas", "Dummy", "Propiedad cuenta con conección a gas directa o no,")
+tabla_variables[46,] <- c("", "", "variable de si y no")
+tabla_variables[47,] <- c("calefaccion", "Dummy", "Propiedad con calefacción, variable de si y no")
+tabla_variables[48,] <- c("Gym", "Dummy", "Propiedad con gym, variable de si y no")
+tabla_variables[49,] <- c("Air_condicioning", "Dummy", "Propiedad con aire acondicionado, variable de si y no")
+tabla_variables[50,] <- c("Solarium", "Dummy", "Propiedad con solarium, variable de si y no")
 
  
 
