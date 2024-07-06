@@ -293,11 +293,11 @@ conditionalPanel(
     ),
     mainPanel(
       tabsetPanel(id = "tabselected",
-                  tabPanel("Datos1",
-                           h2("Gráfico de Datos1"),
-                           plotOutput("barPlot"),
-                           value = 1
-                  ),
+                  # tabPanel("Datos1",
+                  #          h2("Gráfico de Datos1"),
+                  #          plotOutput("barPlot"),
+                  #          value = 1
+                 # ),
                   # tabPanel("Datos2",
                   #          h2("Gráfico de Datos2"),
                   #          plotOutput("scatterPlot"),
@@ -309,12 +309,12 @@ conditionalPanel(
                            value = 3
                   ),
                   
-        tabPanel("Municipio GC",
-          h2("Gastos Comunes por Municipio"),
-          plotOutput("municipioPlot1_GC"),
-          plotOutput("singleMunicipioPlot_GC"),
-          plotOutput("zonaPlot_GC"),
-          value = 4
+                  tabPanel("Municipio GC",
+                        h2("Gastos Comunes por Municipio"),
+                        plotOutput("municipioPlot1_GC"),
+                        plotOutput("singleMunicipioPlot_GC"),
+                        plotOutput("zonaPlot_GC"),
+                        value = 4
         ),
                   tabPanel("Bernoulli",
                            h2("Gráfico de Bernoulli"),
@@ -327,12 +327,12 @@ conditionalPanel(
                            plotOutput("singleMunicipioPlot"),
                            plotOutput("zonaPlot"),
                            value = 6
-                  ),
-                  tabPanel("Basicos",
-                           h2("Gráficos Básicos"),
-                           plotOutput("BasicosPlot"),
-                           value = 7
                   )
+                  # tabPanel("Basicos",
+                  #          h2("Gráficos Básicos"),
+                  #          plotOutput("BasicosPlot"),
+                  #          value = 7
+                  # )
       )
     )
   )
