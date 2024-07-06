@@ -15,6 +15,10 @@ library(sf)
 
 
 
+
+
+
+
 # DATOS
 #here()
 # Datos limpios sobre precio_m2 de casas
