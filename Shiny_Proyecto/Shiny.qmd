@@ -20,7 +20,7 @@ library(ggplot2)
 library(here)
 library(readxl)
 library(ggmosaic)
-
+library(paletteer)
 ```
 
 
@@ -45,7 +45,16 @@ datos
 
 ```{r}
 
+
+
+colnames(datos)
 # FILTROS
+
+datos <- datos|>
+  rename(conexion_gas = coneccion_cas)
+
+
+
 datos <- datos %>%
   mutate(precio_m2_rec = case_when(
     precio_m2 >= 13 ~ "Precio m2 mayor a 13",
@@ -63,7 +72,7 @@ datos <- datos |>
 
 
 ```
-# correcto
+
 
 ```{r}
 datos <- datos %>%
@@ -117,7 +126,7 @@ datos <- datos %>% # Datos
 
 
 
-
+#  CORRECTO
 ```{r}
 # Colores personalizados para el gráfico de municipios
 colores_personalizados <- c(
@@ -300,7 +309,7 @@ observeEvent(input$update_bernoulli, {
   output$bernoulliPlot <- renderPlot({
     x_axis <- input$x_axis_bernoulli
     
-    ggplot(data = datos_4) +
+    ggplot(data = datos) +
       geom_mosaic(aes_string(x = paste0("product(precio_m2_rec, ", x_axis, ")"), fill= "precio_m2_rec")) +
       labs(title='Comparación del precio por metro cuadrado y el número de piso', x = x_axis, y = "Precio por metro cuadrado")+
       theme(legend.position = "bottom")
@@ -404,105 +413,29 @@ shinyApp(ui, server)
 ```
 
 
+```{r}
+
+
+
+
+```
+
 
 
 
 ```{r}
 
-selectInput("single_plot", "Seleccione el Municipio:",
-            choices = unique(datos$Municipio),
-            selected = unique(datos$Municipio)[1])
-
-server <- function(input, output, session) {
-
-  # GRÁFICO DE DATOS 1
-  observeEvent(input$update_datos1, {
-    output$barPlot <- renderPlot({
-      x_axis <- input$x_axis_datos1
-
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(media_precio_m2 = mean(precio_m2, na.rm = TRUE), .groups = 'drop')
-
-      p1 <- ggplot(datos, aes_string(x = x_axis)) +
-        geom_bar() +
-        scale_x_discrete(breaks = unique(datos[[x_axis]])) +
-        labs(x = x_axis, y = "Cantidad")
-
-      p2 <- ggplot(datos_resumidos, aes_string(x = x_axis, y = "media_precio_m2")) +
-        geom_bar(stat = "identity") +
-        scale_x_discrete(breaks = unique(datos_resumidos[[x_axis]])) +
-        labs(x = x_axis, y = "Media precio_m2")
-
-      gridExtra::grid.arrange(p1, p2, nrow = 2)
-    })
-  })
-
-  # GRÁFICO DE MUNICIPIOS
-  observeEvent(input$single_plot, {
-    selected_municipio <- input$single_plot
-    zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio])
-    
-    updateSelectInput(session, "zona_plot",
-                      choices = zonas_filtradas,
-                      selected = zonas_filtradas[1])
-  })
-  
-  observeEvent(input$update_municipio, {
-    output$municipioPlot1 <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-        ggtitle("precio_m2 por Municipio") +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-    
-    output$singleMunicipioPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_municipio <- input$single_plot
-      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-      ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-        ggtitle(paste("precio_m2 en", selected_municipio)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-
-    output$zonaPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_zona <- input$zona_plot
-      datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "precio_m2", fill = "zona")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "precio_m2", fill = "zona") +
-        ggtitle(paste("precio_m2 en la Zona", selected_zona)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-  })
-  
-  # GRÁFICO DE BÁSICOS
-  observeEvent(input$update_basicos, {
-    output$BasicosPlot <- renderPlot({
-      x_axis <- input$x_axis_basicos
-      datos_resumidos <- datos %>%
-        group_by(across(all_of(x_axis))) %>%
-        summarise(Cantidad = n(), .groups = 'drop')
-
-      ggplot(datos_resumidos, aes_string(x = x_axis, y = "Cantidad")) +
-        geom_bar(stat = "identity") +
-        labs(x = x_axis, y = "Cantidad") +
-        theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 8))
-    })
-  })
-}
-
-shinyApp(ui, server)
 
 
 ```
+
+
+
+
+
+
+
+
+
+
 
