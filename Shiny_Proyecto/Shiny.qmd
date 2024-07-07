@@ -983,3 +983,20 @@ shinyApp(ui = ui, server = server)
 
 ```
 
+
+
+```{r}
+
+#datos
+
+# Exportar el data frame a un archivo Excel
+library(writexl)
+here()
+
+write_xlsx(datos, here("Shiny_Proyecto/Miapp/datos_limpios.xlsx"))
+
+
+datos
+
+```
+

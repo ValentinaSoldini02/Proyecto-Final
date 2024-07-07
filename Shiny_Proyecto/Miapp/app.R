@@ -72,10 +72,7 @@ color_pal <- colorNumeric(paletaseq, domain= tabla$total)
 #FILTRAR
 
 colnames(datos)
-# FILTROS
 
-datos <- datos|>
-  rename(conexion_gas = coneccion_cas)
 
 
 
