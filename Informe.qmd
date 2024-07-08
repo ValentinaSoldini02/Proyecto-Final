@@ -1,6 +1,8 @@
 ---
 title: "Informe"
-format: pdf
+format: 
+  pdf:
+    number-sections: true
 execute: 
   echo: false
   warning: false
@@ -8,7 +10,7 @@ execute:
 author: "Diego Da Rosa, Valentina Soldini, Nahuel Bizoso"
 date: "`r Sys.Date()`"
 editor: visual
-toc: true
+lang: es
 ---
 
 ```{r}
@@ -81,32 +83,58 @@ Además, se re-codificaron variables para mejorar su análisis y para evaluar c�
 Por otro lado, a los datos duplicados se eliminaron teniendo en cuenta que las coincidencias únicas que tienen las filas, ya que no tenemos una fecha de snapshot de Mercado Libre.xnmsxnlks
 
 ```{r}
-#| tbl-cap: "Qué Municipio le corresponde a cada zona"
+#| fig-cap: "Qué Municipio le corresponde a cada zona"
+# Crear la tabla original
 tabla_municipio <- data.frame(
   Municipio = c("Municipio A","Municipio B", "Municipio C", "" ,"Municipio CH", "Municipio D", "Municipio E", "Municipio F", "", "Municipio G"),
   Columna2 = c("Cerro, La Teja, Paso de la Arena, Belvedere, Nuevo París, Prado",
-  "Cordón, Parque Rodó, Palermo, Barrio Sur, Ciudad Vieja, Centro, Aguada, La Comercial", 
-  "Aguada, Arroyo Seco, Atahualpa, Bella Vista, Brazo Oriental, Capurro, Goes, Jacinto Vera,", 
-  "La Comercial, Mercado Modelo, Reducto, Villa Muñoz", 
-  "Tres Cruces, La Blanqueada, Parque Batlle, Villa Dolores, Buceo, Pocitos, Punta Carretas",
-  "Piedras Blancas, Villa Española, Unión, Bolivar, Cerrito",
-  "Malvín Norte, Malvín, Carrasco Norte, Carrasco, Punta Gorda, Buceo, La Blanqueada",
-  "Maroñas, Flor de Maroñas, Villa Española, Ituzaingó, Jardines del Hipódromo,",
-  "Piedras Blancas",
-  "Lezica, Peñarol, Nuevo París, Sayago, Conciliación, Colón"))
+               "Cordón, Parque Rodó, Palermo, Barrio Sur, Ciudad Vieja, Centro, Aguada, La Comercial", 
+               "Aguada, Arroyo Seco, Atahualpa, Bella Vista, Brazo Oriental, Capurro, Goes, Jacinto Vera,", 
+               "La Comercial, Mercado Modelo, Reducto, Villa Muñoz", 
+               "Tres Cruces, La Blanqueada, Parque Batlle, Villa Dolores, Buceo, Pocitos, Punta Carretas",
+               "Piedras Blancas, Villa Española, Unión, Bolivar, Cerrito",
+               "Malvín Norte, Malvín, Carrasco Norte, Carrasco, Punta Gorda, Buceo, La Blanqueada",
+               "Maroñas, Flor de Maroñas, Villa Española, Ituzaingó, Jardines del Hipódromo,",
+               "Piedras Blancas",
+               "Lezica, Peñarol, Nuevo París, Sayago, Conciliación, Colón")
+)
 
+# Función para insertar saltos de línea después de cada tres barrios
+insert_line_breaks <- function(text, n = 3) {
+  parts <- str_split(text, ",\\s*")[[1]]
+  text_with_breaks <- paste(sapply(seq_along(parts), function(i) {
+    if (i %% n == 0 && i != length(parts)) {
+      return(paste(parts[i], "\n"))
+    } else {
+      return(parts[i])
+    }
+  }), collapse = ", ")
+  return(text_with_breaks)
+}
 
+# Aplicar la función a la columna Columna2
+tabla_municipio$Columna2 <- sapply(tabla_municipio$Columna2, insert_line_breaks)
+
+# Generar la tabla con gt y ajustar el ancho
 Municipios <- gt(tabla_municipio) |>
-  tab_spanner(label = md("**Zonas**"), columns = everything()) |>
   cols_label(
-    Municipio = md("**Municipio**")
+    Municipio = md("**Municipio**"),
+    Columna2 = md("**Barrios**")
   ) |>
   tab_style(
-    style = cell_text(size = pct(70)),
-    locations = cells_column_labels()
+    style = cell_text(size = "small", align = "justify"),
+    locations = cells_body()
+  ) |>
+  tab_options(
+    table.width = pct(100),
+    table.font.size = "small"
   )
 
-Municipios
+# Mostrar la tabla
+gtsave(Municipios, here::here("output/tabla_municipios.png"))
+
+knitr::include_graphics(here::here("output/tabla_municipios.png"))
+
 
 ```
 
