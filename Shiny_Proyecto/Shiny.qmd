@@ -188,10 +188,11 @@ datos <- datos %>% # Datos
 
 
 
+
+
 # Versión Final
 ```{r}
 
-#
 
 
 
@@ -319,45 +320,46 @@ server <- function(input, output, session) {
                       selected = zonas_filtradas[1])
   })
   
-  observeEvent(input$update_municipio_GC, {
-output$municipioPlot1_GC <- renderPlot({
-  x_axis <- input$x_axis__GC_municipio
-  ggplot(datos, aes_string(x = paste0("reorder(", x_axis, ", Gastos_Comunes)"), y = "Gastos_Comunes", fill = "Municipio")) +
-    geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-    facet_grid(. ~ Municipio, scales = "free_x") +
-    labs(x = x_axis, y = "Gastos_Comunes", fill = "Municipio") +
-     #scale_fill_paletteer_d("RColorBrewer::RdYlBu")+
-    ggtitle("Gastos Comunes por Municipio") +
-    theme(plot.title = element_text(hjust = 0.5),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-})
-    
-output$singleMunicipioPlot_GC <- renderPlot({
-  x_axis <- input$x_axis__GC_municipio
-  selected_municipio <- input$single_plot_GC
-  datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-  ggplot(datos_filtrados, aes_string(x = paste0("reorder(", x_axis, ", Gastos_Comunes)"), y = "Gastos_Comunes", fill = "Municipio")) +
-    geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-    labs(x = x_axis, y = "Gastos Comunes", fill = "Municipio") +
-     #scale_fill_paletteer_d("RColorBrewer::RdYlBu")+
-    ggtitle(paste("Gastos Comunes en", selected_municipio)) +
-    theme(plot.title = element_text(hjust = 0.5),
-          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-})
-    
-    output$zonaPlot_GC <- renderPlot({
-      x_axis <- input$x_axis__GC_municipio
-      selected_zona <- input$zona_plot_GC
-      datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "zona")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "Gastos Comúnes", fill = "zona") +
-         #scale_fill_paletteer_d("RColorBrewer::RdYlBu")+
-        ggtitle(paste("Gastos Comúnes en la Zona", selected_zona)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
+ 
+observeEvent(input$update_municipio_GC, {
+  output$municipioPlot1_GC <- renderPlot({
+    x_axis <- input$x_axis__GC_municipio
+    ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) +
+      geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+      facet_grid(. ~ Municipio, scales = "free_x") +
+      labs(x = x_axis, y = "Gastos_Comunes", fill = "Municipio") +
+      ggtitle("Gastos Comúnes por Municipio") +
+      scale_fill_manual(values = colores_personalizados) +  # Aplicar colores personalizados
+      theme(plot.title = element_text(hjust = 0.5),
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 11))
   })
+  
+  output$singleMunicipioPlot_GC <- renderPlot({
+    x_axis <- input$x_axis__GC_municipio
+    selected_municipio <- input$single_plot_GC
+    datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
+    ggplot(datos_filtrados, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) +
+      geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+      labs(x = x_axis, y = "Gastos Comúnes", fill = "Municipio") +
+      ggtitle(paste("Gastos Comúnes en", selected_municipio)) +
+      scale_fill_manual(values = colores_personalizados) +  # Aplicar colores personalizados
+      theme(plot.title = element_text(hjust = 0.5),
+            axis.text.x = element_text(angle = 0, size = 11))
+  })
+  
+  output$zonaPlot_GC <- renderPlot({
+    x_axis <- input$x_axis__GC_municipio
+    selected_zona <- input$zona_plot_GC
+    datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
+ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  labs(x = x_axis, y = "Gastos Comúnes", fill = "Municipio") +
+  ggtitle(paste("Gastos Comúnes en la Zona", selected_zona)) +
+  scale_fill_manual(values = colores_personalizados) +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 0, size=11))
+  })
+})
   
   # GRÁFICO DE BERNOULLIS
   observeEvent(input$update_bernoulli, {
@@ -375,58 +377,57 @@ output$singleMunicipioPlot_GC <- renderPlot({
   
   
   
-  
   # GRÁFICO DE MUNICIPIOS
-  observeEvent(input$single_plot, {
+observeEvent(input$single_plot, {
+  selected_municipio <- input$single_plot
+  zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio])
+  
+  updateSelectInput(session, "zona_plot",
+                    choices = zonas_filtradas,
+                    selected = zonas_filtradas[1])
+})
+
+observeEvent(input$update_municipio, {
+  output$municipioPlot1 <- renderPlot({
+    x_axis <- input$x_axis_municipio
+    ggplot(datos, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
+      geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+      facet_grid(. ~ Municipio, scales = "free_x") +
+      labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
+      scale_fill_manual(values = colores_personalizados) +
+      ggtitle("precio_m2 por Municipio") +
+      theme(plot.title = element_text(hjust = 0.5),
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 11))
+  })
+  
+  output$singleMunicipioPlot <- renderPlot({
+    x_axis <- input$x_axis_municipio
     selected_municipio <- input$single_plot
-    zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio])
-    
-    updateSelectInput(session, "zona_plot",
-                      choices = zonas_filtradas,
-                      selected = zonas_filtradas[1])
+    datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
+    ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
+      geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+      labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
+      scale_fill_manual(values = colores_personalizados) +
+      ggtitle(paste("precio_m2 en", selected_municipio)) +
+      theme(plot.title = element_text(hjust = 0.5),
+            axis.text.x = element_text(angle = 0, size = 11))
   })
   
-  observeEvent(input$update_municipio, {
-    output$municipioPlot1 <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-        #scale_fill_paletteer_d("RColorBrewer::RdYlBu")+
-        ggtitle("precio_m2 por Municipio") +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-    
-    output$singleMunicipioPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_municipio <- input$single_plot
-      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-      ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-        #scale_fill_paletteer_d("RColorBrewer::RdYlBu")+
-        ggtitle(paste("precio_m2 en", selected_municipio)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
-    
-    output$zonaPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_zona <- input$zona_plot
-      datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "precio_m2", fill = "zona")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-       labs(x = x_axis, y = "precio_m2", fill = "zona") +
-       #scale_fill_paletteer_d("RColorBrewer::RdYlBu")+
-        ggtitle(paste("precio_m2 en la Zona", selected_zona)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-    })
+  output$zonaPlot <- renderPlot({
+    x_axis <- input$x_axis_municipio
+    selected_zona <- input$zona_plot
+    datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
+    ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
+      geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+      labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
+      scale_fill_manual(values = colores_personalizados) +
+      ggtitle(paste("precio_m2 en la Zona", selected_zona)) +
+      theme(plot.title = element_text(hjust = 0.5),
+            axis.text.x = element_text(angle = 0, size = 11))
   })
+})
   
-  
+
   # GRÁFICO DEL MAPA
   output$mapa <- renderLeaflet({
     if(input$change_mapa== "mapa1"){
@@ -471,532 +472,19 @@ output$singleMunicipioPlot_GC <- renderPlot({
   
   
   
-
   
+
+
+
+
+
+
+
 }
 
 shinyApp(ui, server)
 
 
 
-#datos
-```
-
-
-# Experimento
-```{r}
-colores_personalizados <- c(
-  "Municipio_A" = "black", "Municipio_B" = "black", "Municipio_C" = "black",
-  "Municipio_CH" = "purple", "Municipio_D" = "orange", "Municipio_E" = "pink",
-  "Municipio_F" = "brown", "Municipio_G" = "cyan"
-)
-
-# UI
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
-      # OUTPUTS DE GASTOS COMUNES POR MUNICIPIO
-      conditionalPanel(
-        condition = "input.tabselected == 4",
-        selectInput("x_axis__GC_municipio", "Seleccione el eje X:",
-                    choices = list(
-                      "Zona" = "zona",
-                      "Tipo de Propiedad" = "tipo_prop",
-                      "Condición" = "Condicion",
-                      "Disposicion" = "disposicion"
-                    )),
-        selectInput("single_plot_GC", "Seleccione el Municipio:",
-                    choices = unique(datos$Municipio),
-                    selected = unique(datos$Municipio)[1]),
-        selectInput("zona_plot_GC", "Seleccione la Zona:",
-                    choices = NULL),  # Inicialmente vacío
-        actionButton("update_municipio_GC", "Actualizar Gráficos")
-      ),
-      
-      conditionalPanel( # OUTPUT DE BERNOULLIS
-        condition = "input.tabselected == 5",
-        selectInput("x_axis_bernoulli", "Seleccione el eje X para los gráficos de Bernoulli:",
-                    choices = list(
-                      "Conexión Gas" = "conexion_gas",
-                      "WiFi" = "WiFi",
-                      "Duplex" = "Duplex",
-                      "Pet" = "Pet",
-                      "Pool" = "Pool",
-                      "Gym" = "Gym"
-                    )),
-        actionButton("update_bernoulli", "Actualizar Gráficos")
-      ),
-      
-      conditionalPanel( # OUTPUT DE MUNICIPIO
-        condition = "input.tabselected == 6",
-        selectInput("x_axis_municipio", "Seleccione el eje X:",
-                    choices = list(
-                      "Zona" = "zona",
-                      "Tipo de Propiedad" = "tipo_prop",
-                      "Condición" = "Condicion",
-                      "Disposicion"="disposicion"
-                     )),
-        selectInput("single_plot", "Seleccione el Municipio:",
-                    choices = unique(datos$Municipio),
-                    selected = unique(datos$Municipio)[1]),
-        selectInput("zona_plot", "Seleccione la Zona:",
-                    choices = NULL),  # Inicialmente vacío
-        actionButton("update_municipio", "Actualizar Gráficos")
-      ), 
-      
-      # OUTPUT DE MAPA
-      conditionalPanel(
-        condition = "input.tabselected== 3",
-        selectInput("change_mapa", "Seleccionar mapa:",
-                    choices= list(
-                      "Ubicacion de alquileres en Montevideo"= "mapa1",
-                      "Cantidad de alquileres por Municipio"= "mapa2"))
-      )
-      
-    ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-                  tabPanel("Mapa",
-                           h2("Gráfico de Mapa"),
-                           leafletOutput("mapa", width="100%", height= "600px"),
-                           value = 3
-                  ),
-                  
-                  tabPanel("Municipio GC",
-                           h2("Gastos Comunes por Municipio"),
-                           plotOutput("municipioPlot1_GC"),
-                           plotOutput("singleMunicipioPlot_GC"),
-                           plotOutput("zonaPlot_GC"),
-                           value = 4
-                  ),
-                  tabPanel("Bernoulli",
-                           h2("Gráfico de Bernoulli"),
-                           plotOutput("bernoulliPlot"),
-                           value = 5
-                  ),
-                  tabPanel("Municipio",
-                           h2("Gráficos por Municipio"),
-                           plotOutput("municipioPlot1"),
-                           plotOutput("singleMunicipioPlot"),
-                           plotOutput("zonaPlot"),
-                           value = 6
-                  )
-      )
-    )
-  )
-)
-
-# Server
-server <- function(input, output, session) {
-
-  # GRÁFICO DE GASTOS COMÚNES
-  observeEvent(input$single_plot_GC, {
-    selected_municipio <- input$single_plot_GC
-    zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio])
-    
-    updateSelectInput(session, "zona_plot_GC",
-                      choices = zonas_filtradas,
-                      selected = zonas_filtradas[1])
-  })
-  
-  observeEvent(input$update_municipio_GC, {
-    output$municipioPlot1_GC <- renderPlot({
-      x_axis <- input$x_axis__GC_municipio
-      ggplot(datos, aes_string(x = paste0("reorder(", x_axis, ", Gastos_Comunes)"), y = "Gastos_Comunes", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "Gastos_Comunes", fill = "Municipio") +
-#scale_fill_paletteer_d("viridis::viridis") +        ggtitle("Gastos Comunes por Municipio") +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-    
-    output$singleMunicipioPlot_GC <- renderPlot({
-      x_axis <- input$x_axis__GC_municipio
-      selected_municipio <- input$single_plot_GC
-      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-      ggplot(datos_filtrados, aes_string(x = paste0("reorder(", x_axis, ", Gastos_Comunes)"), y = "Gastos_Comunes", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "Gastos Comunes", fill = "Municipio") +
-       # scale_fill_paletteer_d("RColorBrewer::RdYlBu") +
-        ggtitle(paste("Gastos Comunes en", selected_municipio)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-    
-    output$zonaPlot_GC <- renderPlot({
-      x_axis <- input$x_axis__GC_municipio
-      selected_zona <- input$zona_plot_GC
-      datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "zona")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "Gastos Comúnes", fill = "zona") +
-     # scale_fill_paletteer_d("RColorBrewer::RdYlBu") +
-      ggtitle(paste("Gastos Comúnes en la Zona", selected_zona)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-  })
-  
-  # GRÁFICO DE BERNOULLIS
-  observeEvent(input$update_bernoulli, {
-    output$bernoulliPlot <- renderPlot({
-      x_axis <- input$x_axis_bernoulli
-      ggplot(data = datos) +
-        geom_mosaic(aes_string(x = paste0("product(precio_m2_rec, ", x_axis, ")"), fill= "precio_m2_rec")) +
-        labs(title='Comparación del precio por metro cuadrado y el número de piso', x = x_axis, y = "Precio por metro cuadrado") +
-        theme(legend.position = "bottom",
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-  })
-  
-  # GRÁFICO DE MUNICIPIOS
-  observeEvent(input$single_plot, {
-    selected_municipio <- input$single_plot
-    zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio])
-    
-    updateSelectInput(session, "zona_plot",
-                      choices = zonas_filtradas,
-                      selected = zonas_filtradas[1])
-  })
-  
-  observeEvent(input$update_municipio, {
-    output$municipioPlot1 <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "Precio por metro cuadrado", fill = "Municipio") +
-     #scale_fill_paletteer_d("RColorBrewer::RdYlBu") +
-        ggtitle("Precio por metro cuadrado por Municipio") +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-    
-    output$singleMunicipioPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_municipio <- input$single_plot
-      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-      ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "Precio por metro cuadrado", fill = "Municipio") +
-     #   scale_fill_paletteer_d("RColorBrewer::RdYlBu") +
-        ggtitle(paste("Precio por metro cuadrado en", selected_municipio)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-    
-    output$zonaPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_zona <- input$zona_plot
-      datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "precio_m2", fill = "zona")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "Precio por metro cuadrado", fill = "zona") +
-       # scale_fill_paletteer_d("RColorBrewer::RdYlBu") +
-        ggtitle(paste("Precio por metro cuadrado en la Zona", selected_zona)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-  })
-}
-
-# Run the application 
-shinyApp(ui = ui, server = server)
-
 
 ```
-
-
-
-```{r}
-
-
-colores_personalizados <- c(
-  "Municipio_A" = "black", "Municipio_B" = "black", "Municipio_C" = "black",
-  "Municipio_CH" = "purple", "Municipio_D" = "orange", "Municipio_E" = "pink",
-  "Municipio_F" = "brown", "Municipio_G" = "cyan"
-)
-
-# UI
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
-      # OUTPUTS DE GASTOS COMUNES POR MUNICIPIO
-      conditionalPanel(
-        condition = "input.tabselected == 4",
-        selectInput("x_axis__GC_municipio", "Seleccione el eje X:",
-                    choices = list(
-                      "Zona" = "zona",
-                      "Tipo de Propiedad" = "tipo_prop",
-                      "Condición" = "Condicion",
-                      "Disposicion" = "disposicion"
-                    )),
-        selectInput("single_plot_GC", "Seleccione el Municipio:",
-                    choices = unique(datos$Municipio),
-                    selected = unique(datos$Municipio)[1]),
-        selectInput("zona_plot_GC", "Seleccione la Zona:",
-                    choices = NULL),  # Inicialmente vacío
-        actionButton("update_municipio_GC", "Actualizar Gráficos")
-      ),
-      
-      conditionalPanel( # OUTPUT DE BERNOULLIS
-        condition = "input.tabselected == 5",
-        selectInput("x_axis_bernoulli", "Seleccione el eje X para los gráficos de Bernoulli:",
-                    choices = list(
-                      "Conexión Gas" = "conexion_gas",
-                      "WiFi" = "WiFi",
-                      "Duplex" = "Duplex",
-                      "Pet" = "Pet",
-                      "Pool" = "Pool",
-                      "Gym" = "Gym"
-                    )),
-        actionButton("update_bernoulli", "Actualizar Gráficos")
-      ),
-      
-      conditionalPanel( # OUTPUT DE MUNICIPIO
-        condition = "input.tabselected == 6",
-        selectInput("x_axis_municipio", "Seleccione el eje X:",
-                    choices = list(
-                      "Zona" = "zona",
-                      "Tipo de Propiedad" = "tipo_prop",
-                      "Condición" = "Condicion",
-                      "Disposicion"="disposicion"
-                     )),
-        selectInput("single_plot", "Seleccione el Municipio:",
-                    choices = unique(datos$Municipio),
-                    selected = unique(datos$Municipio)[1]),
-        selectInput("zona_plot", "Seleccione la Zona:",
-                    choices = NULL),  # Inicialmente vacío
-        actionButton("update_municipio", "Actualizar Gráficos")
-      ), 
-      
-      # OUTPUT DE MAPA
-      conditionalPanel(
-        condition = "input.tabselected== 3",
-        selectInput("change_mapa", "Seleccionar mapa:",
-                    choices= list(
-                      "Ubicacion de alquileres en Montevideo"= "mapa1",
-                      "Cantidad de alquileres por Municipio"= "mapa2"))
-      )
-      
-    ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-                  tabPanel("Mapa",
-                           h2("Gráfico de Mapa"),
-                           leafletOutput("mapa", width="100%", height= "600px"),
-                           value = 3
-                  ),
-                  
-                  tabPanel("Municipio GC",
-                           h2("Gastos Comunes por Municipio"),
-                           plotOutput("municipioPlot1_GC"),
-                           plotOutput("singleMunicipioPlot_GC"),
-                           plotOutput("zonaPlot_GC"),
-                           value = 4
-                  ),
-                  tabPanel("Bernoulli",
-                           h2("Gráfico de Bernoulli"),
-                           plotOutput("bernoulliPlot"),
-                           value = 5
-                  ),
-                  tabPanel("Municipio",
-                           h2("Gráficos por Municipio"),
-                           plotOutput("municipioPlot1"),
-                           plotOutput("singleMunicipioPlot"),
-                           plotOutput("zonaPlot"),
-                           value = 6
-                  )
-      )
-    )
-  )
-)
-
-# Server
-server <- function(input, output, session) {
-
-  # GRÁFICO DE GASTOS COMÚNES
-  observeEvent(input$single_plot_GC, {
-    selected_municipio <- input$single_plot_GC
-    zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio])
-    
-    updateSelectInput(session, "zona_plot_GC",
-                      choices = zonas_filtradas,
-                      selected = zonas_filtradas[1])
-  })
-  
-  observeEvent(input$update_municipio_GC, {
-    output$municipioPlot1_GC <- renderPlot({
-      x_axis <- input$x_axis__GC_municipio
-      ggplot(datos, aes_string(x = paste0("reorder(", x_axis, ", Gastos_Comunes)"), y = "Gastos_Comunes", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "Gastos_Comunes", fill = "Municipio") +
-        scale_fill_manual(values = colores_personalizados) +
-        ggtitle("Gastos Comunes por Municipio") +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-    
-    output$singleMunicipioPlot_GC <- renderPlot({
-      x_axis <- input$x_axis__GC_municipio
-      selected_municipio <- input$single_plot_GC
-      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-      ggplot(datos_filtrados, aes_string(x = paste0("reorder(", x_axis, ", Gastos_Comunes)"), y = "Gastos_Comunes", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "Gastos Comunes", fill = "Municipio") +
-        scale_fill_manual(values = colores_personalizados) +
-        ggtitle(paste("Gastos Comunes en", selected_municipio)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-    
-    output$zonaPlot_GC <- renderPlot({
-      x_axis <- input$x_axis__GC_municipio
-      selected_zona <- input$zona_plot_GC
-      datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "zona")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "Gastos Comúnes", fill = "zona") +
-        scale_fill_manual(values = colores_personalizados) +
-        ggtitle(paste("Gastos Comúnes en la Zona", selected_zona)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-  })
-  
-  # GRÁFICO DE BERNOULLIS
-  observeEvent(input$update_bernoulli, {
-    output$bernoulliPlot <- renderPlot({
-      x_axis <- input$x_axis_bernoulli
-      ggplot(data = datos) +
-        geom_mosaic(aes_string(x = paste0("product(precio_m2_rec, ", x_axis, ")"), fill = "precio_m2_rec")) +
-        labs(title = 'Comparación del precio por metro cuadrado y el número de piso', x = x_axis, y = "Precio por metro cuadrado") +
-        theme(legend.position = "bottom",
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-  })
-  
-  # GRÁFICO DE MUNICIPIOS
-  observeEvent(input$single_plot, {
-    selected_municipio <- input$single_plot
-    zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio])
-    
-    updateSelectInput(session, "zona_plot",
-                      choices = zonas_filtradas,
-                      selected = zonas_filtradas[1])
-  })
-  
-  observeEvent(input$update_municipio, {
-    output$municipioPlot1 <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-        scale_fill_manual(values = colores_personalizados) +
-        ggtitle("Precio por metro cuadrado por Municipio") +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-    
-    output$singleMunicipioPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_municipio <- input$single_plot
-      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-      ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-        scale_fill_manual(values = colores_personalizados) +
-        ggtitle(paste("Precio por metro cuadrado en", selected_municipio)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-    
-    output$zonaPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_zona <- input$zona_plot
-      datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "precio_m2", fill = "zona")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "precio_m2", fill = "zona") +
-        scale_fill_manual(values = colores_personalizados) +
-        ggtitle(paste("Precio por metro cuadrado en la Zona", selected_zona)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    })
-  })
-
-  # MAPA
-  output$mapa <- renderLeaflet({
-    leaflet(datos) %>%
-      addTiles() %>%
-      addMarkers(~long, ~lat, popup = ~paste(Municipio, precio_m2))
-  })
-}
-
-# App
-shinyApp(ui = ui, server = server)
-
-```
-
-
-
-```{r}
-
-#datos
-
-# Exportar el data frame a un archivo Excel
-library(writexl)
-here()
-
-write_xlsx(datos, here("Shiny_Proyecto/Miapp/datos_limpios.xlsx"))
-
-
-datos
-
-```
-
