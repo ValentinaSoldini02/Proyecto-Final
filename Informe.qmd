@@ -40,18 +40,18 @@ library(ggmosaic)
 
 # Introducción:
 
-El mercado inmobiliario ha sido ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan un alquiler una propiedad. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, características de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios en dólares de las propiedades teniendo en cuenta diferentes aspectos. Para realizar este análisis, planteemos las diferentes preguntas de investigación:
+El mercado inmobiliario ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan una propiedad para alquilar. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, características de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios en dólares de las propiedades teniendo en cuenta diferentes aspectos. Para realizar este análisis, planteamos las diferentes preguntas de investigación:
 
--   ¿Cambia el precio con respecto al barrio en que se ecuestre la propiedad?
+-   ¿Cambia el precio con respecto al barrio en que se encuentra la propiedad?
 -   ¿En que municipio hay más alquileres?
 -   ¿Cuál es la variable que más influye en el precio?
--   ¿Hay alguna variable que debería de eliminarse al modelo?
+-   ¿Hay alguna variable que debería de eliminarse del modelo?
 
-Estas preguntas guiarán nuestro análisis para comprender mejor los factores que afectan los precios en el mercado inmobiliario y proporcionar una herramienta útil para los distintos agentes, ya sean compradores, vendedores, inversores y agentes inmobiliarios. La variable de interés de este proyecto es *precio_m2*
+Estas preguntas guiarán nuestro análisis para comprender mejor los factores que afectan los precios en el mercado inmobiliario y proporciona una herramienta útil para los distintos agentes, ya sean compradores, vendedores, inversores. La variable de interés de este proyecto es *precio_m2*.
 
 # Datos
 
-Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**, consiste en una plataforma web que reúne la comunidad Data Science, con más de 536 mil miembros activos en 194 países. Estos datos contienen variables que describen diversos aspectos de una propiedad disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes características internas y externas de la propiedad. 
+Los datos utilizados en este análisis se han extraidos de una pagina web llamada **kaggle**, consiste en una plataforma web que reúne la comunidad Data Science, con más de 536 mil miembros activos en 194 países. Estos datos contienen variables que describen diversos aspectos de una propiedad que se encuentran disponibles para alquilar en el año 2023. La base de datos abarcan un total de 2361 registros de diferentes propiedades y 45 variables que incluyen desde el precio hasta diferentes características internas y externas de la propiedad.
 
 Puedes encontrar el dataset en el siguiente enlace: [Precio de alquiler de casas en Montevideo Dataset](https://www.kaggle.com/datasets/lasm1984/house-rental-price-in-montevideo?select=houses.csv)
 
@@ -72,13 +72,13 @@ Como se mencionó anteriormente, ciertas variables contenían valores nulos. Par
 
 -   **dirección**: Se asignó el nombre de la zona correspondiente a la propiedad.
 -   **precio_m2**: Se calculó la media de toda la columna de dicha variable y se coloco este valor en las filas donde había un dato faltante.
--   **concisión**: Se asignó la categoría más frecuente. Lo mismo se realizó con la variable *disposición*
+-   **condición**: Se asignó la categoría más frecuente. Lo mismo se realizó con la variable *disposición*
 
-Para las variables que se mencionó que se calculo la media de toda la columna y se coloco ese dato en las filas con datos faltantes. Se tomo la media ya que tiene una capacidad para reflejar la tendencia central del conjunto de datos en su totalidad, incluyendo la influencia de los valores extremos. Este enfoque proporciona una estimación consistente y efectiva para la preparación de ks datos antes de su análisis detallado.
+Para las variables que se mencionó, se calculo la media de toda la columna y se coloco ese dato en las filas con datos faltantes. Se tomo la media ya que tiene una capacidad para reflejar la tendencia central del conjunto de datos en su totalidad, incluyendo la influencia de los valores extremos. Este enfoque proporciona una estimación consistente y efectiva para la preparación de los datos antes de su análisis detallado.
 
 Además, se re-codificaron variables para mejorar su análisis y para evaluar cómo algunas de las variables del modelo afectaban linealmente a la variable predictora, **precio_m2**
 
-Por otro lado, a los datos duplicados se eliminaron teniendo en cuenta que las  coincidencias únicas que tienen las filas, ya que no tenemos una fecha de snapshot de Mercado Libre.
+Por otro lado, a los datos duplicados se eliminaron teniendo en cuenta que las coincidencias únicas que tienen las filas, ya que no tenemos una fecha de snapshot de Mercado Libre.
 
 ```{r}
 #| tbl-cap: "Qué Municipio le corresponde a cada zona"
@@ -109,7 +109,6 @@ Municipios <- gt(tabla_municipio) |>
 Municipios
 
 ```
-
 
 ```{r}
 ## Limpieza
@@ -171,7 +170,6 @@ datos_2 <- datos_2 |>
 
 ```
 
-
 ```{r}
 datos_2 <- datos_2 %>%
   mutate(zona = case_when(
@@ -211,7 +209,6 @@ datos_2 <- datos_2 %>% # Datos
     TRUE ~ zona  ))
 
 ```
-
 
 ```{r}
 # Función para reemplazar valores NA en 'direccion' con los valores de 'zona'
@@ -257,7 +254,6 @@ detector_nulos <- function(datos_2){ # Función
 
 
 ```
-
 
 ## Determinar que variables Influyen más en el Precio por metro cuadrado:
 
@@ -346,6 +342,7 @@ ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2, color = precio_m2)
   theme_minimal()
 
 ```
+
 Este patrón es consistente con la idea de que las propiedades más nuevas tienen características y otras comodidades, mejor infraestructura y probablemnete esten ubicadas en lugares mas deseables.
 
 \newpage
@@ -400,6 +397,7 @@ ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantid
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+
 No hay una diferencia muy notoria con respecto al precio por metro cuadrado en cuanto a la dispocicion en que se encuentra las diferentes propiedades.
 
 \newpage
@@ -465,12 +463,10 @@ ggplot(data = datos_3) +
 
 Este grafico representa la relacion entre el precio por metro cuadrado (*precio_m2*) y el número de piso (*nro_de_piso*) de las propiedades.
 
-Re-caracterizando el precio promedio por metro cuadrado en dos grupos: 
-  - Menor o igual a 13 dólares y mayor a 13 dólares, 
-  
-También se re-categorizó el número de piso en dos grupos:
-  - Menor o igual a 15 pisos y mayor a 15 pisos. 
-  
+Re-caracterizando el precio promedio por metro cuadrado en dos grupos: - Menor o igual a 13 dólares y mayor a 13 dólares,
+
+También se re-categorizó el número de piso en dos grupos: - Menor o igual a 15 pisos y mayor a 15 pisos.
+
 Para los precios por metro cuadrado menor o igual a 13 dólares, se observa que son propiedades que tienen pisos bajos menores a 15. Para los precios por metro cuadrado mayores a 13 dólares, se observa que son propiedades que tienen pisos mayores a 15.
 
 Por lo tanto, en pisos mas bajos, predominan los precios por metro cuadrado menores o iguales a 13 dólares. Por otro lado, para los pisos mas altos, los precios por metro cuadrado mayores a 13 dólares son los más comunes.
@@ -500,8 +496,8 @@ ggplot(promedios1, aes(x = fct_reorder(cant_cuartos, promedio_precio_m2), y = pr
   ggtitle("Precio por m2 según cantidad de cuartos") +
   theme_minimal()
 ```
-Como se puede observar, la cantidad de cuartos no afecta demasiado el cambio en el precio por metro cuadrado. Puede sonar un poco extraño ya que en la realidad cuantos mas cuartos es mas costosa la propiedad, por lo tanto es un poco contradictorio con la realidad.
 
+Como se puede observar, la cantidad de cuartos no afecta demasiado el cambio en el precio por metro cuadrado. Puede sonar un poco extraño ya que en la realidad cuantos mas cuartos es mas costosa la propiedad, por lo tanto es un poco contradictorio con la realidad.
 
 \newpage
 
@@ -562,7 +558,7 @@ ggplot(promedios2, aes(x = fct_reorder(cant_de_est, promedio_precio_m2), y = pro
 
 De manera similar a lo observado anteriorente, el precio por metro cuadrado de la propiedad es mayor cuando la propiedad tiene al menos un estacionamiento. Sin embargo, el incremento en el precio no tan relevare al pasar de uno a dos estacionamientos. Curiosamente, las propiedades con tres estacionamientos son más caras que las que tienen dos, aunque la diferencia no es tan marcada como entre tener cero y uno.
 
-Ellos siguientes sod gráficos se  re-codificó ahora la cantidad de cantidad de habitaciones y la cantidad de cuartos. Se obsevra que en general, el tener 2 cuartos o 2 habitaciones hace que el precio promedio por metro cuadrado sea mayor, esto también se cumple para los alquileres con 3 o más cuartos / habitaciones.
+Ellos siguientes sod gráficos se re-codificó ahora la cantidad de cantidad de habitaciones y la cantidad de cuartos. Se obsevra que en general, el tener 2 cuartos o 2 habitaciones hace que el precio promedio por metro cuadrado sea mayor, esto también se cumple para los alquileres con 3 o más cuartos / habitaciones.
 
 \newpage
 
@@ -657,9 +653,9 @@ En este gráfico, muestra una tendencia lineal, se puede decir que los gastos co
 
 Con el objetivo de identificar si las variables del modelo explican correctamente la variable de respuesta, en este caso *precio_m2*, se decidió hacer una exploración con ciertas variables. Para ello, se elaboraron gráficos lineales que anteriormente están presentados que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas afecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos.
 
-Una vez hecho este análisis, se paso a crear el modelo de regresion lineal. Este modelo se creo a partir de las variables que mas afectaba el cambio en el precio por metro cuadrado. Es así, que se eligieron las variables: *Municipio*,  *condicion*, *baños*, *año_de_const*, *tipo_prop*, *vista_al_mar*, *cant_de_est*, *nro_de_piso*, a pesar de que se redujo la cantidad de variables comparando con todas las variables que hay en el set de datos, se interpretó que así se iba a poder ver un poco mejor que quieren mostrar las diferentes variables.
+Una vez hecho este análisis, se paso a crear el modelo de regresion lineal. Este modelo se creo a partir de las variables que mas afectaba el cambio en el precio por metro cuadrado. Es así, que se eligieron las variables: *Municipio*, *condicion*, *baños*, *año_de_const*, *tipo_prop*, *vista_al_mar*, *cant_de_est*, *nro_de_piso*, a pesar de que se redujo la cantidad de variables comparando con todas las variables que hay en el set de datos, se interpretó que así se iba a poder ver un poco mejor que quieren mostrar las diferentes variables.
 
-*precio_m2* = $\beta0$ + *Municipio*$\beta1$ +  *condicion*$\beta2$ + *baños*$\beta3$ + *año_de_const*$\beta4$ + *tipo_prop*$\beta5$ + *vista_al_mar*$\beta6$ + *cant_de_est*$\beta7$ + *nro_de_piso*$\beta8$
+*precio_m2* = $\beta0$ + *Municipio*$\beta1$ + *condicion*$\beta2$ + *baños*$\beta3$ + *año_de_const*$\beta4$ + *tipo_prop*$\beta5$ + *vista_al_mar*$\beta6$ + *cant_de_est*$\beta7$ + *nro_de_piso*$\beta8$ + *error*
 
 Una vez obtenido el modelo, se realizo el summary, y se obtuvieron estos resultados:
 
@@ -702,7 +698,7 @@ tabla_coef <- gt(coef) |>
 tabla_coef
 ```
 
-Por lo que se puede observar es que casi todos los coeficientes dan un p-valor mayor a 0.05 porque lo que significa que no son significativas al modelo. 
+Por lo que se puede observar es que casi todos los coeficientes dan un p-valor mayor a 0.05 porque lo que significa que no son significativas al modelo.
 
 ```{r}
 #| tbl-cap: "Raíz cuadrada de SE"
@@ -753,7 +749,7 @@ tabla_R2 <- gt(R2) |>
 tabla_R2
 ```
 
-Que la significancia no se cumpla es decir que las variables no sean significativas y que el $R^2$ sea tan chico que las variables explicativas no expliquen en absoluto a la variable de respuesta, es una mala señal. 
+Que la significancia no se cumpla es decir que las variables no sean significativas y que el $R^2$ sea tan chico que las variables explicativas no expliquen en absoluto a la variable de respuesta, es una mala señal.
 
 Por ende, a continuación se van a evaluar los cuatros supuestos para identificar si un modelo predice bien o no.
 
@@ -761,48 +757,47 @@ Por ende, a continuación se van a evaluar los cuatros supuestos para identifica
 
 Para poder obtener conclusiones confiables, el modelo debe cumplir con determinados supuestos
 
-  - no multicolinealidad: exacta ni aproximada, para asegurar que la matriz X sea de rango completo (conformable),
+-   no multicolinealidad: exacta ni aproximada, para asegurar que la matriz X sea de rango completo (conformable).
 
-  - linealidad: la relación entre variables expicativas y la respuesta debe ser aproximadamente lineal,
+-   linealidad: la relación entre variables expicativas y la respuesta debe ser aproximadamente lineal.
 
-  - homoscedasticidad: la varianza de los errores no depende de ninguna de las variables explicativas,
+-   homoscedasticidad: la varianza de los errores no depende de ninguna de las variables explicativas.
 
-  - normalidad: los errores del modelo deben presentar una distribución normal,
+-   normalidad: los errores del modelo deben presentar una distribución normal.
 
-  - atípicos/influyentes: si bien no es un supuesto en si mismo, es recomendable identificar observaciones atípicas e influyentes al modelo.
-
+-   atípicos/influyentes: si bien no es un supuesto en si mismo, es recomendable identificar observaciones atípicas e influyentes al modelo.
 
 ## Multicolinealidad:
 
 ```{r}
 vif <- vif(mod)
 ```
-La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo.
 
+La mayoria de las variables tienen valores de GVIF ajustados menores a 2, lo que generalmente se consudera aceptable por lo que no hay problemas graves de multicolinealidad en el modelo.
 
 ## Homocedasticidad
 
 **ncvTest**
 
-   **Hipótesis**:
+**Hipótesis**:
 
-  - **Hipótesis Nula (H0)**: La varianza de los residuos es constante (Homocedasticidad).
+-   **Hipótesis Nula (H0)**: La varianza de los residuos es constante (Homocedasticidad).
 
-  - **Hipótesis Alternativa (H1)**: La varianza de los residuos no es constante (heterocedasticidad).
+-   **Hipótesis Alternativa (H1)**: La varianza de los residuos no es constante (heterocedasticidad).
 
-   **Procedimiento**:
+**Procedimiento**:
 
-  - El *ncvTest* examina la relación entre los valores ajustados (predicciones del modelo) y la varianza de los residuos.
+-   El *ncvTest* examina la relación entre los valores ajustados (predicciones del modelo) y la varianza de los residuos.
 
-  - Se ajusta un modelo de regresión para predecir los residuos en función de los valores ajustados.
+-   Se ajusta un modelo de regresión para predecir los residuos en función de los valores ajustados.
 
-  - Se calcula un estadístico de prueba basado en esta relación.
+-   Se calcula un estadístico de prueba basado en esta relación.
 
-  - El estadístico de prueba sigue una distribución chi-cuadrado.
+-   El estadístico de prueba sigue una distribución chi-cuadrado.
 
     Un p-valor alto sugiere que no hay evidencia suficiente para rechazar la hipótesis nula, indicando Homocedasticidad.
 
-  - Un p-valor bajo indica heteroscedasticidad.
+-   Un p-valor bajo indica heteroscedasticidad.
 
 ```{r}
 #| tbl-cap: "p-valor"
@@ -825,28 +820,27 @@ tabla_p_valor
 
 **Breusch-Pagan Test**
 
-   **Hipótesis**:
+**Hipótesis**:
 
-  - **Hipótesis Nula (H0)**: La varianza de los residuos es constante y no depende de las variables independientes (Homocedasticidad).
+-   **Hipótesis Nula (H0)**: La varianza de los residuos es constante y no depende de las variables independientes (Homocedasticidad).
 
-  - **Hipótesis Alternativa (H1)**: La varianza de los residuos depende linealmente de las variables independientes (heteroscedasticidad).
+-   **Hipótesis Alternativa (H1)**: La varianza de los residuos depende linealmente de las variables independientes (heteroscedasticidad).
 
-   **Procedimiento**:
+**Procedimiento**:
 
-  - El test de *Breusch-Pagan* examina si la varianza de los residuos depende linealmente de las variables independientes del modelo original.
+-   El test de *Breusch-Pagan* examina si la varianza de los residuos depende linealmente de las variables independientes del modelo original.
 
-  - Se realiza una regresión auxiliar de los residuos al cuadrado contra las variables independientes originales.
+-   Se realiza una regresión auxiliar de los residuos al cuadrado contra las variables independientes originales.
 
-  - Se calcula un estadístico de prueba basado en la regresión auxiliar.
+-   Se calcula un estadístico de prueba basado en la regresión auxiliar.
 
-  - El estadístico de prueba sigue una distribución chi-cuadrado.
+-   El estadístico de prueba sigue una distribución chi-cuadrado.
 
 ```{r, message=FALSE}
 breusch_pagan(mod) %>% kable()
 ```
 
 Ambos p-valores son super pequeños, por lo tanto, hay problema de Heterocedasticidad. Se puede concluir que se rechaza la hipótesis nula que no es nuestro objetivo
-
 
 ## Normalidad
 
@@ -860,14 +854,13 @@ ggplot()+geom_density(aes(rstudent(mod)))+
 
 La densidad de los residuos estudentizados no parecen comportarse como una normal. Por lo tanto nos indica que los residuos no se distribuyen normal.
 
-
 Se va a corrobar lo visto en el gráfico mediante tres métodos:
 
-  - **Shaphiro-Wilk**: se basa en la comparación de los cuantiles empíricos y teóricos bajo el supuesto de normalidad.
+-   **Shaphiro-Wilk**: se basa en la comparación de los cuantiles empíricos y teóricos bajo el supuesto de normalidad.
 
-  - **Jarque-Bera**: se basa en la comparación de los estadísticos de asimetría y kurtosis bajo el supuesto de normalidad.
+-   **Jarque-Bera**: se basa en la comparación de los estadísticos de asimetría y kurtosis bajo el supuesto de normalidad.
 
-  - **Kolmogorov-Smirnov**: se basa en la máxima discrepacnoa entre la función de distribución empírica y la teórica bajo el supuesto de normalidad.
+-   **Kolmogorov-Smirnov**: se basa en la máxima discrepacnoa entre la función de distribución empírica y la teórica bajo el supuesto de normalidad.
 
 ```{r}
 #| tbl-cap: "Normalidad"
@@ -916,10 +909,9 @@ ggplot(mod, aes(x=yhat, y= res))+
 
 Existen cuatro observación que podría tomarse como dato atípico.
 
-
 Debido a que casi ningún supuesto se cumplió, se optó por utilizar otros métodos de prediccion, que son el método de árboles y bosques:
 
-## Árboles de decisión:
+## Árbol de decisión:
 
 Los modelos basados en árboles consisten en una secuencia de particiones anidadas que dividen el espacio de los predictores donde en cada partición se usa un modelo para predecir la respuesta.
 
@@ -1015,7 +1007,6 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
 
 ```
 
-
 En la gráfica, se muestra una comparación entre las variables originales y las variables predichas utilizando un modelo de random forest. Las predicciones serían perfectas si todos los puntos cayeran sobre la línea roja
 
 En este paso se utilizo el conjunto de entrenamiento en el que se esta utilizando únicamente el 30% de los datos.
@@ -1040,6 +1031,7 @@ ggplot(results, aes(x = Actual, y = Predicciones)) +
   theme_minimal()+
   ggtitle("Predicción de las variables originales con datos desconocidos")
 ```
+
 Como en el gráfico anterior se muestra la comparación entre las variables originales y las variables predichas usando el método de random forest, pero esta vez aplicándolo al conjunto de datos "testing" que son un 70% de los datos.
 
 Con respecto a la dispersión alrededor de la línea roja, en comparación al gráfico anterior, usando el conjunto de entrenamiento, se observa una mayor dispersión de las observaciones alrededor de la línea roja. Esto sugiere que el modelo tiene más dificultad para predecir correctamente.
@@ -1047,6 +1039,11 @@ Con respecto a la dispersión alrededor de la línea roja, en comparación al gr
 La mayor dispersión y el alejamiento de algunos puntos de la línea roja indican que el modelo no está generalizado bien a datos nuevos y desconocidos. Este es un indicio de que el modelo podría estar sobre ajustando al conjunto de datos de entrenamiento.
 
 \newpage
+
+# Conclusion:
+
+Se puede concluir que, aunque el modelo de regresión lineal no fue completamente exitoso en predecir el precio por metro cuadrado debido a la falta de cumplimiento de algunos supuestos y la baja capacidad explicativa, los análisis realizados proporcionaron información valiosa sobre los factores que influyen en los precios inmobiliarios en Montevideo. Los métodos alternativos como los árboles de decisión y los bosques aleatorios muestran un camino prometedor para futuras investigaciones en el mercado inmobiliario. Igualmente parte del objetivo se cumplió, que era brindarle información a los individuos interesados en alquilar, cual eran las características de las propiedades que los propietarios tienen en cuenta para elevar el precio de las propiedades.
+
 
 # Metadatos
 
@@ -1139,9 +1136,71 @@ tabla_gt <- gt(tabla_variables) |>
 tabla_gt
 ```
 
-
-
 ```{r}
 #write_xlsx(df, "ruta/del/archivo.xlsx")
 
 ```
+
+
+# Biblografia: 
+
+  - Notas de la unidad curricular Ciencia de Datos con R
+  - Notas de la unidad curricular Modelos LinealeS
+  - Auguie B (2017). _gridExtra: Miscellaneous Functions for "Grid" Graphics_. R package
+  version 2.3, <https://CRAN.R-project.org/package=gridExtra>.
+  - Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A,
+  Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson
+  D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome
+  to the tidyverse.” _Journal of Open Source Software_, *4*(43), 1686.
+  doi:10.21105/joss.01686 <https://doi.org/10.21105/joss.01686>.
+  - Schloerke B, Cook D, Larmarange J, Briatte F, Marbach M, Thoen E, Elberg A, Crowley J
+  (2024). _GGally: Extension to 'ggplot2'_. R package version 2.2.1,
+  <https://CRAN.R-project.org/package=GGally>.
+  - Fox J, Weisberg S (2019). _An R Companion to Applied Regression_, Third edition. Sage,
+  Thousand Oaks CA. <https://socialsciences.mcmaster.ca/jfox/Books/Companion/>.
+  - Farrar, Thomas J. (2024). skedastic: Heteroskedasticity Diagnostics for Linear
+  Regression Models. R Package version 2.0.2. University of the Western Cape. Bellville,
+  South Africa. https://github.com/tjfarrar/skedastic
+  - Martin Maechler, Peter Rousseeuw, Christophe Croux, Valentin Todorov, Andreas
+  Ruckstuhl, Matias Salibian-Barrera, Tobias Verbeke, Manuel Koller, c("Eduardo", "L. T.")
+  Conceicao and Maria Anna di Palma (2024). robustbase: Basic Robust Statistics R package
+  version 0.99-2. URL http://CRAN.R-project.org/package=robustbase
+  - Trapletti A, Hornik K (2024). _tseries: Time Series Analysis and Computational
+  Finance_. R package version 0.10-56, <https://CRAN.R-project.org/package=tseries>.
+  - Müller K (2020). _here: A Simpler Way to Find Your Files_. R package version 1.0.1,
+  <https://CRAN.R-project.org/package=here>.
+  - Wickham H, Bryan J (2023). _readxl: Read Excel Files_. R package version 1.4.3,
+  <https://CRAN.R-project.org/package=readxl>.
+  - H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York,2016.
+  - Wickham H (2023). _forcats: Tools for Working with Categorical Variables (Factors)_. R
+  package version 1.0.0, <https://CRAN.R-project.org/package=forcats>.
+  - Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J (2024). _gt: Easily Create
+  Presentation-Ready Display Tables_. R package version 0.10.1,
+  <https://CRAN.R-project.org/package=gt>.
+  - Wickham H, François R, Henry L, Müller K, Vaughan D (2023). _dplyr: A Grammar of Data
+  Manipulation_. R package version 1.1.4, <https://CRAN.R-project.org/package=dplyr>.
+  - A. Liaw and M. Wiener (2002). Classification and Regression by randomForest. R News
+  2(3), 18--22.
+  - Wickham H (2023). _modelr: Modelling Functions that Work with the Pipe_. R package
+  version 0.1.11, <https://CRAN.R-project.org/package=modelr>.
+  - Xie Y (2023). _knitr: A General-Purpose Package for Dynamic Report Generation in R_. R
+  package version 1.45, <https://yihui.org/knitr/>.
+  - Therneau T, Atkinson B (2023). _rpart: Recursive Partitioning and Regression Trees_. R
+  package version 4.1.23, <https://CRAN.R-project.org/package=rpart>.
+  - Williams, G. J. (2011), Data Mining with Rattle and R: The Art of Excavating Data for
+  Knowledge Discovery, Use R!, Springer.
+  - Milborrow S (2024). _rpart.plot: Plot 'rpart' Models: An Enhanced Version of
+  'plot.rpart'_. R package version 3.1.2, <https://CRAN.R-project.org/package=rpart.plot>.
+  - Hvitfeldt E. (2021). paletteer: Comprehensive Collection of Color Palettes. version
+  1.3.0. https://github.com/EmilHvitfeldt/paletteer
+  - Neuwirth E (2022). _RColorBrewer: ColorBrewer Palettes_. R package version 1.1-3,
+  <https://CRAN.R-project.org/package=RColorBrewer>.
+  - Jeppson H, Hofmann H, Cook D (2021). _ggmosaic: Mosaic Plots in the 'ggplot2'
+  Framework_. R package version 0.3.3, <https://CRAN.R-project.org/package=ggmosaic>.
+
+
+
+
+
+
+
