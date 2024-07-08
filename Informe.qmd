@@ -78,7 +78,7 @@ Para las variables que se mencionó, se calculo la media de toda la columna y se
 
 Además, se re-codificaron variables para mejorar su análisis y para evaluar cómo algunas de las variables del modelo afectaban linealmente a la variable predictora, **precio_m2**
 
-Por otro lado, a los datos duplicados se eliminaron teniendo en cuenta que las coincidencias únicas que tienen las filas, ya que no tenemos una fecha de snapshot de Mercado Libre.
+Por otro lado, a los datos duplicados se eliminaron teniendo en cuenta que las coincidencias únicas que tienen las filas, ya que no tenemos una fecha de snapshot de Mercado Libre.xnmsxnlks
 
 ```{r}
 #| tbl-cap: "Qué Municipio le corresponde a cada zona"
