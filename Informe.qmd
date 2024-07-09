@@ -66,7 +66,7 @@ datos <- read_csv(here("houses.csv"))
 
 # Análisis exploratorio de los datos
 
-Para responder adecuadamente las preguntas planteadas, se inició con una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados, valores atípocos y valores nulos. Además, se decidió eliminar las variables *Furnished...32*, *Furnished...42*, y *Floors*. Las dos primeras variables fueron eliminadas debido a la existencia de una tercera que contenía la misma información. La columna *Floors* se eliminó ya que no aportaba información relevante, contenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.
+Para responder adecuadamente las preguntas planteadas, se inició con una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados, valores atípicos y valores nulos. Además, se decidió eliminar las variables *Furnished...32*, *Furnished...42*, y *Floors*. Las dos primeras variables fueron eliminadas debido a la existencia de una tercera que contenía la misma información. La columna *Floors* se eliminó ya que no aportaba información relevante, contenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.
 
 Otra modificación realizada fue la agrupación de las zonas de Montevideo en municipios. Se creó una variable adicional *Municipio* que contiene todas las zonas de Montevideo separadas por municipios, se puede observar en la Tabla 1 que zonas corresponden a cada municipio. Adicionalmente, se convirtió la variable *precio* por *precio_m2* (precio por metros cuadrados) para facilitar el análisis de los datos.
 
@@ -78,7 +78,7 @@ Como se mencionó anteriormente, ciertas variables contenían valores nulos. Par
 
 Para las variables que se mencionó, se calculo la media de toda la columna y se coloco ese dato en las filas con datos faltantes. Se tomo la media ya que tiene una capacidad para reflejar la tendencia central del conjunto de datos en su totalidad, incluyendo la influencia de los valores extremos. Este enfoque proporciona una estimación consistente y efectiva para la preparación de los datos antes de su análisis detallado.
 
-Además, se re-codificaron variables para mejorar su análisis y para evaluar cómo algunas de las variables del modelo afectaban linealmente a la variable predictora, **precio_m2**
+Además, se re-codificaron variables para mejorar su análisis y para evaluar cómo algunas de las variables del modelo afectaban lineal mente a la variable predictora, **precio_m2**
 
 Por otro lado, a los datos duplicados se eliminaron teniendo en cuenta que las coincidencias únicas que tienen las filas, ya que no tenemos una fecha de snapshot de Mercado Libre.xnmsxnlks
 
@@ -335,13 +335,13 @@ ggplot(promedios3, aes(x = fct_reorder(Municipio, promedio_precio_m2), y = prome
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-En este gráfico se puede apreciar como el Municipio A tiene los precios por metro cuadrado pormedios mas altos, seguido por el Municipio E. Este gráfico es útil para ver que zonas de Montevideo son mas caras y cuáles son mas económicas, lo cual es valioso para los inquilinos al decidir en que área desean vivir según sus preferencias y presupuesto.
+En este gráfico se puede apreciar como el Municipio A tiene los precios por metro cuadrado promedios mas altos, seguido por el Municipio E. Este gráfico es útil para ver que zonas de Montevideo son mas caras y cuáles son mas económicas, lo cual es valioso para los inquilinos al decidir en que área desean vivir según sus preferencias y presupuesto.
 
 **¿Cómo varía el precio por metro cuadrado según el año de construcción de la propiedad?**
 
-A continuación, se presenta un gráfico que muestra la antigüedad de la propiedad y cómo varía el precio por metro cuadrado según el año de construcción. Se observa que, a medida que las propiedades son más nueveas, el precio por metro cuadrado tiende a aumentar.
+A continuación, se presenta un gráfico que muestra la antigüedad de la propiedad y cómo varía el precio por metro cuadrado según el año de construcción. Se observa que a medida que las propiedades son más nuevas, el precio por metro cuadrado tiende a aumentar.
 
-Para llevar a cabo este análisis, fue necesario acotar ciertos datos y eliminar algunos valores atípicos que distorcionaban la visualización.
+Para llevar a cabo este análisis, fue necesario acotar ciertos datos y eliminar algunos valores atípicos que distorsionaban la visualización.
 
 ```{r, fig.cap="Relación entre año de construcción y precio por m2", label:fig-plot1}
 datos_filtrados <- datos_2 %>%
@@ -371,11 +371,11 @@ ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2, color = precio_m2)
 
 ```
 
-Este patrón es consistente con la idea de que las propiedades más nuevas tienen características y otras comodidades, mejor infraestructura y probablemnete esten ubicadas en lugares mas deseables.
+Este patrón es consistente con la idea de que las propiedades más nuevas tienen características y otras comodidades, mejor infraestructura y probablemente esten ubicadas en lugares mas deseables.
 
 \newpage
 
-**¿Que tipo de propiedad presenta los alquileres las más elevados?**
+**¿Que tipo de propiedad presenta los alquileres más elevados?**
 
 ```{r, fig.cap="Relación entre el precio por m2 y el tipo de propiedad", label:fig-plot2}
 datos_2 <- datos_2 %>%
@@ -529,9 +529,9 @@ Como se puede observar, la cantidad de cuartos no afecta demasiado el cambio en 
 
 \newpage
 
-**¿Como afecta el incremeto del precio por metro cuadrado el aumentar en la cantidad de baños?**
+**¿Como afecta el incremento del precio por metro cuadrado el aumentar en la cantidad de baños?**
 
-A continuación se muestra un gráfico que ilustra cómo la cantidad de baños afecta el precio por metro cuadrado. En este análisis, la variable baños se re-codifico en cinco grupos para facilitar su inetrpretación y análisis.
+A continuación se muestra un gráfico que ilustra cómo la cantidad de baños afecta el precio por metro cuadrado. En este análisis, la variable baños se re-codifico en cinco grupos para facilitar su interpretación y análisis.
 
 ```{r, fig.cap="Relación entre el precio por m2 y el número de baños de la propiedad", label:fig-plot7}
 datos_2 <- datos_2 %>%
@@ -558,7 +558,7 @@ ggplot(promedios1, aes(x = fct_reorder(baños, promedio_precio_m2), y = promedio
 
 Se observe que el precio se incrementa hasta la propiedad que tiene dos baños. Sin embargo, después de dos baños, el impacto en el precio es menor. Es decir, una propiedad con tres baños es mas cara que una con uno, pero es considerablemente más cara que una de dos baños. Parece que llega a un punto en el que la cantidad de baños no afecta el precio por metro cuadrado de una propiedad.
 
-**¿Como afecta al incremeto del precio el aumento de la cantidad de estacionamientos?**
+**¿Como afecta al incremento del precio el aumento de la cantidad de estacionamientos?**
 
 Similar al anterior razonamiento, los valores de la variable *cant_de_est* se re-codificaron en cuatro grupos para una mejor interpretación.
 
@@ -584,9 +584,9 @@ ggplot(promedios2, aes(x = fct_reorder(cant_de_est, promedio_precio_m2), y = pro
   theme_minimal()
 ```
 
-De manera similar a lo observado anteriorente, el precio por metro cuadrado de la propiedad es mayor cuando la propiedad tiene al menos un estacionamiento. Sin embargo, el incremento en el precio no tan relevare al pasar de uno a dos estacionamientos. Curiosamente, las propiedades con tres estacionamientos son más caras que las que tienen dos, aunque la diferencia no es tan marcada como entre tener cero y uno.
+De manera similar a lo observado anteriormente, el precio por metro cuadrado de la propiedad es mayor cuando la propiedad tiene al menos un estacionamiento. Sin embargo, el incremento en el precio no tan relevare al pasar de uno a dos estacionamientos. Curiosamente, las propiedades con tres estacionamientos son más caras que las que tienen dos, aunque la diferencia no es tan marcada como entre tener cero y uno.
 
-Ellos siguientes sod gráficos se re-codificó ahora la cantidad de cantidad de habitaciones y la cantidad de cuartos. Se obsevra que en general, el tener 2 cuartos o 2 habitaciones hace que el precio promedio por metro cuadrado sea mayor, esto también se cumple para los alquileres con 3 o más cuartos / habitaciones.
+En los siguientes dos gráficos se re-codificó ahora la cantidad de cantidad de habitaciones y la cantidad de cuartos. Se observa que en general, el tener 2 cuartos o 2 habitaciones hace que el precio promedio por metro cuadrado sea mayor, esto también se cumple para los alquileres con 3 o más cuartos / habitaciones.
 
 \newpage
 
@@ -657,7 +657,7 @@ Analizando los anteriores dos gráficos se puede ver como las propiedades tienen
 
 \newpage
 
-**¿El incremento en los gastos comunes adecta negarivamente el precio por metro cuadrado de la propiedad?**
+**¿El incremento en los gastos comunes afecta negativamente el precio por metro cuadrado de la propiedad?**
 
 ```{r, fig.cap="Relación entre el precio por m2 y los gatos comunes de la propiedad", label:fig-plot13}
 media_gastos <- mean(datos_2$Gastos_Comunes[datos_2$Gastos_Comunes != 0], na.rm = TRUE)
@@ -681,7 +681,7 @@ En este gráfico, muestra una tendencia lineal, se puede decir que los gastos co
 
 Con el objetivo de identificar si las variables del modelo explican correctamente la variable de respuesta, en este caso *precio_m2*, se decidió hacer una exploración con ciertas variables. Para ello, se elaboraron gráficos lineales que anteriormente están presentados que comparan distintas variables con el precio por metro cuadrado, permitiendo observar cómo cada una de estas afecta el precio de manera específica. Este análisis se ha realizado con casi todas las variables disponibles en los datos.
 
-Una vez hecho este análisis, se paso a crear el modelo de regresion lineal. Este modelo se creo a partir de las variables que mas afectaba el cambio en el precio por metro cuadrado. Es así, que se eligieron las variables: *Municipio*, *condicion*, *baños*, *año_de_const*, *tipo_prop*, *vista_al_mar*, *cant_de_est*, *nro_de_piso*, a pesar de que se redujo la cantidad de variables comparando con todas las variables que hay en el set de datos, se interpretó que así se iba a poder ver un poco mejor que quieren mostrar las diferentes variables.
+Una vez hecho este análisis, se paso a crear el modelo de regresión lineal. Este modelo se creo a partir de las variables que mas afectaba el cambio en el precio por metro cuadrado. Es así, que se eligieron las variables: *Municipio*, *condicion*, *baños*, *año_de_const*, *tipo_prop*, *vista_al_mar*, *cant_de_est*, *nro_de_piso*, a pesar de que se redujo la cantidad de variables comparando con todas las variables que hay en el set de datos, se interpretó que así se iba a poder ver un poco mejor que quieren mostrar las diferentes variables.
 
 *precio_m2* = $\beta0$ + *Municipio*$\beta1$ + *condicion*$\beta2$ + *baños*$\beta3$ + *año_de_const*$\beta4$ + *tipo_prop*$\beta5$ + *vista_al_mar*$\beta6$ + *cant_de_est*$\beta7$ + *nro_de_piso*$\beta8$ + *error*
 
@@ -882,7 +882,7 @@ ggplot()+geom_density(aes(rstudent(mod)))+
 
 La densidad de los residuos estudentizados no parecen comportarse como una normal. Por lo tanto nos indica que los residuos no se distribuyen normal.
 
-Se va a corrobar lo visto en el gráfico mediante tres métodos:
+Se va a corroborar lo visto en el gráfico mediante tres métodos:
 
 -   **Shaphiro-Wilk**: se basa en la comparación de los cuantiles empíricos y teóricos bajo el supuesto de normalidad.
 
@@ -995,11 +995,11 @@ prp(tree_ab,
 
 ```
 
-El árbol de decisión muetsra que el año de construcción y la siposición de las propiedades son factores importantes para predecir el precio por metro cuadrado. Las propiedades más recientes tienden a tener un precio más alto, y la disposición también juega un papel importante, especialmente en las propiedades más nuevas.
+El árbol de decisión muestra que el año de construcción y la disposición de las propiedades son factores importantes para predecir el precio por metro cuadrado. Las propiedades más recientes tienden a tener un precio más alto, y la disposición también juega un papel importante, especialmente en las propiedades más nuevas.
 
 ## Bosques:
 
-Para hacer este análisis se quitaron las variables dirección y zona ya que daban problemas y por otro lado estaba municipio que lo que se evaluo en todo el trabajo.
+Para hacer este análisis se quitaron las variables dirección y zona ya que daban problemas y por otro lado estaba municipio que lo que se evaluó en todo el trabajo.
 
 ```{r}
 
@@ -1071,7 +1071,6 @@ La mayor dispersión y el alejamiento de algunos puntos de la línea roja indica
 # Conclusion:
 
 Se puede concluir que, aunque el modelo de regresión lineal no fue completamente exitoso en predecir el precio por metro cuadrado debido a la falta de cumplimiento de algunos supuestos y la baja capacidad explicativa, los análisis realizados proporcionaron información valiosa sobre los factores que influyen en los precios inmobiliarios en Montevideo. Los métodos alternativos como los árboles de decisión y los bosques aleatorios muestran un camino prometedor para futuras investigaciones en el mercado inmobiliario. Igualmente parte del objetivo se cumplió, que era brindarle información a los individuos interesados en alquilar, cual eran las características de las propiedades que los propietarios tienen en cuenta para elevar el precio de las propiedades.
-
 
 # Metadatos
 
@@ -1169,66 +1168,29 @@ tabla_gt
 
 ```
 
+# Biblografia:
 
-# Biblografia: 
-
-  - Notas de la unidad curricular Ciencia de Datos con R
-  - Notas de la unidad curricular Modelos LinealeS
-  - Auguie B (2017). _gridExtra: Miscellaneous Functions for "Grid" Graphics_. R package
-  version 2.3, <https://CRAN.R-project.org/package=gridExtra>.
-  - Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A,
-  Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson
-  D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome
-  to the tidyverse.” _Journal of Open Source Software_, *4*(43), 1686.
-  doi:10.21105/joss.01686 <https://doi.org/10.21105/joss.01686>.
-  - Schloerke B, Cook D, Larmarange J, Briatte F, Marbach M, Thoen E, Elberg A, Crowley J
-  (2024). _GGally: Extension to 'ggplot2'_. R package version 2.2.1,
-  <https://CRAN.R-project.org/package=GGally>.
-  - Fox J, Weisberg S (2019). _An R Companion to Applied Regression_, Third edition. Sage,
-  Thousand Oaks CA. <https://socialsciences.mcmaster.ca/jfox/Books/Companion/>.
-  - Farrar, Thomas J. (2024). skedastic: Heteroskedasticity Diagnostics for Linear
-  Regression Models. R Package version 2.0.2. University of the Western Cape. Bellville,
-  South Africa. https://github.com/tjfarrar/skedastic
-  - Martin Maechler, Peter Rousseeuw, Christophe Croux, Valentin Todorov, Andreas
-  Ruckstuhl, Matias Salibian-Barrera, Tobias Verbeke, Manuel Koller, c("Eduardo", "L. T.")
-  Conceicao and Maria Anna di Palma (2024). robustbase: Basic Robust Statistics R package
-  version 0.99-2. URL http://CRAN.R-project.org/package=robustbase
-  - Trapletti A, Hornik K (2024). _tseries: Time Series Analysis and Computational
-  Finance_. R package version 0.10-56, <https://CRAN.R-project.org/package=tseries>.
-  - Müller K (2020). _here: A Simpler Way to Find Your Files_. R package version 1.0.1,
-  <https://CRAN.R-project.org/package=here>.
-  - Wickham H, Bryan J (2023). _readxl: Read Excel Files_. R package version 1.4.3,
-  <https://CRAN.R-project.org/package=readxl>.
-  - H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York,2016.
-  - Wickham H (2023). _forcats: Tools for Working with Categorical Variables (Factors)_. R
-  package version 1.0.0, <https://CRAN.R-project.org/package=forcats>.
-  - Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J (2024). _gt: Easily Create
-  Presentation-Ready Display Tables_. R package version 0.10.1,
-  <https://CRAN.R-project.org/package=gt>.
-  - Wickham H, François R, Henry L, Müller K, Vaughan D (2023). _dplyr: A Grammar of Data
-  Manipulation_. R package version 1.1.4, <https://CRAN.R-project.org/package=dplyr>.
-  - A. Liaw and M. Wiener (2002). Classification and Regression by randomForest. R News
-  2(3), 18--22.
-  - Wickham H (2023). _modelr: Modelling Functions that Work with the Pipe_. R package
-  version 0.1.11, <https://CRAN.R-project.org/package=modelr>.
-  - Xie Y (2023). _knitr: A General-Purpose Package for Dynamic Report Generation in R_. R
-  package version 1.45, <https://yihui.org/knitr/>.
-  - Therneau T, Atkinson B (2023). _rpart: Recursive Partitioning and Regression Trees_. R
-  package version 4.1.23, <https://CRAN.R-project.org/package=rpart>.
-  - Williams, G. J. (2011), Data Mining with Rattle and R: The Art of Excavating Data for
-  Knowledge Discovery, Use R!, Springer.
-  - Milborrow S (2024). _rpart.plot: Plot 'rpart' Models: An Enhanced Version of
-  'plot.rpart'_. R package version 3.1.2, <https://CRAN.R-project.org/package=rpart.plot>.
-  - Hvitfeldt E. (2021). paletteer: Comprehensive Collection of Color Palettes. version
-  1.3.0. https://github.com/EmilHvitfeldt/paletteer
-  - Neuwirth E (2022). _RColorBrewer: ColorBrewer Palettes_. R package version 1.1-3,
-  <https://CRAN.R-project.org/package=RColorBrewer>.
-  - Jeppson H, Hofmann H, Cook D (2021). _ggmosaic: Mosaic Plots in the 'ggplot2'
-  Framework_. R package version 0.3.3, <https://CRAN.R-project.org/package=ggmosaic>.
-
-
-
-
-
-
-
+-   Notas de la unidad curricular Ciencia de Datos con R
+-   Notas de la unidad curricular Modelos LinealeS
+-   Auguie B (2017). *gridExtra: Miscellaneous Functions for "Grid" Graphics*. R package version 2.3, <https://CRAN.R-project.org/package=gridExtra>.
+-   Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” *Journal of Open Source Software*, *4*(43), 1686. doi:10.21105/joss.01686 <https://doi.org/10.21105/joss.01686>.
+-   Schloerke B, Cook D, Larmarange J, Briatte F, Marbach M, Thoen E, Elberg A, Crowley J (2024). *GGally: Extension to 'ggplot2'*. R package version 2.2.1, <https://CRAN.R-project.org/package=GGally>.
+-   Fox J, Weisberg S (2019). *An R Companion to Applied Regression*, Third edition. Sage, Thousand Oaks CA. <https://socialsciences.mcmaster.ca/jfox/Books/Companion/>.
+-   Farrar, Thomas J. (2024). skedastic: Heteroskedasticity Diagnostics for Linear Regression Models. R Package version 2.0.2. University of the Western Cape. Bellville, South Africa. https://github.com/tjfarrar/skedastic
+-   Martin Maechler, Peter Rousseeuw, Christophe Croux, Valentin Todorov, Andreas Ruckstuhl, Matias Salibian-Barrera, Tobias Verbeke, Manuel Koller, c("Eduardo", "L. T.") Conceicao and Maria Anna di Palma (2024). robustbase: Basic Robust Statistics R package version 0.99-2. URL http://CRAN.R-project.org/package=robustbase
+-   Trapletti A, Hornik K (2024). *tseries: Time Series Analysis and Computational Finance*. R package version 0.10-56, <https://CRAN.R-project.org/package=tseries>.
+-   Müller K (2020). *here: A Simpler Way to Find Your Files*. R package version 1.0.1, <https://CRAN.R-project.org/package=here>.
+-   Wickham H, Bryan J (2023). *readxl: Read Excel Files*. R package version 1.4.3, <https://CRAN.R-project.org/package=readxl>.
+-   H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York,2016.
+-   Wickham H (2023). *forcats: Tools for Working with Categorical Variables (Factors)*. R package version 1.0.0, <https://CRAN.R-project.org/package=forcats>.
+-   Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J (2024). *gt: Easily Create Presentation-Ready Display Tables*. R package version 0.10.1, <https://CRAN.R-project.org/package=gt>.
+-   Wickham H, François R, Henry L, Müller K, Vaughan D (2023). *dplyr: A Grammar of Data Manipulation*. R package version 1.1.4, <https://CRAN.R-project.org/package=dplyr>.
+-   A. Liaw and M. Wiener (2002). Classification and Regression by randomForest. R News 2(3), 18--22.
+-   Wickham H (2023). *modelr: Modelling Functions that Work with the Pipe*. R package version 0.1.11, <https://CRAN.R-project.org/package=modelr>.
+-   Xie Y (2023). *knitr: A General-Purpose Package for Dynamic Report Generation in R*. R package version 1.45, <https://yihui.org/knitr/>.
+-   Therneau T, Atkinson B (2023). *rpart: Recursive Partitioning and Regression Trees*. R package version 4.1.23, <https://CRAN.R-project.org/package=rpart>.
+-   Williams, G. J. (2011), Data Mining with Rattle and R: The Art of Excavating Data for Knowledge Discovery, Use R!, Springer.
+-   Milborrow S (2024). *rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'*. R package version 3.1.2, <https://CRAN.R-project.org/package=rpart.plot>.
+-   Hvitfeldt E. (2021). paletteer: Comprehensive Collection of Color Palettes. version 1.3.0. https://github.com/EmilHvitfeldt/paletteer
+-   Neuwirth E (2022). *RColorBrewer: ColorBrewer Palettes*. R package version 1.1-3, <https://CRAN.R-project.org/package=RColorBrewer>.
+-   Jeppson H, Hofmann H, Cook D (2021). *ggmosaic: Mosaic Plots in the 'ggplot2' Framework*. R package version 0.3.3, <https://CRAN.R-project.org/package=ggmosaic>.
