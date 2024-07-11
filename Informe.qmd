@@ -131,9 +131,9 @@ Municipios <- gt(tabla_municipio) |>
   )
 
 # Mostrar la tabla
-gtsave(Municipios, here::here("output/tabla_municipios.png"))
+#(Municipios, here::here("output/tabla_municipios.png"))
 
-knitr::include_graphics(here::here("output/tabla_municipios.png"))
+#knitr::include_graphics(here::here("output/tabla_municipios.png"))
 
 
 ```
