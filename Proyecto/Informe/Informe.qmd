@@ -14,6 +14,8 @@ lang: es
 ---
 
 ```{r}
+
+
 library(gridExtra)
 library(tidyverse)
 library(GGally)
@@ -60,7 +62,10 @@ Puedes encontrar el dataset en el siguiente enlace: [Precio de alquiler de casas
 ```{r}
 # Lectura de los datos:
 # Datos sobre precio de casas
-datos <- read_csv(here("houses.csv"))
+datos<-read_csv(here("Proyecto","Datos","houses.csv"))
+
+
+#here()
 
 ```
 

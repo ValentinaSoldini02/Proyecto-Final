@@ -230,8 +230,8 @@ ui <- fluidPage(
                            plotOutput("zonaPlot_GC"),
                            value = 4
                   ),
-                  tabPanel("Bernoulli",
-                           h2("Gráfico de Bernoulli"),
+                  tabPanel("Mosaicos",
+                           h2("Gráfico de Mosaicos"),
                            plotOutput("bernoulliPlot"),
                            value = 5
                   ),
