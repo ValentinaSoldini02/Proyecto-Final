@@ -136,9 +136,9 @@ Municipios <- gt(tabla_municipio) |>
   )
 
 # Mostrar la tabla
-#(Municipios, here::here("output/tabla_municipios.png"))
+gtsave(Municipios, here::here("output/tabla_municipios.png"))
 
-#knitr::include_graphics(here::here("output/tabla_municipios.png"))
+knitr::include_graphics(here::here("output/tabla_municipios.png"))
 
 
 ```
@@ -333,7 +333,7 @@ promedios3 <- datos_2 %>%
 
 ggplot(promedios3, aes(x = fct_reorder(Municipio, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
+  scale_fill_continuous(type= "gradient", name= "Precio por m2") +
   labs(x = "Municipio", y = "Precio por m2") +
   ggtitle("Relación entre Municipios y precio por m2") +
   theme_minimal() +
@@ -369,7 +369,7 @@ datos_filtrados$año_de_const <- as.numeric(datos_filtrados$año_de_const)
 
 ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2, color = precio_m2)) +
   geom_point(alpha = 0.7) +
-  scale_color_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
+  scale_color_continuous(type= "gradient", name = "Precio por m2") +
   labs(x = "Año de construcción de la propiedad", y = "Precio por m2") +
   ggtitle("Relación entre año de construcción y precio por m2") +
   theme_minimal()
@@ -400,7 +400,7 @@ promedios6 <- datos_2 %>%
 
 ggplot(promedios6, aes(x = fct_reorder(tipo_prop, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
+  scale_color_continuous(type = "gradient", name = "Precio por m2") +
   labs(x = "Tipo de propiedad", y = "Promedio del precio por m2") +
   ggtitle("Promedio del precio por m2 según el tipo de propiedad") +
   theme_minimal() +
@@ -424,7 +424,7 @@ grupo_disposicion <- datos_2 %>%
 
 ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantidad, fill = Cantidad)) +
   geom_bar(stat = "identity") +
-  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Cantidad") +
+  scale_fill_continuous(type = "gradient", name = "Cantidad") +
   labs(x = "Disposición", y = "Cantidad") +
   ggtitle("Cantidad por disposición de la propiedad") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -455,7 +455,7 @@ grupo_condicion <- datos_2 %>%
 
 ggplot(grupo_condicion, aes(x = fct_reorder(condicion, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
+  scale_fill_continuous(type= "gradient", name = "Precio por m2") +
   labs(x = "Condición", y = "Precio promedio") +
   ggtitle("Promedio del precio por m2 y la condición de la propiedad") +
   theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1, size = 10)) +
@@ -486,7 +486,7 @@ datos_3 <- datos_3 %>%
 
 ggplot(data = datos_3) +
   geom_mosaic(aes(x = product(precio_m2, nro_de_piso), fill = precio_m2)) +
-  scale_fill_brewer(palette = "RdYlBu", name = "Precio por m2") +
+  scale_fill_discrete( name = "Precio por m2") +
   labs(title = 'Comparación del precio por metro cuadrado y el número de piso',
        x = "Número de piso", y = "Precio por metro cuadrado") +
   theme_minimal() +
@@ -524,7 +524,7 @@ promedios1 <- datos_2 %>%
 
 ggplot(promedios1, aes(x = fct_reorder(cant_cuartos, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") + 
+  scale_fill_continuous(type="gradient", name = "Precio por m2") + 
   labs(x = "Cantidad de cuartos", y = "Precio por m2") +
   ggtitle("Precio por m2 según cantidad de cuartos") +
   theme_minimal()
@@ -555,7 +555,7 @@ promedios1 <- datos_2 %>%
 
 ggplot(promedios1, aes(x = fct_reorder(baños, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +  # Utilizar la paleta de colores RdYlBu
+  scale_fill_continuous(type= "gradient", name = "Precio por m2") +  
   labs(x = "Baños", y = "Precio por m2") +
   ggtitle("Precio por m2 según número de baños") +
   theme_minimal()
@@ -583,7 +583,7 @@ promedios2 <- datos_2 %>%
 
 ggplot(promedios2, aes(x = fct_reorder(cant_de_est, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +  # Utilizar la paleta de colores RdYlBu
+  scale_fill_continuous(type ="gradient", name = "Precio por m2") +  # Utilizar la paleta de colores RdYlBu
   labs(x = "Cantidad de estacionamientos", y = "Precio por m2") +
   ggtitle("Precio por m2 según la cantidad de estacionamientos") +
   theme_minimal()
@@ -615,7 +615,7 @@ promedios4 <- datos_2 %>%
 
 ggplot(promedios4, aes(x = fct_reorder(cant_habitaciones, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +  # Utilizar la paleta de colores RdYlBu
+  scale_fill_continuous(type= "gradient", name = "Precio por m2") +  
   labs(x = "Cantidad de habitaciones", y = "Precio por m2") +
   ggtitle("Precio por m2 según la cantidad de habitaciones") +
   theme_minimal()
@@ -632,7 +632,7 @@ promedios4 <- datos_2 %>%
 
 ggplot(promedios4, aes(x = fct_reorder(calefaccion, promedio_precio_m2), y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
+  scale_fill_continuous(type = "gradient", name = "Precio por m2") +
   labs(x = "Calefacción", y = "Impacto en el precio por m2") + 
   ggtitle("Impacto de la calefacción en el precio por m2") +
   theme_minimal()
@@ -651,7 +651,7 @@ promedios5 <- datos_2 %>%
 
 ggplot(promedios5, aes(x = vista_al_mar, y = promedio_precio_m2, fill = promedio_precio_m2)) +
   geom_bar(stat = "identity") +
-  scale_fill_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +
+  scale_fill_continuous(type = "gradient", name = "Precio por m2") +
   labs(x = "Vista al mar", y = "Precio por m2") +
   ggtitle("Relación entre vista al mar y precio por m2") +
   theme_minimal()
@@ -673,7 +673,7 @@ datos_2$Gastos_Comunes[datos_2$Gastos_Comunes == 0] <- round(media_gastos)
 
 ggplot(datos_2, aes(x = Gastos_Comunes, y = precio_m2, color = precio_m2)) +
   geom_point(alpha = 0.7) +  # Establece la transparencia de los puntos
-  scale_color_distiller(palette = "RdYlBu", direction = 1, name = "Precio por m2") +  # Aplica la paleta de colores RdYlBu y define la leyenda
+  scale_color_continuous(type= 'gradient', name = "Precio por m2") +  # Aplica la paleta de colores RdYlBu y define la leyenda
   labs(x = "Gastos Comunes", y = "Precio por m2") +  # Etiqueta de los ejes
   ggtitle("Relación entre Gastos Comunes y precio por m2") +  # Título del gráfico
   theme_minimal() 
