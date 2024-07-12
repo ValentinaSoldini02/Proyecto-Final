@@ -38,16 +38,16 @@ here()
 
 #datos <- read_excel(here("Avances","datos_2.xlsx"))
 
-datos <- read_excel(here("Datos","datos_limpios.xlsx"))
+datos <- read_excel(here("Proyecto","Datos","datos_limpios.xlsx"))
 datos
 
 #datos <- read.csv(here("houses.csv"))
 #datos
 
-
+here()
 #DATOS PARA EL MAPA CON LATITUD Y LONGITUD
-datos_mapa <- read.csv(here("Shiny_Proyecto", "Miapp", "datoss.csv"))
-shape <- st_read(here("Shiny_Proyecto","Miapp", "sig_municipios.shp"))
+datos_mapa <- read.csv(here("Proyecto","Shiny", "Miapp", "datoss.csv"))
+shape <- st_read(here("Proyecto","Shiny","Miapp", "sig_municipios.shp"))
 shape <- st_transform(shape, "+init=epsg:4326")
 
 #Crear tabla para añadir la media de precio por metros cuadrados de los alquileres y la cantidad de alquileres de cada municipio
