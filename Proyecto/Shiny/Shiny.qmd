@@ -364,24 +364,31 @@ observeEvent(input$update_municipio_GC, { # Gráfico asociado a el boton
     # Tamaño y eje de los textos del eje X
   })
   
-  output$singleMunicipioPlot_GC <- renderPlot({ # 
-    x_axis <- input$x_axis__GC_municipio
-    selected_municipio <- input$single_plot_GC
+  output$singleMunicipioPlot_GC <- renderPlot({ # Municipios especifico
+    x_axis <- input$x_axis__GC_municipio # Distintos ejes X
+    selected_municipio <- input$single_plot_GC # Municipio elegido
     datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-    ggplot(datos_filtrados, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) +
+    # Nos quedamos solo con los Datos asociados a ese municipio
+    ggplot(datos_filtrados, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) + # Datos, ejes y color
       geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+      # Gráfico de barras
       labs(x = x_axis, y = "Gastos Comúnes", fill = "Municipio") +
-      ggtitle(paste("Gastos Comúnes en", selected_municipio)) +
-      scale_fill_manual(values = colores_personalizados) +  # Aplicar colores personalizados
+      # Nombres de los ejes y color
+      ggtitle(paste("Gastos Comúnes en", selected_municipio)) + #Título
+      scale_fill_manual(values = colores_personalizados) +  
+      # Colores personalizados
+      
       theme(plot.title = element_text(hjust = 0.5),
             axis.text.x = element_text(angle = 0, size = 11))
+     # Tamaño y eje de los textos del eje X
   })
   
-  output$zonaPlot_GC <- renderPlot({
-    x_axis <- input$x_axis__GC_municipio
-    selected_zona <- input$zona_plot_GC
-    datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) +
+  output$zonaPlot_GC <- renderPlot({ # Barrio en especifico
+    x_axis <- input$x_axis__GC_municipio # Distintos ejes X
+    selected_zona <- input$zona_plot_GC  # Municipio elegido
+    datos_filtrados_zona <- datos[datos$zona == selected_zona, ] 
+    # Nos quedamos solo con los Datos asociados a ese municipio
+ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) + # Datos, ejes y color
   geom_bar(stat = "identity", position = "dodge", width = 0.7) +
   labs(x = x_axis, y = "Gastos Comúnes", fill = "Municipio") +
   ggtitle(paste("Gastos Comúnes en la Zona", selected_zona)) +
