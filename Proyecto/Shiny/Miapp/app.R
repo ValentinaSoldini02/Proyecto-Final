@@ -272,66 +272,70 @@ ui <- fluidPage( # Definimos una página en blanco
 # Server
 server <- function(input, output, session) {
   
-  # GRÁFICO DE GASTOS COMÚNES
+  # GRÁFICO DE GASTOS COMÚNES POR MUNICIPIO
   observeEvent(input$single_plot_GC, {
     selected_municipio <- input$single_plot_GC
     zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio])
+    # Que cuando toquemos el botón de "Actualizar Gráficos" salgan estos tres gráficos.
     
+    # Hacer que los gráficos dependan entre si, que el barrio seleccionado dependa de el municipio y que este dependa de todos los municipios posibles para seleccionar.
     updateSelectInput(session, "zona_plot_GC",
                       choices = zonas_filtradas,
                       selected = zonas_filtradas[1])
   })
   
   
-  observeEvent(input$update_municipio_GC, {
-    output$municipioPlot1_GC <- renderPlot({
-      x_axis <- input$x_axis__GC_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "Gastos_Comunes", fill = "Municipio") +
-        ggtitle("Gastos Comúnes por Municipio") +
-        scale_fill_manual(values = colores_personalizados) +  # Aplicar colores personalizados
-        theme(plot.title = element_text(hjust = 0.5),
+  observeEvent(input$update_municipio_GC, {   # Gráfico asociado a el input de todos los municipios
+    output$municipioPlot1_GC <- renderPlot({  # Gráfico de los municipios
+      x_axis <- input$x_axis__GC_municipio    # Distintos ejes X
+      ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) +  # Datos, ejes y color
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +    # Gráfico de barras
+        facet_grid(. ~ Municipio, scales = "free_x") +  # Grilla
+        labs(x = x_axis, y = "Gastos_Comunes", fill = "Municipio") + # Nombre de los ejes y color
+        ggtitle("Gastos Comúnes por Municipio") + # Título
+        scale_fill_manual(values = colores_personalizados) +  # Escala con colores personalizados
+        theme(plot.title = element_text(hjust = 0.5), # Tamaño y eje de los textos del eje X
               axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 11))
     })
     
-    output$singleMunicipioPlot_GC <- renderPlot({
-      x_axis <- input$x_axis__GC_municipio
-      selected_municipio <- input$single_plot_GC
-      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-      ggplot(datos_filtrados, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "Gastos Comúnes", fill = "Municipio") +
-        ggtitle(paste("Gastos Comúnes en", selected_municipio)) +
-        scale_fill_manual(values = colores_personalizados) +  # Aplicar colores personalizados
-        theme(plot.title = element_text(hjust = 0.5),
+    output$singleMunicipioPlot_GC <- renderPlot({ # Municipios especificos
+      x_axis <- input$x_axis__GC_municipio       # Distintos ejes X
+      selected_municipio <- input$single_plot_GC # Municipio elegido
+      datos_filtrados <- datos[datos$Municipio == selected_municipio, ] # Nos quedamos solo con los Datos asociados a ese municipio
+      ggplot(datos_filtrados, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) +  # Datos, ejes y color
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Gráfico de barras
+        labs(x = x_axis, y = "Gastos Comúnes", fill = "Municipio") + # Nombre de los ejes
+        ggtitle(paste("Gastos Comúnes en", selected_municipio)) + # Título
+        scale_fill_manual(values = colores_personalizados) +  # Escala con colores personalizados
+        theme(plot.title = element_text(hjust = 0.5),  # Tamaño y eje de los textos del eje X
               axis.text.x = element_text(angle = 0, size = 11))
     })
     
-    output$zonaPlot_GC <- renderPlot({
-      x_axis <- input$x_axis__GC_municipio
-      selected_zona <- input$zona_plot_GC
-      datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "Gastos Comúnes", fill = "Municipio") +
-        ggtitle(paste("Gastos Comúnes en la Zona", selected_zona)) +
-        scale_fill_manual(values = colores_personalizados) +
-        theme(plot.title = element_text(hjust = 0.5),
+    output$zonaPlot_GC <- renderPlot({     #Barrio en especifico
+      x_axis <- input$x_axis__GC_municipio # Distintos ejes X
+      selected_zona <- input$zona_plot_GC  # Barrio elegido
+      datos_filtrados_zona <- datos[datos$zona == selected_zona, ] # Nos quedamos solo con los Datos asociados a ese municipio
+      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) + # Datos, ejes y color
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Gráfico de barras
+        labs(x = x_axis, y = "Gastos Comúnes", fill = "Municipio") +   # Nombre de los ejes
+        ggtitle(paste("Gastos Comúnes en la Zona", selected_zona)) +   # Título
+        scale_fill_manual(values = colores_personalizados) +           # Escala de color
+        theme(plot.title = element_text(hjust = 0.5),   # Tamaño y eje de los textos del eje X
               axis.text.x = element_text(angle = 0, size=11))
     })
   })
   
   # GRÁFICO DE BERNOULLIS
-  observeEvent(input$update_bernoulli, {
-    output$bernoulliPlot <- renderPlot({
-      x_axis <- input$x_axis_bernoulli
+  observeEvent(input$update_bernoulli, { # Input asociado
+    output$bernoulliPlot <- renderPlot({ # Output de salida
+      x_axis <- input$x_axis_bernoulli   # Distintos ejes X
       
-      ggplot(data = datos) +
+      ggplot(data = datos) + # Datos y Gráfico
         geom_mosaic(aes_string(x = paste0("product(precio_m2_rec, ", x_axis, ")"), fill= "precio_m2_rec")) +
-        labs(title='Comparación del precio por metro cuadrado y el número de piso', x = x_axis, y = "Precio por metro cuadrado")+
-        theme(legend.position = "bottom")
+        # Gráfico de mosaico, donde en tenemos distintos ejes X categoricos (dos categorías) y en ele eje Y tenemos dos categorías que son el precio_m2 mayor o menor al promedio de precio_m2
+        labs(title='Comparación del precio por metro cuadrado y el número de piso', x = x_axis, y = "Precio por metro cuadrado")+ 
+        # Nombre de los ejes y título
+        theme(legend.position = "bottom") # Leyenda
     })
   })
   
