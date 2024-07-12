@@ -347,7 +347,7 @@ server <- function(input, output, session) { # Server
   })
   
  
-observeEvent(input$update_municipio_GC, { # Gráfico asociado a el boton
+observeEvent(input$update_municipio_GC, { # Gráfico asociado a el input de todos los municipios
   output$municipioPlot1_GC <- renderPlot({ # Gráfico de los municipios
     x_axis <- input$x_axis__GC_municipio # Distintos ejes X
     ggplot(datos, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) + # Datos, ejes y color
@@ -385,28 +385,32 @@ observeEvent(input$update_municipio_GC, { # Gráfico asociado a el boton
   
   output$zonaPlot_GC <- renderPlot({ # Barrio en especifico
     x_axis <- input$x_axis__GC_municipio # Distintos ejes X
-    selected_zona <- input$zona_plot_GC  # Municipio elegido
+    selected_zona <- input$zona_plot_GC  # Barrio elegido
     datos_filtrados_zona <- datos[datos$zona == selected_zona, ] 
     # Nos quedamos solo con los Datos asociados a ese municipio
 ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "Gastos_Comunes", fill = "Municipio")) + # Datos, ejes y color
-  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) + 
+ # Gráfico de barras
   labs(x = x_axis, y = "Gastos Comúnes", fill = "Municipio") +
-  ggtitle(paste("Gastos Comúnes en la Zona", selected_zona)) +
-  scale_fill_manual(values = colores_personalizados) +
+ # Nombre de los ejes
+  ggtitle(paste("Gastos Comúnes en la Zona", selected_zona)) + # Título
+  scale_fill_manual(values = colores_personalizados) + #Escala de color
   theme(plot.title = element_text(hjust = 0.5),
         axis.text.x = element_text(angle = 0, size=11))
+     # Tamaño y eje de los textos del eje X
+
   })
 })
   
   # GRÁFICO DE BERNOULLIS
-  observeEvent(input$update_bernoulli, {
-    output$bernoulliPlot <- renderPlot({
-      x_axis <- input$x_axis_bernoulli
+  observeEvent(input$update_bernoulli, { # Input asociado
+    output$bernoulliPlot <- renderPlot({ # Output de salida
+      x_axis <- input$x_axis_bernoulli # Distintos ejes X
       
-      ggplot(data = datos) +
-        geom_mosaic(aes_string(x = paste0("product(precio_m2_rec, ", x_axis, ")"), fill= "precio_m2_rec")) +
-        labs(title='Comparación del precio por metro cuadrado y el número de piso', x = x_axis, y = "Precio por metro cuadrado")+
-        theme(legend.position = "bottom")
+      ggplot(data = datos) + # Datos
+        geom_mosaic(aes_string(x = paste0("product(precio_m2_rec, ", x_axis, ")"), fill= "precio_m2_rec")) + # Gráfico de mosaico, donde en tenemos distintos ejes X categoricos (dos categorías) y en ele eje Y tenemos dos categorías que son el precio_m2 mayor o menor al promedio de precio_m2
+        labs(title='Comparación del precio por metro cuadrado y el número de piso', x = x_axis, y = "Precio por metro cuadrado")+ # Nombre de los ejes
+        theme(legend.position = "bottom") # Leyenda
     })
   })
   
@@ -414,51 +418,68 @@ ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "Gastos_Comunes", fill =
   
   
   
-  # GRÁFICO DE MUNICIPIOS
-observeEvent(input$single_plot, {
-  selected_municipio <- input$single_plot
-  zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio])
+  # GRÁFICO DE MUNICIPIOS POR PRECIO_M2
+observeEvent(input$single_plot, { # Input asociado a estos gráficos
+  selected_municipio <- input$single_plot # Gráfico de municipio especifico
+  zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio]) 
+# Nos quedamos solo con los Datos asociados a ese municipio
+
   
+# Hacer que los gráficos dependan entre si, que el barrio seleccionado dependa de el municipio y que este dependa de todos los municipios posibles para seleccionar.
   updateSelectInput(session, "zona_plot",
                     choices = zonas_filtradas,
                     selected = zonas_filtradas[1])
 })
 
-observeEvent(input$update_municipio, {
-  output$municipioPlot1 <- renderPlot({
-    x_axis <- input$x_axis_municipio
-    ggplot(datos, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
+observeEvent(input$update_municipio, { # Gráfico asociado a el input de todos los municipios
+  output$municipioPlot1 <- renderPlot({ # Gráfico de los municipios
+    x_axis <- input$x_axis_municipio # Distintos ejes X
+    ggplot(datos, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) + # Datos, ejes y color
       geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-      facet_grid(. ~ Municipio, scales = "free_x") +
-      labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-      scale_fill_manual(values = colores_personalizados) +
-      ggtitle("precio_m2 por Municipio") +
+      # Gráfico de barras
+      facet_grid(. ~ Municipio, scales = "free_x") + # Grilla
+      labs(x = x_axis, y = "precio_m2", fill = "Municipio") + 
+      # Nombres de los ejes
+      scale_fill_manual(values = colores_personalizados) +#Escala color
+      ggtitle("precio_m2 por Municipio") + # Título
+      
+      # Tamaño y eje de los textos del eje X
       theme(plot.title = element_text(hjust = 0.5),
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 11))
   })
   
-  output$singleMunicipioPlot <- renderPlot({
-    x_axis <- input$x_axis_municipio
-    selected_municipio <- input$single_plot
+  output$singleMunicipioPlot <- renderPlot({ # Municipio especifico
+    x_axis <- input$x_axis_municipio # Distintos ejes X
+    selected_municipio <- input$single_plot #Seleccionamos un municipio
     datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-    ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-      geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+    # Nos quedamos solo con los datos asociados a ese municipio
+    ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) + # Datos, ejes y color
+      geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Gráfico de barras
       labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-      scale_fill_manual(values = colores_personalizados) +
-      ggtitle(paste("precio_m2 en", selected_municipio)) +
+      # Nombre de los ejes
+      scale_fill_manual(values = colores_personalizados) + # Escala de color
+      ggtitle(paste("precio_m2 en", selected_municipio)) + # Título
+      
+      # Tamaño y eje de los textos del eje X
       theme(plot.title = element_text(hjust = 0.5),
             axis.text.x = element_text(angle = 0, size = 11))
+    
   })
   
-  output$zonaPlot <- renderPlot({
-    x_axis <- input$x_axis_municipio
-    selected_zona <- input$zona_plot
-    datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-    ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
+  output$zonaPlot <- renderPlot({ # Barrio especifico
+    x_axis <- input$x_axis_municipio # Distintos ejes X
+    selected_zona <- input$zona_plot # Barrio elegido
+    datos_filtrados_zona <- datos[datos$zona == selected_zona, ] 
+    # Nos quedamos solo con los datos de ese barrio
+    ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) + # Datos, ejes y color
       geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-      labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-      scale_fill_manual(values = colores_personalizados) +
-      ggtitle(paste("precio_m2 en la Zona", selected_zona)) +
+      # Gráfico de barras
+      labs(x = x_axis, y = "precio_m2", fill = "Municipio") + 
+      # Nombre de los ejes
+      scale_fill_manual(values = colores_personalizados) +#Escala color
+      ggtitle(paste("precio_m2 en la Zona", selected_zona)) + # Título
+      
+      #  Tamaño y eje de los textos del eje X
       theme(plot.title = element_text(hjust = 0.5),
             axis.text.x = element_text(angle = 0, size = 11))
   })
@@ -466,38 +487,55 @@ observeEvent(input$update_municipio, {
   
 
   # GRÁFICO DEL MAPA
-  output$mapa <- renderLeaflet({
-    if(input$change_mapa== "mapa1"){
-      leaflet() %>% addTiles() %>% 
-        setView(-56.18816, -34.90328, 10)%>%
-        addCircles( data= datos_mapa, lat =~as.numeric(oc_lat),
-                    lng= ~as.numeric(oc_lng), color= ~pal(Municipio), label= ~Municipio,
-                    fillOpacity = 0.5) %>%
-        addPolygons(data= shape, 
-                    fillColor = ~pal(MUNICIPIO),
-                    weight = 0.5,
-                    label= ~MUNICIPIO) %>%
-        addLegend(data= datos_mapa, "bottomleft", pal= pal,
-                  values= ~Municipio, title= "Municipios", opacity= 1,
-                  group= "Leyenda"
+  output$mapa <- renderLeaflet({ # Output asociado al mapa
+    
+    # Lo que hicimos fue usar un if para los distintos tipos de mapa
+    if(input$change_mapa== "mapa1"){  # Si elegimos mapa1
+      leaflet() %>% addTiles() %>%    # Agrega los tiles del mapa base
+        setView(-56.18816, -34.90328, 10)%>%  # Vista inicial del mapa
+        
+        # Agregar círculos al mapa
+        addCircles( data= datos_mapa,         # Datos
+                    lat =~as.numeric(oc_lat), # Latitud
+                    lng= ~as.numeric(oc_lng), # Longitud
+                    color= ~pal(Municipio), label= ~Municipio, # Color
+                    fillOpacity = 0.5) %>%    # Opacidad
+        addPolygons(data= shape,  # Agregar poligonos al mapa
+                    fillColor = ~pal(MUNICIPIO), # Color
+                    weight = 0.5, # Grosor
+                    label= ~MUNICIPIO) %>% # Etiquetas
+        addLegend(data= datos_mapa, "bottomleft", pal= pal, # Leyenda
+                  values= ~Municipio,  # Valores 
+                  title= "Municipios", # Título 
+                  opacity= 1,          # Opacidad
+                  group= "Leyenda"     # Grupos de la leyenda
         ) %>%
-        addLayersControl(overlayGroups = c("Leyenda"),
+        addLayersControl( # Control de capas
+                         overlayGroups = c("Leyenda"),# Grupos de capas
                          options= layersControlOptions(collapsed=TRUE))
+                         # Opciones para controlar las capas
+      
     }
-    else if(input$change_mapa== "mapa2"){
-      leaflet() %>% addTiles() %>% 
-        setView(-56.18816, -34.90328, 10)%>%
-        addPolygons(data= shape, 
-                    fillColor = ~color_pal(total),
-                    fillOpacity = 1,
-                    weight = 0.5,
-                    label= ~medias,
-                    popup= ~MUNICIPIO) %>%
-        addLegend(data=shape, "bottomleft", pal=color_pal,
-                  values= ~total, title="Cantidad", opacity=1,
-                  group="Leyenda") %>%
-        addLayersControl(overlayGroups = c("Leyenda"),
-                         options=layersControlOptions(collapsed=TRUE))
+    else if(input$change_mapa== "mapa2"){ # Si seleccionamos mapa2
+      leaflet() %>% addTiles() %>% # Agrega los tiles del mapa base
+        setView(-56.18816, -34.90328, 10)%>%  # Vista inicial del mapa
+        addPolygons(data= shape,              # Agregar poligonos 
+                    fillColor = ~color_pal(total), # Color
+                    fillOpacity = 1,               # Opacidad
+                    weight = 0.5,                  # Grosor
+                    label= ~medias,        # Etiquetas en base a medias
+                    popup= ~MUNICIPIO) %>% # Información al hacer click
+        
+        addLegend(data=shape, "bottomleft",  # Leyenda y datos
+                  pal=color_pal,             # Palet de colores
+                  values= ~total,            # Valores
+                  title="Cantidad",          # Título
+                  opacity=1,                 # Opacidad
+                  group="Leyenda") %>%       # Grupos
+        addLayersControl( # Agrega control de capas al mapa
+          overlayGroups = c("Leyenda"), # Grupos de capas para control
+          options=layersControlOptions(collapsed=TRUE)) 
+      # Opciones para el control
     }
     
     
@@ -519,6 +557,7 @@ observeEvent(input$update_municipio, {
 
 }
 
+# Resultado final
 shinyApp(ui, server)
 
 
