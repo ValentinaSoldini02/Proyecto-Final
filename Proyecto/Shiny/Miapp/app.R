@@ -343,53 +343,55 @@ server <- function(input, output, session) {
   
   
   
-  # GRÁFICO DE MUNICIPIOS
-  observeEvent(input$single_plot, {
-    selected_municipio <- input$single_plot
+  # GRÁFICO DE MUNICIPIOS POR PRECIO_M2
+  observeEvent(input$single_plot, {  # Input asociado a estos gráficos
+    selected_municipio <- input$single_plot # Gráfico de municipio especifico
     zonas_filtradas <- unique(datos$zona[datos$Municipio == selected_municipio])
+    # Nos quedamos solo con los Datos asociados a ese municipio
     
+    # Hacer que los gráficos dependan entre si, que el barrio seleccionado dependa de el municipio y que este dependa de todos los municipios posibles para seleccionar.
     updateSelectInput(session, "zona_plot",
                       choices = zonas_filtradas,
                       selected = zonas_filtradas[1])
   })
-  
-  observeEvent(input$update_municipio, {
-    output$municipioPlot1 <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      ggplot(datos, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        facet_grid(. ~ Municipio, scales = "free_x") +
-        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-        scale_fill_manual(values = colores_personalizados) +
-        ggtitle("precio_m2 por Municipio") +
-        theme(plot.title = element_text(hjust = 0.5),
+   
+  observeEvent(input$update_municipio, {   # Gráfico asociado a el input de todos los municipios
+    output$municipioPlot1 <- renderPlot({  # Gráfico de los municipios
+      x_axis <- input$x_axis_municipio     # Distintos ejes X
+      ggplot(datos, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) + # Datos, ejes y color
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) + # Gráfico de barras
+        facet_grid(. ~ Municipio, scales = "free_x") + # Grilla
+        labs(x = x_axis, y = "precio_m2", fill = "Municipio") + # Nombre de los ejes y color
+        scale_fill_manual(values = colores_personalizados) + # Escala de color
+        ggtitle("precio_m2 por Municipio") + # Título
+        theme(plot.title = element_text(hjust = 0.5),  # Tamaño y eje de los textos del eje X
               axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, size = 11))
     })
     
-    output$singleMunicipioPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_municipio <- input$single_plot
-      datos_filtrados <- datos[datos$Municipio == selected_municipio, ]
-      ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-        scale_fill_manual(values = colores_personalizados) +
-        ggtitle(paste("precio_m2 en", selected_municipio)) +
-        theme(plot.title = element_text(hjust = 0.5),
+    output$singleMunicipioPlot <- renderPlot({ # Municipio especifico
+      x_axis <- input$x_axis_municipio         # Distintos ejes X
+      selected_municipio <- input$single_plot  # Seleccionamos un municipio
+      datos_filtrados <- datos[datos$Municipio == selected_municipio, ] # Nos quedamos solo con los datos asociados a ese municipio
+      ggplot(datos_filtrados, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) + # Datos, ejes y color
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +  # Gráfico de barras
+        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +  # Nombre de los ejes
+        scale_fill_manual(values = colores_personalizados) +     # Escala de color
+        ggtitle(paste("precio_m2 en", selected_municipio)) +     # Título
+        theme(plot.title = element_text(hjust = 0.5),        # Tamaño y eje de los textos del eje X
               axis.text.x = element_text(angle = 0, size = 11))
     })
     
-    output$zonaPlot <- renderPlot({
-      x_axis <- input$x_axis_municipio
-      selected_zona <- input$zona_plot
-      datos_filtrados_zona <- datos[datos$zona == selected_zona, ]
-      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) +
-        geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +
-        scale_fill_manual(values = colores_personalizados) +
-        ggtitle(paste("precio_m2 en la Zona", selected_zona)) +
-        theme(plot.title = element_text(hjust = 0.5),
-              axis.text.x = element_text(angle = 0, size = 11))
+    output$zonaPlot <- renderPlot({      # Barrio especifico
+      x_axis <- input$x_axis_municipio   # Distintos ejes X
+      selected_zona <- input$zona_plot   # Barrio elegido
+      datos_filtrados_zona <- datos[datos$zona == selected_zona, ]    # Nos quedamos solo con los datos de ese barrio
+      ggplot(datos_filtrados_zona, aes_string(x = x_axis, y = "precio_m2", fill = "Municipio")) + # Datos, ejes y color
+        geom_bar(stat = "identity", position = "dodge", width = 0.7) +     # Gráfico de barras
+        labs(x = x_axis, y = "precio_m2", fill = "Municipio") +       # Nombre de los ejes y color
+        scale_fill_manual(values = colores_personalizados) +          # Escala color
+        ggtitle(paste("precio_m2 en la Zona", selected_zona)) +       # Título
+        theme(plot.title = element_text(hjust = 0.5),     # Tamaño y eje de los textos del eje X
+              axis.text.x = element_text(angle = 0, size = 11)) 
     })
   })
   
