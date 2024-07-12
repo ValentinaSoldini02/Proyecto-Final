@@ -143,37 +143,47 @@ colores_personalizados <- c(
   "Municipio_CH" = "purple", "Municipio_D" = "orange", "Municipio_E" = "pink",
   "Municipio_F" = "brown", "Municipio_G" = "cyan"
 )
-#
+
+
 # UI
-ui <- fluidPage(
-  titlePanel("Análisis de Alquileres"),
-  sidebarLayout(
-    sidebarPanel(
+ui <- fluidPage( # Definimos una página en blanco
+  titlePanel("Análisis de Alquileres"), # Título
+  sidebarLayout(      # Definimos la estructura
+    sidebarPanel(     # Colocar los selectInput
       
       # OUTPUTS DE GASTOS COMUNES POR MUNICIPIO
-      conditionalPanel(
-        condition = "input.tabselected == 4",
+      conditionalPanel(   # Panel Condicional
+        condition = "input.tabselected == 4", # Le asociamos el valor 4
         selectInput("x_axis__GC_municipio", "Seleccione el eje X:",
-                    choices = list(
+                    # Distintos ejes X para la reactividad
+                    choices = list( # Opciones a elegir
                       "Zona" = "zona",
                       "Tipo de Propiedad" = "tipo_prop",
                       "Condición" = "Condicion",
                       "Disposicion" = "disposicion"
-                      # "Gastos Comúnes" = "Gastos_Comunes"
                     )),
+        
+        # Este input va a estar asociado al gráfico de un municipio especifico
         selectInput("single_plot_GC", "Seleccione el Municipio:",
+        # Distintos ejes X para la reactividad, donde estaremos eligiendo un municipio de todos los que hay
                     choices = unique(datos$Municipio),
                     selected = unique(datos$Municipio)[1]),
+        
+        # Distintos ejes X para la reactividad, donde estaremos eligiendo un barrio de todos los que hay
         selectInput("zona_plot_GC", "Seleccione la Zona:",
-                    choices = NULL),  # Inicialmente vacío
+                    choices = NULL),  # Inicio por defecto
+      
         actionButton("update_municipio_GC", "Actualizar Gráficos")
+        # Boton para hacer aparecer los gráficos.
       ),
       
       
-      conditionalPanel( # OUTPUT DE BERNOULLIS
-        condition = "input.tabselected == 5",
+      # OUTPUT DE MOSAICOS
+      conditionalPanel( # Panel Condicional
+        condition = "input.tabselected == 5", # Le asociamos el valor 5
         selectInput("x_axis_bernoulli", "Seleccione el eje X para los gráficos de Bernoulli:",
-                    choices = list(
+            # Distintos ejes X para la reactividad              
+                    choices = list( # Opciones a elegir
                       "Conexión Gas" = "conexion_gas",
                       "WiFi" = "WiFi",
                       "Duplex" = "Duplex",
@@ -182,65 +192,76 @@ ui <- fluidPage(
                       "Gym" = "Gym"
                     )),
         actionButton("update_bernoulli", "Actualizar Gráficos")
+        # Boton para hacer aparecer los gráficos.
       ),
       
       
-      
-      conditionalPanel( # OUTPUT DE MUNICIPIO
-        condition = "input.tabselected == 6",
+      # OUTPUT DE MUNICIPIO POR PRECIO_M2
+      conditionalPanel( # Panel Condicional
+        condition = "input.tabselected == 6", # Le asociamos el valor 6
         selectInput("x_axis_municipio", "Seleccione el eje X:",
-                    choices = list(
+                    # Distintos ejes X para la reactividad        
+                    choices = list( # Opciones a elegir
                       "Zona" = "zona",
                       "Tipo de Propiedad" = "tipo_prop",
                       "Condición" = "Condicion",
                       "Disposicion"="disposicion"
                     )),
+        
+        # Este input va a estar asociado al gráfico de un municipio especifico
         selectInput("single_plot", "Seleccione el Municipio:",
+         # Distintos ejes X para la reactividad, donde estaremos eligiendo un municipio de todos los que hay
                     choices = unique(datos$Municipio),
                     selected = unique(datos$Municipio)[1]),
+        
+        
+        # Este input va a estar asociado al gráfico de un barrio especifico
         selectInput("zona_plot", "Seleccione la Zona:",
-                    choices = NULL),  # Inicialmente vacío
+                    choices = NULL),  #  Inicio por defecto
+        
         actionButton("update_municipio", "Actualizar Gráficos")
+        # Boton para hacer aparecer los gráficos.
       ), 
       
       
       
       # OUTPUT DE MAPA
-      conditionalPanel(
-        condition = "input.tabselected== 3",
-        selectInput("change_mapa", "Seleccionar mapa:",
-                    choices= list(
+      conditionalPanel( # Panel Condicional
+        condition = "input.tabselected== 3", # Le asociamos el valor 3
+        selectInput("change_mapa", "Seleccionar mapa:", # Distintos ejes X para la reactividad
+                    choices= list( # Opciones a elegir
                       "Ubicacion de alquileres en Montevideo"= "mapa1",
                       "Cantidad de alquileres por Municipio"= "mapa2"))
       )
       
     ),
-    mainPanel(
-      tabsetPanel(id = "tabselected",
-                  tabPanel("Mapa",
-                           h2("Gráfico de Mapa"),
+    mainPanel( # Panel para las pestañas donde se veran los gráficos
+      tabsetPanel(id = "tabselected", # Pestañas posibles (cuatro)
+                  tabPanel("Mapa", # Pestaña del mapa
+                           h2("Gráfico de Mapa"), # Título
                            leafletOutput("mapa", width="100%", height= "600px"),
-                           value = 3
+                           # Parámetros relacionados con la imagen del mapa
+                           value = 3 # Valor Asociado
                   ),
                   
-                  tabPanel("Municipio GC",
-                           h2("Gastos Comunes por Municipio"),
-                           plotOutput("municipioPlot1_GC"),
-                           plotOutput("singleMunicipioPlot_GC"),
-                           plotOutput("zonaPlot_GC"),
-                           value = 4
+                  tabPanel("Municipio GC", # Pestaña de Gastos Comunes por Municipio
+                           h2("Gastos Comunes por Municipio"), # Título
+                           plotOutput("municipioPlot1_GC"),  # Municipios
+                           plotOutput("singleMunicipioPlot_GC"), # Municipio Especifico
+                           plotOutput("zonaPlot_GC"), # Barrio especifico
+                           value = 4 # Valor asociado
                   ),
-                  tabPanel("Mosaicos",
-                           h2("Gráfico de Mosaicos"),
-                           plotOutput("bernoulliPlot"),
-                           value = 5
+                  tabPanel("Mosaicos", #  Pestaña de Mosaicos
+                           h2("Gráfico de Mosaicos"), # Título
+                           plotOutput("bernoulliPlot"), # Gráfico
+                           value = 5 # Valor asociado
                   ),
-                  tabPanel("Municipio",
-                           h2("Gráficos por Municipio"),
-                           plotOutput("municipioPlot1"),
-                           plotOutput("singleMunicipioPlot"),
-                           plotOutput("zonaPlot"),
-                           value = 6
+                  tabPanel("Municipio", # Pestaña de Municipios por precio_m2
+                           h2("Gráficos por Municipio"), # Título
+                           plotOutput("municipioPlot1"), # Municipios
+                           plotOutput("singleMunicipioPlot"), # Municipio especifico
+                           plotOutput("zonaPlot"),   # Barrio especifico
+                           value = 6     # Valor asociado
                   )
                   
       )
