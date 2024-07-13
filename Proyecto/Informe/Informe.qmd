@@ -429,6 +429,8 @@ ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantid
   ggtitle("Cantidad por disposición de la propiedad") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+
+
 ```
 
 No hay una diferencia muy notoria con respecto al precio por metro cuadrado en cuanto a la dispocicion en que se encuentra las diferentes propiedades.
