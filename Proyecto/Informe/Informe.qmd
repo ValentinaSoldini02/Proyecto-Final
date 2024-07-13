@@ -3,6 +3,7 @@ title: "Informe"
 format: 
   pdf:
     number-sections: true
+    toc: true 
 execute: 
   echo: false
   warning: false
@@ -10,7 +11,6 @@ execute:
 author: "Diego Da Rosa, Valentina Soldini, Nahuel Bizoso"
 date: "`r Sys.Date()`"
 editor: visual
-lang: es
 ---
 
 ```{r}
@@ -42,7 +42,7 @@ library(ggmosaic)
 
 \newpage
 
-# Introducción:
+# Introducción
 
 El mercado inmobiliario ha sido de gran importancia durante muchos años, tanto para inversores como para personas que buscan una propiedad para alquilar. La variabilidad de los precios puede depender de diferentes factores, como es la ubicación, características de la propiedad, también la seguridad de la zona y algunos otros aspectos. Este estudio tiene como objetivo analizar como varían los precios en dólares de las propiedades teniendo en cuenta diferentes aspectos. Para realizar este análisis, planteamos las diferentes preguntas de investigación:
 
@@ -73,7 +73,7 @@ datos<-read_csv(here("Proyecto","Datos","houses.csv"))
 
 Para responder adecuadamente las preguntas planteadas, se inició con una limpieza de los datos. Esta limpieza incluyó la eliminación de datos duplicados, valores atípicos y valores nulos. Además, se decidió eliminar las variables *Furnished...32*, *Furnished...42*, y *Floors*. Las dos primeras variables fueron eliminadas debido a la existencia de una tercera que contenía la misma información. La columna *Floors* se eliminó ya que no aportaba información relevante, contenía muchos datos faltantes y los datos presentes eran inconsistentes y poco fiables.
 
-Otra modificación realizada fue la agrupación de las zonas de Montevideo en municipios. Se creó una variable adicional *Municipio* que contiene todas las zonas de Montevideo separadas por municipios, se puede observar en la Tabla 1 que zonas corresponden a cada municipio. Adicionalmente, se convirtió la variable *precio* por *precio_m2* (precio por metros cuadrados) para facilitar el análisis de los datos.
+Otra modificación realizada fue la agrupación de las zonas de Montevideo en municipios. Se creó una variable adicional *Municipio* que contiene todas las zonas de Montevideo separadas por municipios, se puede observar en la Figura 1 que zonas corresponden a cada municipio. Adicionalmente, se convirtió la variable *precio* por *precio_m2* (precio por metros cuadrados) para facilitar el análisis de los datos.
 
 Como se mencionó anteriormente, ciertas variables contenían valores nulos. Para abordar este problema, se emplearon diferentes métodos según las características de cada variable:
 
@@ -85,7 +85,7 @@ Para las variables que se mencionó, se calculo la media de toda la columna y se
 
 Además, se re-codificaron variables para mejorar su análisis y para evaluar cómo algunas de las variables del modelo afectaban lineal mente a la variable predictora, **precio_m2**
 
-Por otro lado, a los datos duplicados se eliminaron teniendo en cuenta que las coincidencias únicas que tienen las filas, ya que no tenemos una fecha de snapshot de Mercado Libre.xnmsxnlks
+Por otro lado, a los datos duplicados se eliminaron teniendo en cuenta que las coincidencias únicas que tienen las filas, ya que no tenemos una fecha de snapshot de Mercado Libre.
 
 ```{r}
 #| fig-cap: "Qué Municipio le corresponde a cada zona"
@@ -136,9 +136,9 @@ Municipios <- gt(tabla_municipio) |>
   )
 
 # Mostrar la tabla
-gtsave(Municipios, here::here("output/tabla_municipios.png"))
+#gtsave(Municipios, here::here("output/tabla_municipios.png"))
 
-knitr::include_graphics(here::here("output/tabla_municipios.png"))
+#knitr::include_graphics(here::here("output/tabla_municipios.png"))
 
 
 ```
@@ -288,7 +288,7 @@ detector_nulos <- function(datos_2){ # Función
 
 ```
 
-## Determinar que variables Influyen más en el Precio por metro cuadrado:
+**Determinar que variables Influyen más en el Precio por metro cuadrado:**
 
 A continuación, se presentarán algunas visualizaciones para responder las preguntas planteadas.
 
@@ -324,6 +324,8 @@ datos_2$deposito <- as.factor(datos_2$deposito)
 datos_2$baños <- as.factor(datos_2$baños)
 ```
 
+\newpage
+
 **¿Cual es el municipio más costoso para alquilar?**
 
 ```{r, fig.cap="Relación entre el Precio por Metro cuadrado y Municipios", label:fig-plot0}
@@ -341,6 +343,8 @@ ggplot(promedios3, aes(x = fct_reorder(Municipio, promedio_precio_m2), y = prome
 ```
 
 En este gráfico se puede apreciar como el Municipio A tiene los precios por metro cuadrado promedios mas altos, seguido por el Municipio E. Este gráfico es útil para ver que zonas de Montevideo son mas caras y cuáles son mas económicas, lo cual es valioso para los inquilinos al decidir en que área desean vivir según sus preferencias y presupuesto.
+
+\newpage
 
 **¿Cómo varía el precio por metro cuadrado según el año de construcción de la propiedad?**
 
@@ -376,7 +380,7 @@ ggplot(datos_filtrados, aes(x = año_de_const, y = precio_m2, color = precio_m2)
 
 ```
 
-Este patrón es consistente con la idea de que las propiedades más nuevas tienen características y otras comodidades, mejor infraestructura y probablemente esten ubicadas en lugares mas deseables.
+Este patrón es consistente con la idea de que las propiedades más nuevas tienen características y otras comodidades, mejor infraestructura y probablemente esten ubicadas en lugares más deseables.
 
 \newpage
 
@@ -427,7 +431,7 @@ ggplot(grupo_disposicion, aes(x = fct_reorder(disposicion, Cantidad), y = Cantid
   scale_fill_continuous(type = "gradient", name = "Cantidad") +
   labs(x = "Disposición", y = "Cantidad") +
   ggtitle("Cantidad por disposición de la propiedad") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme_minimal()
 
 
 
@@ -489,6 +493,7 @@ datos_3 <- datos_3 %>%
 ggplot(data = datos_3) +
   geom_mosaic(aes(x = product(precio_m2, nro_de_piso), fill = precio_m2)) +
   scale_fill_discrete( name = "Precio por m2") +
+  scale_fill_manual(values = c("blue", "skyblue"))+
   labs(title = 'Comparación del precio por metro cuadrado y el número de piso',
        x = "Número de piso", y = "Precio por metro cuadrado") +
   theme_minimal() +
@@ -496,7 +501,7 @@ ggplot(data = datos_3) +
 
 ```
 
-Este grafico representa la relacion entre el precio por metro cuadrado (*precio_m2*) y el número de piso (*nro_de_piso*) de las propiedades.
+Este gráfico representa la relación entre el precio por metro cuadrado (*precio_m2*) y el número de piso (*nro_de_piso*) de las propiedades.
 
 Re-caracterizando el precio promedio por metro cuadrado en dos grupos: - Menor o igual a 13 dólares y mayor a 13 dólares,
 
@@ -564,6 +569,8 @@ ggplot(promedios1, aes(x = fct_reorder(baños, promedio_precio_m2), y = promedio
 ```
 
 Se observe que el precio se incrementa hasta la propiedad que tiene dos baños. Sin embargo, después de dos baños, el impacto en el precio es menor. Es decir, una propiedad con tres baños es mas cara que una con uno, pero es considerablemente más cara que una de dos baños. Parece que llega a un punto en el que la cantidad de baños no afecta el precio por metro cuadrado de una propiedad.
+
+\newpage
 
 **¿Como afecta al incremento del precio el aumento de la cantidad de estacionamientos?**
 
@@ -683,6 +690,8 @@ ggplot(datos_2, aes(x = Gastos_Comunes, y = precio_m2, color = precio_m2)) +
 ```
 
 En este gráfico, muestra una tendencia lineal, se puede decir que los gastos comunes son independientes con el precio por metro cuadrado.También se puede decir que son independientes con el tamaño de la propiedad, ya que generalmente las propiedades con mas metros cuadrados son mas costosas y no necesariamente pagan mas gastos comunes.
+
+\newpage
 
 # Modelo Predictivo
 
@@ -1075,7 +1084,7 @@ La mayor dispersión y el alejamiento de algunos puntos de la línea roja indica
 
 \newpage
 
-# Conclusion:
+# Conclusión
 
 Se puede concluir que, aunque el modelo de regresión lineal no fue completamente exitoso en predecir el precio por metro cuadrado debido a la falta de cumplimiento de algunos supuestos y la baja capacidad explicativa, los análisis realizados proporcionaron información valiosa sobre los factores que influyen en los precios inmobiliarios en Montevideo. Los métodos alternativos como los árboles de decisión y los bosques aleatorios muestran un camino prometedor para futuras investigaciones en el mercado inmobiliario. Igualmente parte del objetivo se cumplió, que era brindarle información a los individuos interesados en alquilar, cual eran las características de las propiedades que los propietarios tienen en cuenta para elevar el precio de las propiedades.
 
@@ -1175,10 +1184,10 @@ tabla_gt
 
 ```
 
-# Biblografia:
+# Biblografia
 
 -   Notas de la unidad curricular Ciencia de Datos con R
--   Notas de la unidad curricular Modelos LinealeS
+-   Notas de la unidad curricular Modelos Lineales
 -   Auguie B (2017). *gridExtra: Miscellaneous Functions for "Grid" Graphics*. R package version 2.3, <https://CRAN.R-project.org/package=gridExtra>.
 -   Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” *Journal of Open Source Software*, *4*(43), 1686. doi:10.21105/joss.01686 <https://doi.org/10.21105/joss.01686>.
 -   Schloerke B, Cook D, Larmarange J, Briatte F, Marbach M, Thoen E, Elberg A, Crowley J (2024). *GGally: Extension to 'ggplot2'*. R package version 2.2.1, <https://CRAN.R-project.org/package=GGally>.
