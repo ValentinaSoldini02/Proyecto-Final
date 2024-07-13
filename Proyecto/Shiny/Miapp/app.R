@@ -397,38 +397,48 @@ server <- function(input, output, session) {
   
   
   # GRÁFICO DEL MAPA
-  output$mapa <- renderLeaflet({
-    if(input$change_mapa== "mapa1"){
-      leaflet() %>% addTiles() %>% 
-        setView(-56.18816, -34.90328, 10)%>%
-        addCircles( data= datos_mapa, lat =~as.numeric(oc_lat),
-                    lng= ~as.numeric(oc_lng), color= ~pal(Municipio), label= ~Municipio,
-                    fillOpacity = 0.5) %>%
-        addPolygons(data= shape, 
-                    fillColor = ~pal(MUNICIPIO),
-                    weight = 0.5,
-                    label= ~MUNICIPIO) %>%
-        addLegend(data= datos_mapa, "bottomleft", pal= pal,
-                  values= ~Municipio, title= "Municipios", opacity= 1,
-                  group= "Leyenda"
+  output$mapa <- renderLeaflet({ # Output asociado al mapa
+    
+    # Lo que hicimos fue usar un if para los distintos tipos de mapa
+    if(input$change_mapa== "mapa1"){ # Si elegimos mapa1
+      leaflet() %>% addTiles() %>%   # Agrega los tiles del mapa base
+        setView(-56.18816, -34.90328, 10)%>%  # Vista inicial del mapa
+        
+        # Agregar círculos al mapa
+        addCircles( data= datos_mapa,   # Datos
+                    lat =~as.numeric(oc_lat), # Latitud
+                    lng= ~as.numeric(oc_lng), # Longitud
+                    color= ~pal(Municipio),   # Color
+                    label= ~Municipio,        # Etiquetas
+                    fillOpacity = 0.5) %>%    # Opacidad
+        addPolygons(data= shape,        # Agregar poligonos
+                    fillColor = ~pal(MUNICIPIO), # Color
+                    weight = 0.5,  # Grosor
+                    label= ~MUNICIPIO) %>%  # Etiquetas
+        addLegend(data= datos_mapa, "bottomleft", pal= pal, # Leyenda
+                  values= ~Municipio, title= "Municipios", opacity= 1, # Valor
+                  group= "Leyenda" # Grupos para la leyenda
         ) %>%
-        addLayersControl(overlayGroups = c("Leyenda"),
-                         options= layersControlOptions(collapsed=TRUE))
+        addLayersControl(overlayGroups = c("Leyenda"), # Agregar control en las capas
+                         options= layersControlOptions(collapsed=TRUE)) # Controlar estas capas
     }
-    else if(input$change_mapa== "mapa2"){
-      leaflet() %>% addTiles() %>% 
-        setView(-56.18816, -34.90328, 10)%>%
-        addPolygons(data= shape, 
-                    fillColor = ~color_pal(total),
-                    fillOpacity = 1,
-                    weight = 0.5,
-                    label= ~medias,
-                    popup= ~MUNICIPIO) %>%
-        addLegend(data=shape, "bottomleft", pal=color_pal,
-                  values= ~total, title="Cantidad", opacity=1,
-                  group="Leyenda") %>%
-        addLayersControl(overlayGroups = c("Leyenda"),
-                         options=layersControlOptions(collapsed=TRUE))
+    else if(input$change_mapa== "mapa2"){  # Si seleccionamos mapa2
+      leaflet() %>% addTiles() %>%         # Agrega los tiles del mapa base
+        setView(-56.18816, -34.90328, 10)%>%   # Vista inicial del mapa
+        addPolygons(  # Agregar poligonos 
+                    data= shape,   # Datos
+                    fillColor = ~color_pal(total),  # Color
+                    fillOpacity = 1,      # Opacidad
+                    weight = 0.5,         # Grosor
+                    label= ~medias,       # Etiquetas
+                    popup= ~MUNICIPIO) %>%  # Ver información al pasar el mouse
+        addLegend(data=shape, "bottomleft", pal=color_pal, # Leyenda
+                  values= ~total,    # Valores
+                  title="Cantidad",  # Título  
+                  opacity=1,         # Opacidad
+                  group="Leyenda") %>% # Grupos 
+        addLayersControl(overlayGroups = c("Leyenda"), # Agregar control en las capas
+                         options=layersControlOptions(collapsed=TRUE)) # Controlar estas capas
     }
     
     
@@ -449,5 +459,5 @@ server <- function(input, output, session) {
   
   
 }
-
+# Resultados
 shinyApp(ui, server)
