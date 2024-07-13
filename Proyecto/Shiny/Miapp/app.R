@@ -13,7 +13,8 @@ library(leaflet.extras)
 library(sf)
 
 
-
+# Puedes ver esta shiny en la web en el siguiente link:
+# https://9r2k23-diego-da0rosa.shinyapps.io/Proyecto_Final/
 
 
 
